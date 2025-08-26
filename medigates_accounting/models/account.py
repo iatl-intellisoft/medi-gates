@@ -128,27 +128,3 @@ class ResUsers(models.Model):
                 ('invoice_user_id', '=', user.id),
             ])
             user.todo_trusted_overdue_count = len(overdue)
-
-class HRLeaveAllocation(models.Model):
-    _inherit = 'hr.leave.allocation'
-
-    @api.model
-    def allocate_annual_leave_one_year(self):
-        employees = self.env['hr.employee'].search([])
-        today = fields.Date.today()
-        for emp in employees:
-            if emp.contract_id.date_start and emp.contract_id.date_start <= today - timedelta(days=365):
-                # Check if already allocated
-                existing = self.env['hr.leave.allocation'].search([
-                    ('employee_id', '=', emp.id),
-                    ('holiday_status_id.name', '=', 'Annual Leave'),
-                    ('state', 'in', ['validate', 'confirm']),
-                ])
-                if not existing:
-                    self.env['hr.leave.allocation'].create({
-                        'name': 'Annual Leave (Auto)',
-                        'employee_id': emp.id,
-                        'holiday_status_id': self.env.ref('hr_holidays.holiday_status_cl').id,
-                        'number_of_days': 25,
-                        'state': 'validate',
-                    })
