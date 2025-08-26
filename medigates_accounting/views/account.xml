@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+      <record id="view_account_payment_register__inherit_form" model="ir.ui.view">
+        <field name="name">account.payment.register.inherit.form</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+            <field name="journal_id" position="attributes">
+                <attribute name="readonly">is_cash_payment_method == True</attribute>
+            </field>
+            <field name="payment_method_line_id" position="attributes">
+                <attribute name="readonly">is_cash_payment_method ==  True</attribute>
+            </field>
+        </field>
+    </record>
+
+    <!-- views/res_partner_view.xml -->
+   <record id="view_partner_form_private_custom" model="ir.ui.view">
+        <field name="name">res.partner.form.private.custom</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="private_custom"/>
+                <field name="trust_custom"/>
+            </xpath>
+        </field>
+    </record> 
+
+<!--      <record id="cron_notify_due_invoices" model="ir.cron">
+        <field name="name">Notify Invoices Due in 2 Days</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">model._notify_due_soon_invoices()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record> 
+ -->
+
+  <record id="cron_alert_overdue_trusted" model="ir.cron">
+    <field name="name">Check Overdue Trusted Invoices</field>
+    <field name="model_id" ref="account.model_account_move"/>
+    <field name="state">code</field>
+    <field name="code">model.check_overdue_trusted_customers()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <!-- <field name="numbercall">-1</field> -->
+    <field name="active">True</field>
+  </record>
+<record id="action_trusted_overdue_invoices" model="ir.actions.act_window">
+    <field name="name">Trusted Overdue Invoices</field>
+    <field name="res_model">account.move</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[
+        ('partner_id.trust_custom', '=', True),
+        ('state', '=', 'posted'),
+        ('payment_state', '!=', 'paid'),
+        ('invoice_date_due', '&lt;', context_today()),
+        ('invoice_user_id', '=', uid),
+    ]</field>
+    <field name="context">{}</field>
+</record>
+
+<record id="view_users_form_inherit_trusted_overdue" model="ir.ui.view">
+    <field name="name">res.users.form.inherit.trusted.overdue</field>
+    <field name="model">res.users</field>
+    <field name="inherit_id" ref="base.view_users_form"/>
+    <field name="arch" type="xml">
+        <header>
+            <field name="todo_trusted_overdue_count" invisible="1"/>
+            <button name="%(action_trusted_overdue_invoices)d" 
+                    string="Trusted Overdue Invoices" 
+                    type="action"
+                    icon="fa-bell"
+                    class="oe_stat_button"
+                    groups="account.group_account_user"
+                    invisible="todo_trusted_overdue_count == 0">
+            <field name="todo_trusted_overdue_count" widget="statinfo" string="Trusted Overdue" />
+        </button>
+        </header>
+    </field>
+</record>
+
+
+
+    </data>
+</odoo>
