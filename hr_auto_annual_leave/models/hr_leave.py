@@ -288,6 +288,7 @@ class HolidaysAllocation(models.Model):
         Prevents duplicate allocations by checking existing ones for the current year.
         """
         today = fields.Date.today()
+        current_year = today.year
         employees = self.env['hr.employee'].search([])
         annual_leave_type = self.env['hr.leave.type'].search([('name', 'ilike', 'Annual Leave')], limit=1)
 
@@ -299,54 +300,102 @@ class HolidaysAllocation(models.Model):
             if not contract_start:
                 continue
 
-            # Prevent duplicate allocation for the year
             existing_allocation = self.env['hr.leave.allocation'].search([
                 ('employee_id', '=', emp.id),
                 ('holiday_status_id', '=', annual_leave_type.id),
-                ('date_from', '>=', f'{today.year}-01-01'),
-                ('date_from', '<=', f'{today.year}-12-31'),
+                ('date_from', '>=', f'{current_year}-01-01'),
+                ('date_from', '<=', f'{current_year}-12-31'),
                 ('state', 'in', ['confirm', 'validate']),
             ], limit=1)
 
             if existing_allocation:
-                _logger.info(f"Skipping {emp.name} — already has allocation for {today.year}")
+                _logger.info(f"Skipping {emp.name} — already has allocation for {current_year}")
                 continue
 
-            # Skip if unpaid leave over 200 days
-            unpaid_days = self.env['hr.leave'].search_count([
+            # Skip if unpaid leave > 200 days in previous year
+            unpaid_leaves = self.env['hr.leave'].search([
                 ('employee_id', '=', emp.id),
                 ('holiday_status_id.unpaid', '=', True),
-                ('date_from', '>=', f'{today.year - 1}-01-01'),
-                ('date_to', '<=', f'{today.year - 1}-12-31')
+                ('date_from', '>=', f'{current_year - 1}-01-01'),
+                ('date_to', '<=', f'{current_year - 1}-12-31')
             ])
+            unpaid_days = sum(leave.number_of_days for leave in unpaid_leaves)
             if unpaid_days > 200:
+                _logger.info(f"Skipping {emp.name} — over 200 unpaid leave days in {current_year - 1}")
                 continue
 
+            # Calculate years of service
             years_of_service = (today - contract_start).days // 365
-            yearly_vacation = min(25 + years_of_service, 30)
 
-            validated_allocations = self.env['hr.leave.allocation'].search([
-                ('employee_id', '=', emp.id),
-                ('holiday_status_id', '=', annual_leave_type.id),
-                ('state', '=', 'validate')
-            ])
-            current_total = sum(validated_allocations.mapped('number_of_days'))
+            # Determine base allocation (based on policy)
+            base_allocation = min(25 + (current_year - 2025), 30) if current_year >= 2025 else 0
 
-            available_to_allocate = max(0, 30 - current_total)
+            # Adjust by years of service (max 30)
+            final_allocation = min(max(base_allocation, 25 + years_of_service), 30)
 
-            if available_to_allocate > 0:
-                allocation_amount = min(yearly_vacation, available_to_allocate)
+            # Create the allocation
+            self.env['hr.leave.allocation'].create({
+                'name': f'Annual Leave {current_year}',
+                'employee_id': emp.id,
+                'holiday_status_id': annual_leave_type.id,
+                'number_of_days': final_allocation,
+                'date_from': date(current_year, 1, 1),
+                'date_to': date(current_year, 12, 31),
+                'state': 'confirm',
+                'allocation_type': 'regular',
+            })
 
-                self.env['hr.leave.allocation'].create({
-                    'name': f'Annual Leave Credit {today.year}',
-                    'employee_id': emp.id,
-                    'holiday_status_id': annual_leave_type.id,
-                    'number_of_days': allocation_amount,
-                    'date_from': date(today.year, 1, 1),
-                    'date_to': date(today.year, 12, 31),
-                    'state': 'confirm',
-                    'allocation_type': 'regular',
-                })
+            _logger.info(f"Allocated {final_allocation} days to {emp.name} for {current_year}")
 
-                _logger.info(f"Allocated {allocation_amount} days to {emp.name} for {today.year}")
+
+            # Prevent duplicate allocation for the year
+            # existing_allocation = self.env['hr.leave.allocation'].search([
+            #     ('employee_id', '=', emp.id),
+            #     ('holiday_status_id', '=', annual_leave_type.id),
+            #     ('date_from', '>=', f'{today.year}-01-01'),
+            #     ('date_from', '<=', f'{today.year}-12-31'),
+            #     ('state', 'in', ['confirm', 'validate']),
+            # ], limit=1)
+
+            # if existing_allocation:
+            #     _logger.info(f"Skipping {emp.name} — already has allocation for {today.year}")
+            #     continue
+
+            # # Skip if unpaid leave over 200 days
+            # unpaid_days = self.env['hr.leave'].search_count([
+            #     ('employee_id', '=', emp.id),
+            #     ('holiday_status_id.unpaid', '=', True),
+            #     ('date_from', '>=', f'{today.year - 1}-01-01'),
+            #     ('date_to', '<=', f'{today.year - 1}-12-31')
+            # ])
+            # if unpaid_days > 200:
+            #     continue
+
+            # years_of_service = (today - contract_start).days // 365
+            # yearly_vacation = min(25 + years_of_service, 30)
+
+            # validated_allocations = self.env['hr.leave.allocation'].search([
+            #     ('employee_id', '=', emp.id),
+            #     ('holiday_status_id', '=', annual_leave_type.id),
+            #     ('state', '=', 'validate')
+            # ])
+            # current_total = sum(validated_allocations.mapped('number_of_days'))
+
+            # available_to_allocate = max(0, 30 - current_total)
+
+            # if available_to_allocate > 0:
+            #     allocation_amount = min(yearly_vacation, available_to_allocate)
+
+            #     self.env['hr.leave.allocation'].create({
+            #         'name': f'Annual Leave Credit {today.year}',
+            #         'employee_id': emp.id,
+            #         'holiday_status_id': annual_leave_type.id,
+            #         'number_of_days': allocation_amount,
+            #         'date_from': date(today.year, 1, 1),
+            #         'date_to': date(today.year, 12, 31),
+            #         'state': 'confirm',
+            #         'allocation_type': 'regular',
+            #     })
+
+            #     _logger.info(f"Allocated {allocation_amount} days to {emp.name} for {today.year}")
 

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="department_payslip_id"
+            model="department.payslip"
+            string="Department Payslip Report"
+            report_type="qweb-pdf"
+            name="hr_payroll_custom.department_payslip_temp"
+            file="hr_payroll_custom.department_payslip_temp"
+            menu="False"/>
+            
+        <template id="department_payslip_temp">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                <div class="page">
+                    <div style="border: 2px solid #753e06;padding: 10px;border-radius: 25px;">
+                        <t t-set="info" t-value="get_header"/>
+                            <strong><center>تقرير إجمالي مرتبات الأقسام
+                                <br/>
+                            From (<t t-esc="info['from_date']"/> To <t t-esc="info['to_date']"/>)   
+                            <t t-if ="info['department_id']">
+                                <br/>
+                                For <t t-esc="info['department_name']"/> Department
+                            </t>
+                            </center>
+                            </strong> 
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#ded9d5;">
+                                    <td style="border: 1px solid black; text-align:center">No</td>
+                                    <t t-if ="not info['department_id']">
+                                        <td style="border: 1px solid black;text-align:center">Department</td>
+                                    </t>
+                                    <td style="border: 1px solid black;text-align:center">Net Salary</td>  
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="no" t-value="1"/>
+                                <t t-foreach="get_report" t-as="obj">
+                                    <tr>
+                                        <td style="border: 1px solid black;text-align:center"><t t-esc= "no"/><t t-set="no" t-value="no+1"/></td>
+                                        <t t-if ="not info['department_id']">
+                                            <td style="border: 1px solid black;text-align:center">
+                                                <t t-esc="obj['name']"/></td>
+                                        </t> 
+                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['amount']"/> <t t-esc="obj['currency_id']"/></td>
+                                    </tr>
+                                </t>
+
+<!--                                <tr>-->
+<!--                                    <td style="border: 1px solid black;text-align:center">jjj</td>-->
+<!--                                    <td style="border: 1px solid black;text-align:center">jjj==</td>-->
+<!--                                    <td style="border: 1px solid black;text-align:center">jjj==</td>-->
+
+<!--                                </tr>-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
+                   

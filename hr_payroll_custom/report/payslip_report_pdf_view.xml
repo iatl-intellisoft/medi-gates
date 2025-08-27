@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record id="paperformat_payslip_hr" model="report.paperformat">
+            <field name="name">Department Paperformat</field>
+            <field name="default" eval="False" />
+            <field name="format">A4</field>
+             <field name="orientation">Landscape</field>
+            <field name="margin_top">40</field>
+            <field name="margin_bottom">32</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">35</field>
+      </record>
+<!--        <record id="paperformat_survey_certification" model="report.paperformat">-->
+<!--            <field name="name">Survey Certification</field>-->
+<!--            <field name="default" eval="True"/>-->
+<!--            <field name="format">A4</field>-->
+<!--            <field name="orientation">Landscape</field>-->
+<!--            <field name="margin_top">0</field>-->
+<!--            <field name="margin_bottom">0</field>-->
+<!--            <field name="margin_left">0</field>-->
+<!--            <field name="margin_right">0</field>-->
+<!--            <field name="header_line" eval="False"/>-->
+<!--            <field name="header_spacing">0</field>-->
+<!--            <field name="disable_shrinking" eval="True"/>-->
+<!--            <field name="dpi">96</field>-->
+<!--        </record>-->
+        <report
+            id="payslip_report_pdf_id"
+            model="payslip.report.pdf"
+            string="Payslip Report PDF"
+            report_type="qweb-pdf"
+            name="hr_payroll_custom.payslip_report_pdf_temp"
+            file="hr_payroll_custom.payslip_report_pdf_temp"
+            paperformat="paperformat_payslip_hr"
+            menu="False"/>
+            
+        <template id="payslip_report_pdf_temp">
+            <t t-set="info" t-value="get_header"/>
+            <t t-if ="info['department_id']">
+                <t t-call="web.html_container">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <strong><center>Departments Payslips Report
+                                <br/>
+                            From (<t t-esc="info['from_date']"/> To <t t-esc="info['to_date']"/>)
+                            <t t-if ="info['department_id']">
+                                <br/>
+                                For <t t-esc="info['department_name']"/> Department
+                            </t>
+                            </center>
+                            </strong>
+                            <tr><strong>
+                                Head of Department</strong>
+                            </tr>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr style="background-color:#ded9d5;">
+                                        <td style="border: 1px solid black; text-align:center">No</td>
+                                        <t t-if ="not info['department_id']">
+                                            <td style="border: 1px solid black;text-align:center">Department</td>
+                                        </t>
+                                        <td style="border: 1px solid black;text-align:center">Employee</td>
+                                        <td style="border: 1px solid black;text-align:center">Salary</td>
+                                        <td style="border: 1px solid black;text-align:center">Bouns</td>
+                                        <td style="border: 1px solid black;text-align:center">Total</td>
+                                        <td style="border: 1px solid black;text-align:center">Social insurance</td>
+                                        <td style="border: 1px solid black;text-align:center">long Loan</td>
+
+                                        <td style="border: 1px solid black;text-align:center">Absence</td>
+                                        <td style="border: 1px solid black;text-align:center">Delay</td>
+                                        <td style="border: 1px solid black;text-align:center">breakfast</td>
+                                        <td style="border: 1px solid black;text-align:center">Total withholding</td>
+                                        <td style="border: 1px solid black;text-align:center">net</td>
+                                        <td style="border: 1px solid black;text-align:center">Signature</td>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="no" t-value="1"/>
+                                    <t t-foreach="manger_data" t-as="obj">
+                                        <tr>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc= "no"/><t t-set="no" t-value="no+1"/></td>
+                                            <t t-if ="not info['department_id']">
+                                                <td style="border: 1px solid black;text-align:center">
+                                                    <t t-esc="obj['name']"/></td>
+                                            </t> 
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['emp_name']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_wage']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_bouns']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_si']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_loan']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_abs']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_late']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_breakfast']"/></td>
+                                             <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_ded']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_net']"/></td>
+                                            <td style="border: 1px solid black;text-align:center">__________</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            <tr><strong>
+                                Employees</strong>
+                            </tr>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr style="background-color:#ded9d5;">
+                                        <td style="border: 1px solid black; text-align:center">No</td>
+                                        <t t-if ="not info['department_id']">
+                                            <td style="border: 1px solid black;text-align:center">Department</td>
+                                        </t>
+                                        <td style="border: 1px solid black;text-align:center">Employee</td>
+                                        <td style="border: 1px solid black;text-align:center">Salary</td>
+                                        <td style="border: 1px solid black;text-align:center">Bouns</td>
+                                        <td style="border: 1px solid black;text-align:center">Total</td>
+                                        <td style="border: 1px solid black;text-align:center">Social insurance</td>
+                                        <td style="border: 1px solid black;text-align:center">long Loan</td>
+
+                                        <td style="border: 1px solid black;text-align:center">Absence</td>
+                                        <td style="border: 1px solid black;text-align:center">Delay</td>
+                                        <td style="border: 1px solid black;text-align:center">breakfast</td>
+                                        <td style="border: 1px solid black;text-align:center">Total withholding</td>
+                                        <td style="border: 1px solid black;text-align:center">net</td>
+                                        <td style="border: 1px solid black;text-align:center">Signature</td>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="no" t-value="1"/>
+                                    <t t-foreach="get_report" t-as="obj">
+                                        <tr>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc= "no"/><t t-set="no" t-value="no+1"/></td>
+                                            <t t-if ="not info['department_id']">
+                                                <td style="border: 1px solid black;text-align:center">
+                                                    <t t-esc="obj['name']"/></td>
+                                            </t> 
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['emp_name']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_wage']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_bouns']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_si']"/></td>
+                                            <!-- <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_med_ins']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['half_wage']"/></td> -->
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_loan']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_abs']"/></td>
+
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_late']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_breakfast']"/></td>
+                                             <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_ded']"/></td>
+                                            <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_net']"/></td>
+                                            <td style="border: 1px solid black;text-align:center">__________</td>
+                                        </tr>
+                                    </t>
+                                    <tr class="is-total text-center" style="background-color:#ded9d5;">
+                                        <td colspan="2">Total
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_wage'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_bouns'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_si'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_loan'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_abs'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_late'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_breakfast'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_ded'] for p in get_report])))"/>
+                                        </td>
+                                         <td style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(float(sum([p['total_net'] for p in get_report])))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            __________
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+            <t t-if ="not info['department_id']">
+                  <t t-call="web.html_container">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                                <t t-set="info" t-value="get_header"/>
+                                <strong><center>Departments Payslips Report
+                                    <br/>
+                                    From (<t t-esc="info['from_date']"/> To <t t-esc="info['to_date']"/>)
+                                    </center>
+                                    </strong>
+                                    
+                                    <tr><strong>
+                                        Heads of Departments</strong>
+                                    </tr>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr style="background-color:#ded9d5;">
+                                                    <td style="border: 1px solid black; text-align:center">No</td>
+                                                    <td style="border: 1px solid black;text-align:center">Employee</td>
+                                                    <td style="border: 1px solid black;text-align:center">Salary</td>
+                                                    <td style="border: 1px solid black;text-align:center">Bouns</td>
+                                                    <td style="border: 1px solid black;text-align:center">Total</td>
+                                                    <td style="border: 1px solid black;text-align:center">Social insurance</td>
+                                                    <td style="border: 1px solid black;text-align:center">long Loan</td>
+                                                    <td style="border: 1px solid black;text-align:center">Loan Batch</td>
+                                                    <td style="border: 1px solid black;text-align:center">Absence</td>
+                                                    <td style="border: 1px solid black;text-align:center">Delay</td>
+                                                    <td style="border: 1px solid black;text-align:center">breakfast</td>
+                                                    <td style="border: 1px solid black;text-align:center">Total withholding</td>
+                                                    <td style="border: 1px solid black;text-align:center">net</td>
+                                                    <td style="border: 1px solid black;text-align:center">Signature</td>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-set="no" t-value="1"/>
+                                                <t t-foreach="manger_data" t-as="obj">
+                                                    <tr>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc= "no"/><t t-set="no" t-value="no+1"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['emp_name']"/></td>
+
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_wage']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_bouns']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total']"/></td>
+
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_si']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_long_lone']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_sale_lone']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_abs']"/></td>
+
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_late']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_breakfast']"/></td>
+                                                         <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_ded']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_net']"/></td>
+                                                        <td style="border: 1px solid black;text-align:center">__________</td>
+                                                        
+                                                    </tr>
+                                                </t>
+                                                <tr class="is-total text-center" style="background-color:#ded9d5;">
+                                                    <td style="border: 1px solid black;" colspan="2">Total
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_wage'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_bouns'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_si'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_long_lone'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_sale_lone'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_abs'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_late'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_breakfast'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_ded'] for p in manger_data])))"/>
+                                                    </td>
+                                                     <td style="border: 1px solid black;">
+                                                        <t t-esc="'{0:,.2f}'.format(float(sum([p['total_net'] for p in manger_data])))"/>
+                                                    </td>
+                                                    <td style="border: 1px solid black;">__________</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </t>
+                        </t>
+                <t t-foreach="get_report" t-as="line">
+                 <t t-call="web.html_container">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                                <t t-set="info" t-value="get_header"/>
+                                <strong><center>Departments Payslips Report
+                                    <br/>
+                                    From (<t t-esc="info['from_date']"/> To <t t-esc="info['to_date']"/>)
+                                    </center>
+                                    </strong>
+                        
+
+                                    <tr>
+                                        <td> <strong>Departemnt : </strong></td>
+                                        <td t-esc="line['name']"></td>
+                                    </tr>
+
+                                        <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#ded9d5;">
+                                                <td style="border: 1px solid black; text-align:center">No</td>
+                                                <td style="border: 1px solid black;text-align:center">Employee</td>
+                                                <td style="border: 1px solid black;text-align:center">Salary</td>
+                                                <td style="border: 1px solid black;text-align:center">Bouns</td>
+                                                <td style="border: 1px solid black;text-align:center">Total</td>
+                                                <td style="border: 1px solid black;text-align:center">Social insurance</td>
+                                                <td style="border: 1px solid black;text-align:center">long Loan</td>
+                                                <td style="border: 1px solid black;text-align:center">Loan Batch</td>
+                                                <td style="border: 1px solid black;text-align:center">Absence</td>
+                                                <td style="border: 1px solid black;text-align:center">Delay</td>
+                                                <td style="border: 1px solid black;text-align:center">breakfast</td>
+                                                <td style="border: 1px solid black;text-align:center">Total withholding</td>
+                                                <td style="border: 1px solid black;text-align:center">net</td>
+                                                <td style="border: 1px solid black;text-align:center">Signature</td>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-set="no" t-value="1"/>
+                                            <t t-foreach="line['emp_data']" t-as="obj">
+                                                <tr>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc= "no"/><t t-set="no" t-value="no+1"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['emp_name']"/></td>
+
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_wage']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_bouns']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total']"/></td>
+
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_si']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_long_lone']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_sale_lone']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_abs']"/></td>
+
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_late']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_breakfast']"/></td>
+                                                     <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_ded']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center"><t t-esc="obj['total_net']"/></td>
+                                                    <td style="border: 1px solid black;text-align:center">__________</td>
+                                                </tr>
+                                            </t>
+                                            <tr class="is-total text-center" style="background-color:#ded9d5;">
+                                                <td style="border: 1px solid black;" colspan="2">Total
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_wage'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_bouns'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_si'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_long_lone'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_sale_lone'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_abs'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_late'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_breakfast'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_ded'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                 <td style="border: 1px solid black;">
+                                                    <t t-esc="'{0:,.2f}'.format(float(sum([p['total_net'] for p in line['emp_data']])))"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">__________</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                        </t>
+                    </t>
+                </t>
+            </template>
+        </data>
+    </odoo>

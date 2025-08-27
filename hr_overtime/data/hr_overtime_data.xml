@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- <record id="hour_wage_rule" model="hr.salary.rule">
+            <field name="name">Employee Overtime</field>
+            <field name="sequence" eval="100"/>
+            <field name="code">OVERTIME</field>
+            <field name="use_type">over_time</field>
+            <field name='struct_id'>1</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">if payslip.over_time_ids:
+ result=sum(payslip.over_time_ids.mapped('total_amount'))
+else:
+ result = 0.0
+            </field>
+        </record> -->
+
+        <record id="hr_overtime_rule" model="hr.salary.rule">
+            <field name="name">Employee Overtime</field>
+            <field name="sequence" eval="100"/>
+            <field name="code">OVERTIME</field>
+            <field name="use_type">over_time</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <!-- <field name="struct_id" ref="hr_payroll_custom.structure_employee_cu"></field> -->
+            <field name="amount_python_compute">if payslip.over_time_ids:
+ result=sum(payslip.over_time_ids.mapped('total_amount'))
+else:
+ result = 0.0
+            </field>
+        </record>
+
+        <!--  <record id="hr_overtime_rule" model="hr.salary.rule">
+             <field name="name">Employee Overtime</field>
+             <field name="sequence" eval="100"/>
+             <field name="code">OVERTIME</field>
+             <field name="use_type">over_time</field>
+             <field name="category_id" ref="hr_payroll.ALW"/>
+             <field name='struct_id'> 1 </field>
+             <field name="amount_select">fix</field>
+             <field name="amount_fix">200</field>
+         </record> -->
+
+    </data>
+</odoo>
