@@ -71,7 +71,7 @@ class OrderReturn(models.Model):
 
     def _compute_picking_count(self):
         for rec in self:
-            rec.picking_count = rec.env['stock.picking'].search_count([('return_id', '=', rec.id)])
+            rec.picking_count = rec.env['stock.picking'].search_count([('stock_return_id', '=', rec.id)])
 
     def _compute_reverse_move_count(self):
         for rec in self:
@@ -83,7 +83,7 @@ class OrderReturn(models.Model):
             'type': 'ir.actions.act_window',
             'view_mode': 'list,form',
             'res_model': 'stock.picking',
-            'domain': [('return_id', '=', self.id)],
+            'domain': [('stock_return_id', '=', self.id)],
             'target': 'current',
         }
 
@@ -173,7 +173,7 @@ class OrderReturn(models.Model):
             'state': 'draft',
             'origin': _("Return of %s", self.picking_id.name),
             'location_id': self.picking_id.location_dest_id.id,
-            'return_id': self.id,
+            'stock_return_id': self.id,
             'location_dest_id': self.location_id.id})
 
         new_picking.message_post_with_source(
