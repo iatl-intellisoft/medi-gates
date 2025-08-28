@@ -6,9 +6,9 @@
             <field name="model">hr.contract</field>
             <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
             <field name="arch" type="xml">
-                  <xpath expr="//field[@name='wage']"  position="attributes">
-   10:                     <attribute name="invisible">employee_grade not in ('m2','p1')</attribute>
-                  </xpath>
+                <xpath expr="//field[@name='wage']"  position="attributes">
+                    <attribute name="invisible">employee_grade in ('m2','p1')</attribute>
+                </xpath>
                 <xpath expr="//group[@name='salary']" position="before">
                     <group name="salary">
                         <field name='employee_grade' required="1"/>
