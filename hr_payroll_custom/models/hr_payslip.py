@@ -20,7 +20,6 @@ class HrPayrollRules(models.Model):
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
-        default=lambda self: self.env.company.currency_id.id,
         required=True,
     )
 
