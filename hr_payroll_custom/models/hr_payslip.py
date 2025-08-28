@@ -34,7 +34,7 @@ class HrPayrollStructure(models.Model):
 class HrPayroll(models.Model):
     _inherit = 'hr.payslip'
 
-    usd_rate = fields.Float(string='USD Rate', digits=(16, 6))
+    usd_rate = fields.Float(related='payslip_run_id.usd_rate', string='USD Rate', digits=(16, 6))
     employee_grade = fields.Selection(string='Employee Grade', related='contract_id.employee_grade', readonly=True)
 
 
