@@ -17,6 +17,13 @@ class HrPayrollRules(models.Model):
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
 
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        default=lambda self: self.env.company.currency_id.id,
+        required=True,
+    )
+
 
 class HrPayrollStructure(models.Model):
     _inherit = 'hr.payroll.structure'
@@ -185,3 +192,18 @@ class HrPayrollParameterValue(models.Model):
     _inherit = 'hr.rule.parameter.value'
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
+
+class HrPayslipLine(models.Model):
+    _inherit = 'hr.payslip.line'
+
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        compute='_compute_currency_id',
+        store=True
+    )
+
+    @api.depends('salary_rule_id')
+    def _compute_currency_id(self):
+        for line in self:
+            line.currency_id = line.salary_rule_id.currency_id

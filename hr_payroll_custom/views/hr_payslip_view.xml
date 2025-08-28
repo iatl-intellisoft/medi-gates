@@ -22,6 +22,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='appears_on_payslip']" position="after">
                     <field name="company_id"/>
+                    <field name="currency_id"/>
                 </xpath>
             </field>
         </record>
@@ -33,6 +34,14 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_print_payslip']" position="after">
                     <button string="Print Excel" name="print_excel" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/list/field[@name='amount']"  position="replace">
+
+                 <field name="amount"
+                    sum="Total Amount" 
+               widget="monetary"
+               options="{'currency_field': 'currency_id'}"/>
+        <field name="currency_id"/>
                 </xpath>
             </field>
         </record>
