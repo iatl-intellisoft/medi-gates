@@ -17,13 +17,6 @@ class HrPayrollRules(models.Model):
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
 
-    currency_id = fields.Many2one(
-        'res.currency',
-        string='Currency',
-        required=True,
-    )
-
-
 class HrPayrollStructure(models.Model):
     _inherit = 'hr.payroll.structure'
 
@@ -40,6 +33,11 @@ class HrPayrollStructure(models.Model):
 
 class HrPayroll(models.Model):
     _inherit = 'hr.payslip'
+
+    usd_rate = fields.Float(string='USD Rate', digits=(16, 6))
+    employee_grade = fields.Float(string='Employee Grade', related='contract_id.employee_grade', readonly=True)
+
+
 
     def print_excel(self):
         file_name = _('Payslip Reports.xlsx')
@@ -192,17 +190,3 @@ class HrPayrollParameterValue(models.Model):
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
 
-class HrPayslipLine(models.Model):
-    _inherit = 'hr.payslip.line'
-
-    currency_id = fields.Many2one(
-        'res.currency',
-        string='Currency',
-        compute='_compute_currency_id',
-        store=True
-    )
-
-    @api.depends('salary_rule_id')
-    def _compute_currency_id(self):
-        for line in self:
-            line.currency_id = line.salary_rule_id.currency_id
