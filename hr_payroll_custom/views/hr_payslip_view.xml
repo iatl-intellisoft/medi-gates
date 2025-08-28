@@ -52,6 +52,11 @@
                 <xpath expr="//button[@name='action_draft']" position="after">
                     <button string="Print Excel" name="print_excel" type="object"/>
                 </xpath>
+                <xpath expr="//field[@name='employee_id']" position="after">
+                    <field name="employee_grade"/>
+                    <field name="usd_rate" invisible="employee_grade not in ('m2','p1')" required="employee_grade not in ('m2','p1')"/>
+
+                </xpath>
             </field>
         </record>
     </data>
