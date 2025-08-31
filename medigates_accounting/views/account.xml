@@ -64,7 +64,7 @@
          ('payment_state','!=','paid'),
          ('invoice_date_due','&lt;=',context_today())]
     </field>
-    <field name="context">{'create': False, 'edit': Ture}</field>
+    <field name="context">{'create': False, 'edit': True}</field>
 </record>
 <!-- XML: Add Menu Item Under Invoicing -->
 <menuitem
