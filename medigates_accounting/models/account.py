@@ -106,25 +106,26 @@ class AccountMove(models.Model):
 
 
 
-class ResUsers(models.Model):
-    _inherit = 'res.users'
+# class ResUsers(models.Model):
+#     _inherit = 'res.users'
 
-    todo_trusted_overdue_count = fields.Integer(
-        string="Trusted Overdue Invoices",
-        compute='_compute_todo_trusted_overdue_count'
-    )
+#     todo_trusted_overdue_count = fields.Integer(
+#         string="Trusted Overdue Invoices",
+#         compute='_compute_todo_trusted_overdue_count'
+#     )
 
-    def _compute_todo_trusted_overdue_count(self):
-        today = date.today()
-        AccountMove = self.env['account.move'].sudo()
+#     def _compute_todo_trusted_overdue_count(self):
+#         today = date.today()
+#         AccountMove = self.env['account.move'].sudo()
 
-        for user in self:
-            # Get invoices where user is responsible (invoice_user_id)
-            overdue = AccountMove.search([
-                ('partner_id.trust_custom', '=', True),
-                ('state', '=', 'posted'),
-                ('payment_state', '!=', 'paid'),
-                ('invoice_date_due', '<', today),
-                ('invoice_user_id', '=', user.id),
-            ])
-            user.todo_trusted_overdue_count = len(overdue)
+#         for user in self:
+#             # Get invoices where user is responsible (invoice_user_id)
+#             overdue = AccountMove.search([
+#                 ('partner_id.trust_custom', '=', True),
+#                 ('state', '=', 'posted'),
+#                 ('payment_state', '!=', 'paid'),
+#                 ('invoice_date_due', '<', today),
+#                 ('invoice_user_id', '=', user.id),
+#             ])
+#             user.todo_trusted_overdue_count = len(overdue)
+

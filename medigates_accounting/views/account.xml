@@ -50,39 +50,33 @@
     <!-- <field name="numbercall">-1</field> -->
     <field name="active">True</field>
   </record>
+
+
+
+<!-- XML: Define Server Action to Show Trusted Overdue Invoices -->
 <record id="action_trusted_overdue_invoices" model="ir.actions.act_window">
     <field name="name">Trusted Overdue Invoices</field>
     <field name="res_model">account.move</field>
     <field name="view_mode">list,form</field>
-    <field name="domain">[
-        ('partner_id.trust_custom', '=', True),
-        ('state', '=', 'posted'),
-        ('payment_state', '!=', 'paid'),
-        ('invoice_date_due', '&lt;', context_today()),
-        ('invoice_user_id', '=', uid),
-    ]</field>
+    <field name="domain">
+        [('partner_id.trust_custom','=',True),
+         ('state','=','posted'),
+         ('payment_state','!=','paid'),
+         ('invoice_date_due','&lt;=',context_today()),
+         ('invoice_user_id','=',uid)]
+    </field>
     <field name="context">{}</field>
 </record>
+<!-- XML: Add Menu Item Under Invoicing -->
+<menuitem
+    id="menu_trusted_overdue_invoices"
+    name="Trusted Overdue Invoices"
+    parent="account.menu_finance_receivables"
+    action="action_trusted_overdue_invoices"
+    sequence="30"
+    groups="account.group_account_user"
+/>
 
-<record id="view_users_form_inherit_trusted_overdue" model="ir.ui.view">
-    <field name="name">res.users.form.inherit.trusted.overdue</field>
-    <field name="model">res.users</field>
-    <field name="inherit_id" ref="base.view_users_form"/>
-    <field name="arch" type="xml">
-        <header>
-            <field name="todo_trusted_overdue_count" invisible="1"/>
-            <button name="%(action_trusted_overdue_invoices)d" 
-                    string="Trusted Overdue Invoices" 
-                    type="action"
-                    icon="fa-bell"
-                    class="oe_stat_button"
-                    groups="account.group_account_user"
-                    invisible="todo_trusted_overdue_count == 0">
-            <field name="todo_trusted_overdue_count" widget="statinfo" string="Trusted Overdue" />
-        </button>
-        </header>
-    </field>
-</record>
 
 
 
