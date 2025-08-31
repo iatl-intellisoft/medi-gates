@@ -59,12 +59,15 @@
     <field name="res_model">account.move</field>
     <field name="view_mode">list,form</field>
     <field name="domain">
-        [('partner_id.trust_custom','=',True),
-         ('state','=','posted'),
-         ('payment_state','!=','paid'),
-         ('invoice_date_due','&lt;=',context_today())]
+        [('partner_id.trust_custom', '=', True),
+         ('state', '=', 'posted'),
+         ('payment_state', '!=', 'paid'),
+         ('invoice_date_due', '&lt;=', context_today()),
+         ('move_type', 'in', ['out_invoice', 'out_refund'])]
     </field>
-    <field name="context">{'create': False, 'edit': True}</field>
+    <field name="context">
+        {'create': False, 'edit': True, 'search_default_out_invoice': 1, 'default_move_type': 'out_invoice'}
+    </field>
 </record>
 <!-- XML: Add Menu Item Under Invoicing -->
 <menuitem
