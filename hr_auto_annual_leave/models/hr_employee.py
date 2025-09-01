@@ -22,7 +22,7 @@ class HrEmployee(models.Model):
     def allocate_annual_leave_one_year(self):
         today = fields.Date.today()
         employees = self.search([
-            ('contract_id.date_start', '!=', False, 'contract_id.state', '==', 'open'),
+            ('contract_id.date_start', '!=', False, 'contract_id.state', '=', 'open'),
         ])
 
         annual_leave_type = self.env['hr.leave.type'].search([
