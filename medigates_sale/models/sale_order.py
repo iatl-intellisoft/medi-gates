@@ -53,7 +53,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-        private_custom = fields.Boolean(string="Private Customer")
+    private_custom = fields.Boolean(string="Private Customer")
 
     @api.onchange('order_id.partner_id.private_custom')
     def _onchange_partner_private_discount_lock(self):
