@@ -22,8 +22,11 @@
                 <field name="customer_outside_local_city"/>
                 <field name="confirmed_delivery_date"/>
             </xpath>
+             <xpath expr="//notebook/page/field[@name='order_line']/list/field[@name='discount']" position="before">
+            <field name="private_custom" invisible="1"/>
+        </xpath>
             <xpath expr="//notebook/page/field[@name='order_line']/list/field[@name='discount']" position="attributes">
-            <attribute name="column_invisible">[('order_id.partner_id.private_custom', '=', True)]</attribute>
+            <attribute name="column_invisible">[('private_custom', '=', True)]</attribute>
         </xpath>
         </field>
     </record>
