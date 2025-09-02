@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from datetime import date, datetime, timedelta
 
 
 class OrderReturn(models.Model):
@@ -56,6 +57,7 @@ class OrderReturn(models.Model):
             'invoice_line_ids': [],
             'company_id': self.company_id.id,
             'return_order_id': self.id,
+            'invoice_date_due':fields.Date.today(),
             # 'sale_id': self.sale_id.id,
         }
         return invoice_vals
