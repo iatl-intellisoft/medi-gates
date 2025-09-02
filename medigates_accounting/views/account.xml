@@ -69,6 +69,7 @@
         {'create': False, 'edit': True, 'search_default_out_invoice': 1, 'default_move_type': 'out_invoice'}
     </field>
 </record>
+
 <!-- XML: Add Menu Item Under Invoicing -->
 <menuitem
     id="menu_trusted_overdue_invoices"

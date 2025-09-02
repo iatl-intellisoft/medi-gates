@@ -18,44 +18,40 @@ class HrEmployee(models.Model):
             else:
                 emp.service_years = 0
 
-    @api.model
-    def allocate_annual_leave_one_year(self):
-        today = fields.Date.today()
-        # employees = self.search([
-        #     ('contract_id.date_start', '!=', False, 'contract_id.state', '=', 'open'),
-        # ])
-        employees = self.search([
-            ('contract_id.date_start', '!=', False),
-            ('contract_id.state', '=', 'open'),
-        ])
+    # @api.model
+    # def allocate_annual_leave_one_year(self):
+    #     today = fields.Date.today()
+    #     employees = self.search([
+    #         ('contract_id.date_start', '!=', False, 'contract_id.state', '=', 'open'),
+    #     ])
 
-        annual_leave_type = self.env['hr.leave.type'].search([
-            ('name', '=', 'Annual Leave')
-        ], limit=1)
+    #     annual_leave_type = self.env['hr.leave.type'].search([
+    #         ('name', '=', 'Annual Leave')
+    #     ], limit=1)
 
-        if not annual_leave_type:
-            raise ValueError("Leave Type 'Annual Leave' not found.")
+    #     if not annual_leave_type:
+    #         raise ValueError("Leave Type 'Annual Leave' not found.")
 
-        for emp in employees:
-            date_start = emp.contract_id.date_start
-            if date_start and date_start <= (today - timedelta(days=365)):
-                # Check if already granted this year
-                existing_alloc = self.env['hr.leave.allocation'].search([
-                    ('employee_id', '=', emp.id),
-                    ('holiday_status_id', '=', annual_leave_type.id),
-                    ('state', 'in', ['validate', 'confirm']),
-                    ('create_date', '>=', fields.Date.to_string(today.replace(month=1, day=1))),
-                ])
+    #     for emp in employees:
+    #         date_start = emp.contract_id.date_start
+    #         if date_start and date_start <= (today - timedelta(days=365)):
+    #             # Check if already granted this year
+    #             existing_alloc = self.env['hr.leave.allocation'].search([
+    #                 ('employee_id', '=', emp.id),
+    #                 ('holiday_status_id', '=', annual_leave_type.id),
+    #                 ('state', 'in', ['validate', 'confirm']),
+    #                 ('create_date', '>=', fields.Date.to_string(today.replace(month=1, day=1))),
+    #             ])
 
-                if not existing_alloc:
-                    self.env['hr.leave.allocation'].create({
-                        'name': 'Auto Annual Leave',
-                        'employee_id': emp.id,
-                        'holiday_status_id': annual_leave_type.id,
-                        'number_of_days': 25,
-                        'state': 'confirm',
-                        # 'mode': 'add',
-                    })
+    #             if not existing_alloc:
+    #                 self.env['hr.leave.allocation'].create({
+    #                     'name': 'Auto Annual Leave',
+    #                     'employee_id': emp.id,
+    #                     'holiday_status_id': annual_leave_type.id,
+    #                     'number_of_days': 25,
+    #                     'state': 'confirm',
+    #                     # 'mode': 'add',
+    #                 })
 
     # @api.model
     # def create(self, vals):

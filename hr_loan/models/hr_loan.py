@@ -447,7 +447,7 @@ class HrLoan(models.Model):
         if self.loan_amount > self.company_id.maximum_loan_hort_term   and self.loan_type.code == 'PHL':
             raise ValidationError(_(
                     f"The requested amount exceeds the maximum allowed for a long-term loan "
-                    f"({self.company_id.maximum_loan_Long_term} SDG). Please reduce the amount."
+                    f"({self.company_id.maximum_loan_hort_term} SDG). Please reduce the amount."
                 ))
 
         # 2. Validate amount
