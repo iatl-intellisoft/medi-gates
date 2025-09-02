@@ -53,6 +53,17 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+    private_custom = fields.Boolean(
+        string="Private Customer",
+        compute="_compute_private_custom",
+        store=True  # required for invisible or column_invisible to work
+    )
+
+    @api.depends('order_id.partner_id.private_custom')
+    def _compute_private_custom(self):
+        for line in self:
+            line.private_custom = bool(line.order_id.partner_id.private_custom)
+
     # private_custom = fields.Boolean(string="Private Customer")
 
     # @api.onchange('order_id.partner_id')
@@ -60,9 +71,9 @@ class SaleOrderLine(models.Model):
     #     if self.order_id.partner_id.private_custom:
     #         self.private_custom = True
 
-    private_custom = fields.Boolean(string="Private Customer", compute="_compute_private_custom", store=True)
+    # private_custom = fields.Boolean(string="Private Customer", compute="_compute_private_custom", store=True)
 
-    @api.depends('order_id.partner_id')
-    def _compute_private_custom(self):
-        for line in self:
-            line.private_custom = line.order_id.partner_id.private_custom
+    # @api.depends('order_id.partner_id')
+    # def _compute_private_custom(self):
+    #     for line in self:
+    #         line.private_custom = line.order_id.partner_id.private_custom
