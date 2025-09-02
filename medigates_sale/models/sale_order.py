@@ -55,7 +55,7 @@ class SaleOrderLine(models.Model):
 
     private_custom = fields.Boolean(string="Private Customer")
 
-    @api.onchange('order_id.partner_id.private_custom')
+    @api.onchange('order_id.partner_id')
     def _onchange_partner_private_discount_lock(self):
         if self.order_id.partner_id.private_custom:
             self.private_custom = True
