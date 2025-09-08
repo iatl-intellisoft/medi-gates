@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+        <template id="report_sale_invoice_report2_pdf">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <h2>Sales Invoice Financial Report</h2>
+                <table class="table table-sm table-bordered" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Warehouse</th>
+                            <th>City</th>
+                            <th>Invoice</th>
+                            <th>Invoice Date</th>
+                            <th>Invoice Amount</th>
+                            <th>Payment Term</th>
+                            <th>Payment Value</th>
+                            <th>Total Due</th>
+                            <th>Overdue</th>
+                            <th>Not Past Due</th>
+                            <th>Commitment %</th>
+                            <th>Sale Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="r">
+                            <tr>
+                                <td><t t-esc="r.partner_id.name"/></td>
+                                <td><t t-esc="r.warehouse_id.name"/></td>
+                                <td><t t-esc="r.city"/></td>
+                                <td><t t-esc="r.invoice_id.name"/></td>
+                                <td><t t-esc="r.invoice_date"/></td>
+                                <td><t t-esc="r.invoice_amount"/></td>
+                                <td><t t-esc="r.payment_term.name"/></td>
+                                <td><t t-esc="r.payment_value"/></td>
+                                <td><t t-esc="r.total_due"/></td>
+                                <td><t t-esc="r.overdue_value"/></td>
+                                <td><t t-esc="r.not_past_due"/></td>
+                                <td><t t-esc="r.commitment_rate"/>%</td>
+                                <td><t t-esc="r.sale_order_name"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+ <!--     <record id="action_report_sale_invoice_report2" model="ir.actions.report">
+        <field name="name">Sales Invoice Report</field>
+        <field name="model">sale.invoice.report2</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">medigates_sale.report_sale_invoice_report2_pdf</field>
+        <field name="report_file">medigates_sale.report_sale_invoice_report2_pdf</field>
+        <field name="binding_model_id" ref="model_sale_invoice_report2"/>
+        <field name="binding_type">report</field>
+    </record>
+ -->
+<!--     <record id="action_report_sale_invoice_report2" model="ir.actions.report">
+        <field name="name">Sales Invoice Report</field>
+        <field name="model">sale.invoice.report2</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">medigates_sale.report_sale_invoice_report2_pdf</field>
+        <field name="report_file">medigates_sale.report_sale_invoice_report2_pdf</field>
+        <field name="binding_model_id" ref="model_sale_invoice_report2"/>
+        <field name="binding_type">action</field>
+       
+    </record>
+
+<record id="server_action_print_invoice_report" model="ir.actions.server">
+    <field name="name">Print Sales Invoice Report</field>
+    <field name="model_id" ref="model_sale_invoice_report2"/>
+    <field name="binding_model_id" ref="model_sale_invoice_report2"/>
+    <field name="binding_type">action</field>
+    <field name="report_name">medigates_sale.report_sale_invoice_report2_pdf</field>
+</record>
+
+ -->
+  <template id="report_salesperson_pdf">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="line">
+        <div class="page">
+          <h2>Salesperson Report</h2>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Order Date</th>
+                <th>Order</th>
+                <th>Product</th>
+                <th>Customer</th>
+                <th>City</th>
+                <th>Salesperson</th>
+                <th>Company</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><t t-esc="line.order_id.date_order"/></td>
+                <td><t t-esc="line.order_id.name"/></td>
+                <td><t t-esc="line.product_id.name"/></td>
+                <td><t t-esc="line.order_id.partner_id.name"/></td>
+                <td><t t-esc="line.order_id.partner_id.city or ''"/></td>
+                <td><t t-esc="line.order_id.user_id.name or ''"/></td>
+                <td><t t-esc="line.order_id.company_id.name or ''"/></td>
+                <td><t t-esc="line.product_uom_qty"/></td>
+                <td><t t-esc="line.price_unit"/></td>
+                <td><t t-esc="line.price_total"/></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </t>
+    </t>
+  </template>
+    
+<!-- 
+  <template id="report_inventory_movement_pdf">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="product">
+        <div class="page">
+          <h2>Inventory Movement Report</h2>
+          <p><strong>Product:</strong> <t t-esc="product.display_name"/></p>
+          <p><strong>Internal Reference:</strong> <t t-esc="product.default_code"/></p>
+          <p><strong>Quantity On Hand:</strong> <t t-esc="product.qty_available"/></p>
+
+          <t t-set="last_move" t-value="product.stock_move_ids.sorted(key=lambda m: m.date, reverse=True)[0] if product.stock_move_ids else None"/>
+
+          <t t-if="last_move">
+            <h4>Last Movement:</h4>
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><t t-esc="last_move.date"/></td>
+                  <td><t t-esc="last_move.picking_type_id.name or 'Manual Move'"/></td>
+                  <td><t t-esc="last_move.location_id.name"/></td>
+                  <td><t t-esc="last_move.location_dest_id.name"/></td>
+                  <td><t t-esc="last_move.quantity_done"/></td>
+                </tr>
+              </tbody>
+            </table>
+          </t>
+          <t t-if="not last_move">
+            <p>No movements found for this product.</p>
+          </t>
+        </div>
+      </t>
+    </t>
+  </template> -->
+
+
+</odoo>

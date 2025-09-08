@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+<record id="view_sale_invoice_report_list20" model="ir.ui.view">
+    <field name="name">sale.invoice.report.list</field>
+    <field name="model">sale.invoice.report2</field>
+    <field name="arch" type="xml">
+        <list string="Sales Invoice Report" create="false" delete="false">
+            <field name="sale_order_name"/>
+            <field name="partner_id"/>
+            <field name="warehouse_id"/>
+            <field name="city"/>
+            <field name="invoice_id"/>
+            <field name="invoice_date"/>
+            <field name="invoice_amount"/>
+            <field name="payment_term"/>
+            <field name="payment_value"/>
+            <field name="total_due"/>
+            <field name="overdue_value"/>
+            <field name="not_past_due"/>
+            <field name="commitment_rate"/>
+        </list>
+    </field>
+</record>
+
+<record id="view_sale_invoice_report_search20" model="ir.ui.view">
+    <field name="name">sale.invoice.report.search</field>
+    <field name="model">sale.invoice.report2</field>
+    <field name="arch" type="xml">
+        <search string="Sales Invoice Report">
+            <field name="partner_id"/>
+            <field name="city"/>
+            <field name="invoice_date"/>
+        </search>
+    </field>
+</record>
+
+<!-- Window Action -->
+<record id="action_sale_invoice_report201" model="ir.actions.act_window">
+    <field name="name">Sales Invoice Report</field>
+    <field name="res_model">sale.invoice.report2</field>
+    <field name="view_mode">list,search</field>
+    <field name="view_id" ref="view_sale_invoice_report_list20"/>
+    <field name="search_view_id" ref="view_sale_invoice_report_search20"/>
+    <field name="domain">[('sale_order_name', '!=', False)]</field>
+    <field name="help" type="html">
+        <p>This report shows invoice-level financial data grouped by customer.</p>
+    </field>
+</record>
+
+<!-- Menu Item -->
+<menuitem id="menu_sale_invoice_report201"
+          name="Sales Invoice Report"
+          parent="sale.menu_sale_report"
+          action="action_sale_invoice_report201"
+          sequence="1"/>
+
+<!-- Report Action -->
+<record id="action_report_salesperson" model="ir.actions.report">
+    <field name="name">Salesperson Report</field>
+    <field name="model">sale.order.line</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">medigates_sale.report_salesperson_pdf</field>
+    <field name="binding_model_id" ref="sale.model_sale_order_line"/>
+    <field name="binding_type">report</field>
+</record>
+
+<!-- Menu Item to open the list view -->
+<menuitem id="menu_salesperson_report" name="Salesperson Report" parent="sale.menu_sale_report"/>
+
+<!-- Action to open list view -->
+<record id="action_salesperson_report" model="ir.actions.act_window">
+    <field name="name">Salesperson Report</field>
+    <field name="res_model">sale.order.line</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[]</field>
+</record>
+
+<!-- Link Menu to Action -->
+<menuitem id="menu_salesperson_report_action" name="View Report" parent="sale.menu_sale_report" action="action_salesperson_report"/>
+
+<!-- list View (List) -->
+<record id="view_salesperson_report_tree" model="ir.ui.view">
+    <field name="name">sale.order.line.salesperson.report.tree</field>
+    <field name="model">sale.order.line</field>
+    <field name="arch" type="xml">
+        <list string="Salesperson Report">
+            <field name="order_id"/>
+            <field name="product_id"/>
+         <!--    <field name="parent.partner_id" string="Customer"/>
+            <field name="parent.partner_id.city" string="City"/>
+            <field name="parent.user_id" string="Salesperson"/>
+            <field name="parent.company_id" string="Company"/> -->
+            <field name="product_uom_qty" string="Quantity"/>
+            <field name="price_unit" string="Unit Price"/>
+            <field name="price_total" string="Total"/>
+            <!-- <field name="parent.date_order" string="Order Date"/> -->
+        </list>
+    </field>
+</record>
+
+  <!-- <report
+    id="action_report_inventory_movement_pdf"
+    model="product.product"
+    string="Inventory Movement Report"
+    report_type="qweb-pdf"
+    name="your_module.report_inventory_movement_pdf"
+    file="your_module.report_inventory_movement_pdf"
+    print_report_name="'Inventory Movement Report'"
+  />
+
+   <record id="view_inventory_movement_wizard" model="ir.ui.view">
+    <field name="name">inventory.movement.report.wizard.form</field>
+    <field name="model">inventory.movement.report.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Inventory Movement Report">
+        <group>
+          <field name="product_id"/>
+          <field name="categ_id"/>
+        </group>
+        <footer>
+          <button name="action_print_report" type="object" string="Print Report" class="btn-primary"/>
+          <button string="Cancel" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_inventory_movement_wizard" model="ir.actions.act_window">
+    <field name="name">Inventory Movement Report</field>
+    <field name="res_model">inventory.movement.report.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+   <menuitem id="menu_inventory_movement_report" name="Inventory Movement Report"
+            parent="purchase.menu_purchase_root"
+            action="action_inventory_movement_wizard"/>
+ -->
+
+
+   <!--  <odoo>
+  <record id="view_sale_report_wizard_form" model="ir.ui.view">
+    <field name="name">sale.report.wizard.form</field>
+    <field name="model">sale.report.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Salesperson Report">
+        <group>
+          <field name="salesperson_id"/>
+          <field name="customer_city"/>
+          <field name="date_from"/>
+          <field name="date_to"/>
+        </group>
+        <footer>
+          <button name="action_print_report" type="object" string="Print PDF Report" class="btn-primary"/>
+          <button string="Cancel" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_sale_report_wizard" model="ir.actions.act_window">
+    <field name="name">Salesperson Report</field>
+    <field name="res_model">sale.report.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_sale_report_root" name="Sales Reports" parent="sale.sale_menu_root" sequence="99"/>
+  <menuitem id="menu_sale_report_wizard" name="Salesperson Report" parent="menu_sale_report_root" action="action_sale_report_wizard"/>
+</odoo> -->
+
+<!-- <odoo>
+  <report
+    id="action_report_salesperson_pdf"
+    model="sale.order.line"
+    string="Salesperson PDF Report"
+    report_type="qweb-pdf"
+    name="medigates_sale.report_salesperson_pdf"
+    file="medigates_sale.report_salesperson_pdf"
+    print_report_name="'Salesperson Report - %s' % (object.order_id.name or '')"
+  />
+</odoo> -->
+
+<!-- <odoo>
+  <template id="report_salesperson_pdf">
+    <t t-call="web.html_container">
+      <t t-set="form_data" t-value="data.get('form', {})"/>
+      <t t-set="date_from" t-value="form_data.get('date_from')"/>
+      <t t-set="date_to" t-value="form_data.get('date_to')"/>
+      <t t-set="salesperson" t-value="form_data.get('salesperson')"/>
+      <t t-set="city" t-value="form_data.get('city')"/>
+
+      <t t-foreach="docs" t-as="line">
+        <div class="page">
+          <h2>Salesperson Report</h2>
+          <p>
+            <strong>Salesperson:</strong> <t t-esc="salesperson"/> &nbsp;&nbsp;
+            <strong>City:</strong> <t t-esc="city"/> <br/>
+            <strong>Period:</strong> <t t-esc="date_from"/> to <t t-esc="date_to"/>
+          </p>
+
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Order Date</th>
+                <th>Order</th>
+                <th>Product</th>
+                <th>Customer</th>
+                <th>City</th>
+                <th>Salesperson</th>
+                <th>Company</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><t t-esc="line.order_id.date_order"/></td>
+                <td><t t-esc="line.order_id.name"/></td>
+                <td><t t-esc="line.product_id.name"/></td>
+                <td><t t-esc="line.order_id.partner_id.name"/></td>
+                <td><t t-esc="line.order_id.partner_id.city or ''"/></td>
+                <td><t t-esc="line.order_id.user_id.name or ''"/></td>
+                <td><t t-esc="line.order_id.company_id.name or ''"/></td>
+                <td><t t-esc="line.product_uom_qty"/></td>
+                <td><t t-esc="line.price_unit"/></td>
+                <td><t t-esc="line.price_total"/></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo> -->
+
+
+
+</data>
+</odoo>

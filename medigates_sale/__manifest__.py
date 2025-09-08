@@ -13,8 +13,10 @@
     'category': 'Sales',
     'depends': ['base', 'sale', 'account'],
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/sale_order.xml',
+        'reports/sale_report.xml',
+        'reports/report_sale_template.xml',
     ],
 
     'installable': True,

@@ -13,7 +13,7 @@
             </field>
         </record>
 
-    <record id="view_order_form_custom_delivery_fields" model="ir.ui.view">
+    <record id="view_order_form_custom_delivery_fields2" model="ir.ui.view">
         <field name="name">sale.order.form.delivery.fields</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
@@ -22,19 +22,13 @@
                 <field name="customer_outside_local_city"/>
                 <field name="confirmed_delivery_date"/>
             </xpath>
-             <!-- <xpath expr="//notebook/page/field[@name='order_line']/list/field[@name='discount']" position="before">
-            <field name="private_custom" invisible="1"/>
+             <xpath expr="//field[@name='partner_id']" position="after">
+            <field name="global_discount" readonly="state == 'sale'" invisible="0"/>
+            
         </xpath>
-            <xpath expr="//notebook/page/field[@name='order_line']/list/field[@name='discount']" position="attributes">
-            <attribute name="column_invisible">[('private_custom', '=', True)]</attribute>
-        </xpath> -->
-        <xpath expr="//notebook/page/field[@name='order_line']/list" position="inside">
-    <field name="private_custom" invisible="1"/>
-</xpath>
-
-<xpath expr="//notebook/page/field[@name='order_line']/list/field[@name='discount']" position="attributes">
-    <attribute name="column_invisible">[('private_custom', '=', True)]</attribute>
-</xpath>
+            <xpath expr="//notebook/page/field[@name='order_line']/list/field[@name='discount']" position="replace">
+                <field name="discount" invisible="parent.global_discount == True"/>
+        </xpath>
         </field>
     </record>
 
