@@ -13,7 +13,7 @@
             </field>
         </record>
 
-    <record id="view_order_form_custom_delivery_fields2" model="ir.ui.view">
+    <record id="view_order_form_custom_delivery_fields66" model="ir.ui.view">
         <field name="name">sale.order.form.delivery.fields</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
