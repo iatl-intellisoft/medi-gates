@@ -29,6 +29,7 @@ class Contracts(models.Model):
     currency_id_usd = fields.Many2one('res.currency', string='Currency USD')
 
     usd_salary = fields.Float(string='USD Salary', store=True)
+    manager_insentive = fields.Float(string="Manager's Insentive SDG", store=True)
 
 
   

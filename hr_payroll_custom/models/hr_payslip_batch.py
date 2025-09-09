@@ -15,6 +15,8 @@ from io import BytesIO
 class HrPayrollBatch(models.Model):
     _inherit = 'hr.payslip.run'
 
+    usd_rate = fields.Float(string="Usd Rate")
+
     def print_excel(self):
         file_name = _('Payslip Reports.xlsx')
         fp = BytesIO()

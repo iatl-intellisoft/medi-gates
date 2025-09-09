@@ -12,6 +12,7 @@
                 <xpath expr="//group[@name='salary']" position="before">
                     <group name="salary">
                         <field name='employee_grade' required="1"/>
+                        <field name="manager_insentive" invisible="employee_grade in ('m2','p1')"/>
                         <label for="usd_salary" invisible="employee_grade not in ('m2','p1')"/>
                         <div class="o_row mw-50" name="usd_salary" invisible="employee_grade not in ('m2','p1')">
                             <field name="usd_salary" class="oe_inline o_hr_narrow_field" invisible="employee_grade not in ('m2','p1')" nolabel="1"/>
