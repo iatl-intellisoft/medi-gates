@@ -47,7 +47,7 @@ class HrLoan(models.Model):
 
     company_id = fields.Many2one('res.company', 'Company', required=True, index=True,
                                  default=lambda self: self.env.user.company_id.id)
-    currency_id = fields.Many2one(related="loan_type.currency_id", 'Currency')
+    currency_id = fields.Many2one(related="loan_type.currency_id", string='Currency')
     loan_request_website_description = fields.Html('Body Template', sanitize_attributes=False, translate=html_translate)
     loan_request_template_id = fields.Many2one('mail.template', string='Loan Request Template',
                                                related='company_id.loan_request_template_id')
