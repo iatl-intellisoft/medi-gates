@@ -47,8 +47,7 @@ class HrLoan(models.Model):
 
     company_id = fields.Many2one('res.company', 'Company', required=True, index=True,
                                  default=lambda self: self.env.user.company_id.id)
-    currency_id = fields.Many2one('res.currency', 'Currency',
-                                       default=lambda self: self.env.user.company_id.currency_id)
+    currency_id = fields.Many2one(related="loan_type.currency_id", 'Currency')
     loan_request_website_description = fields.Html('Body Template', sanitize_attributes=False, translate=html_translate)
     loan_request_template_id = fields.Many2one('mail.template', string='Loan Request Template',
                                                related='company_id.loan_request_template_id')
@@ -61,6 +60,8 @@ class HrLoan(models.Model):
     reason = fields.Text(string="Reason")
     loan_type_code = fields.Char(related="loan_type.code")
     amount_requested = fields.Float(string='Emergency Amount Requested')
+    loan_type_usd_loan = fields.Boolean(related="loan_type.usd_loan")
+    # loan_type_currency_id = fields.Many2one(related="loan_type.currency_id", string='Currency')
 
 
     def get_template(self, loan_request_template_id, salary_advance_template_id):
@@ -177,7 +178,10 @@ class HrLoan(models.Model):
         A method to compute employee salary.
         """
         for rec in self:
-            self.emp_salary = rec.employee_id.contract_id.wage
+            if rec.employee_id.contract_id.employee_grade == 'm2' or rec.employee_id.contract_id.employee_grade == 'p1':
+                self.emp_salary = rec.employee_id.contract_id.usd_salary
+            else:
+                self.emp_salary = rec.employee_id.contract_id.wage
 
     @api.depends('loan_line_ids.paid_amount')
     def _compute_total_loan(self):
@@ -586,6 +590,8 @@ class LoanType(models.Model):
                                            ' that formula in this rule Ex: Employee 5 Basic')
     no_unpaid = fields.Boolean(string="Not allow old unpaid installment ")
     need_reason = fields.Boolean(string='Need Reason')
+    usd_loan = fields.Boolean("USD Loan", default=True)
+    currency_id = fields.Many2one('res.currency', string='Currency')
 
     _sql_constraints = [
         ('code_uniq', 'unique (code)', "The code of loan type must be unique")]

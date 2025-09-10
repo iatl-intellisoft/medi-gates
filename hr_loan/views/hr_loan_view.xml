@@ -66,6 +66,8 @@
 						</group>
 						<group>
 						<field name="loan_type" readonly="state != 'draft'"/>
+						<field name="currency_id"/>
+						<field name="loan_type_usd_loan" invisible="True"/>
 						<field name="loan_type_code" invisible="True"/>
 						<field name="amount_requested" invisible="loan_type_code != 'EML'" required="loan_type_code == 'EML'" readonly="state != 'draft'"/>
 						<field name="loan_amount" readonly="state != 'draft'"/>
@@ -329,6 +331,8 @@
 
 						</group>
 						<group colspan="4" col="4">
+							<field name="usd_loan"/>
+							<field name="currency_id" required="1"/>
 							<field name="treasury_account_id"/>
 							<field name="emp_account_id"/>
 							<field name="journal_id"/>
