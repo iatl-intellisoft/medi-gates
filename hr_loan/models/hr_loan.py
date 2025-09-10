@@ -590,7 +590,7 @@ class LoanType(models.Model):
                                            ' that formula in this rule Ex: Employee 5 Basic')
     no_unpaid = fields.Boolean(string="Not allow old unpaid installment ")
     need_reason = fields.Boolean(string='Need Reason')
-    usd_loan = fields.Boolean("USD Loan", default=True)
+    usd_loan = fields.Boolean("USD Loan")
     currency_id = fields.Many2one('res.currency', string='Currency')
 
     _sql_constraints = [
