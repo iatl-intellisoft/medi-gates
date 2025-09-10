@@ -175,13 +175,20 @@ class HrOvertime(models.Model):
 
 				# if overtime_rule:
 				# 	hour_wage = overtime_rule.compute_rule_amount(rec.employee_id)
-				if rec.employee_id.contract_id.employee_grade == 'm2' or rec.employee_id.contract_id.employee_grade == 'p1':
-					day = (contract.usd_salary * rec.company_id.usd_rate)/30
-					hour_wage = day/8
-	            else:
-	                # self.emp_salary = rec.employee_id.contract_id.wage
-					day = (contract.wage)/30
-					hour_wage = day/8
+				if contract.employee_grade in ['m2', 'p1']:
+				    day = (contract.usd_salary * rec.company_id.usd_rate) / 30
+				    hour_wage = day / 8
+				else:
+				    day = contract.wage / 30
+				    hour_wage = day / 8
+
+				# if contract.employee_grade == 'm2' or contract.employee_grade == 'p1':
+				# 	day = (contract.usd_salary * rec.company_id.usd_rate)/30
+				# 	hour_wage = day/8
+	            # else:
+				# 	day = (contract.wage)/30
+				# 	hour_wage = day/8
+
 			rec.update({
 				'total_working_hours': total_work,
 				'total_weekend': total_weekend,
