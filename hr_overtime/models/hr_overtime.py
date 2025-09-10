@@ -133,9 +133,19 @@ class HrOvertime(models.Model):
 				# rec.total_amount = 0.0
 				# if overtime_rule:
 				# 	rec.total_amount = rec.total_hours * overtime_rule.compute_rule_amount(rec.employee_id)
-				day = (contract.wage) / 30
-				hour_wage = day / 8
-				rec.total_amount = rec.total_hours * hour_wage
+
+				if contract.employee_grade in ['m2', 'p1']:
+				    day = (contract.usd_salary * rec.company_id.usd_rate) / 30
+				    hour_wage = day / 8
+				    rec.total_amount = rec.total_hours * hour_wage
+				else:
+				    day = contract.wage / 30
+				    hour_wage = day / 8
+				    rec.total_amount = rec.total_hours * hour_wage
+
+				# day = (contract.wage) / 30
+				# hour_wage = day / 8
+				# rec.total_amount = rec.total_hours * hour_wage
 
 	@api.depends('line_ids.hours','line_ids','employee_id','company_id','working_day_rate'\
 		,'weekend_rate','public_holiday_rate')
