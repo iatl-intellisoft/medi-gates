@@ -19,6 +19,7 @@ class ResCompany(models.Model):
     journal_id = fields.Many2one('account.journal', string='Journal', domain=[('type', '=', 'purchase')])
     account_id = fields.Many2one('account.account', string='Account')
     overtime_partner_id = fields.Many2one('res.partner', string='Receipt Partner')
+    usd_rate = fields.Float(string="Usd Rate")
 
 
 class ResConfigSettings(models.TransientModel):
@@ -44,3 +45,4 @@ class ResConfigSettings(models.TransientModel):
                                  related='company_id.journal_id', string='Journal', required=False, readonly=False)
     account_id = fields.Many2one('account.account', related='company_id.account_id', string='Account', readonly=False)
     overtime_partner_id = fields.Many2one('res.partner', related='company_id.overtime_partner_id', string='Partner', readonly=False)
+    usd_rate = fields.Float(related='company_id.usd_rate', string="Usd Rate")

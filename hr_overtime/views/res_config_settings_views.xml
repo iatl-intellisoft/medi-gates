@@ -10,6 +10,11 @@
                 <xpath expr="//block[@id='hr_template']" position="inside">
                     <setting string="OverTime">
 
+                         <div>
+                            <span class="o_form_label">USD Rate</span>
+                            <field name="usd_rate"/>
+                        </div>
+
                         <div>
                             <span class="o_form_label">Working Day Rate</span>
                             <field name="working_day_rate"/>
