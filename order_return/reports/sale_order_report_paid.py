@@ -19,6 +19,7 @@ class SaleReportAccount(models.Model):
     # sale.order fields
     name = fields.Char(string="Order Reference", readonly=True)
     date = fields.Datetime(string="Order Date", readonly=True)
+    effective_date = fields.Datetime(string="Delivery Date", readonly=True)
     partner_id = fields.Many2one(comodel_name='res.partner', string="Customer", readonly=True)
     company_id = fields.Many2one(comodel_name='res.company', readonly=True)
     pricelist_id = fields.Many2one(comodel_name='product.pricelist', readonly=True)
@@ -32,6 +33,14 @@ class SaleReportAccount(models.Model):
             ('to invoice', "To Invoice"),
             ('no', "Nothing to Invoice"),
         ], string="Order Invoice Status", readonly=True)
+    delivery_status = fields.Selection(
+        selection=[
+            ('pending', "Not Delivered"),
+            ('started', "Started"),
+            ('partial', "Partially Delivered"),
+            ('full', "Fully Delivered"),
+        ], string="Delivery Status", readonly=True)
+
 
     campaign_id = fields.Many2one(comodel_name='utm.campaign', string="Campaign", readonly=True)
     medium_id = fields.Many2one(comodel_name='utm.medium', string="Medium", readonly=True)
@@ -180,6 +189,8 @@ class SaleReportAccount(models.Model):
             am.invoice_date AS invoice_date,
             am.name AS invoice_number,
             am.payment_state AS payment_state,
+            s.effective_date AS effective_date,
+            s.delivery_status AS delivery_status,
             concat('sale.order', ',', s.id) AS order_reference"""
 
         additional_fields_info = self._select_additional_fields()
@@ -265,6 +276,8 @@ class SaleReportAccount(models.Model):
             am.name,
             am.state,
             am.payment_state,
+            s.effective_date,
+            s.delivery_status,
             account_currency_table.rate"""
 
     def _query(self):

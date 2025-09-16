@@ -26,6 +26,8 @@
                 <field name="invoice_date" optional="hide"/>
                 <field name="line_invoice_status" optional="hide"/>
                 <field name="payment_state" optional="hide"/>
+                <field name="effective_date"/>
+                <field name="delivery_status"/>
                 <field name="currency_id" column_invisible="True"/>
             </list>
             </field>
@@ -64,7 +66,8 @@
                         </group>
                         <group expand="1" string="Group By">
                             <filter string="Salesperson" name="User" context="{'group_by':'user_id'}"/>
-                            <!-- <filter string="Invoice Date" name="invoice_date" context="{'group_by':'invoice_date'}"/> -->
+                            <filter string="Delivery Date" name="effective_date" context="{'group_by':'effective_date'}"/>
+                            <filter string="Delivery Status" name="delivery_status" context="{'group_by':'delivery_status'}"/>
                             <filter string="Sales Team" name="sales_channel" context="{'group_by':'team_id'}"/>
                             <filter string="Customer" name="Customer" context="{'group_by':'partner_id'}"/>
                             <filter string="Customer Country" name="country_id" context="{'group_by':'country_id'}"/>
