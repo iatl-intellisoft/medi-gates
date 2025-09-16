@@ -25,6 +25,9 @@
         'views/return_order_views.xml',
         'views/stock_picking_views.xml',
         'reports/order_return_report.xml',
+        'reports/return_sale_report_by_quantity.xml',
+        'reports/sale_order_report_paid.xml',
+        'reports/sale_order_report_unpaid.xml',
         'reports/reports.xml',
     ],
 

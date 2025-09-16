@@ -6,6 +6,7 @@ class InventoryMovementReportWizard(models.TransientModel):
 
     product_id = fields.Many2one('product.product', string='Product')
     categ_id = fields.Many2one('product.category', string='Product Category')
+    salesperson_id = fields.Many2one('res.users', string='Salesperson')
 
     def action_print_report(self):
         domain = []

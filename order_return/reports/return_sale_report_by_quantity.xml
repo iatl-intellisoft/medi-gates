@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+  
+
+        <record id="view_order_return_report_quanitiy_list" model="ir.ui.view">
+            <field name="name">view.order.return.quanitiy.list</field>
+            <field name="model">order.return.report.quanitiy</field>
+            <field name="arch" type="xml">
+                <list string="Sales Return Analysis By Quantity" action="action_open_order" type="object">
+                <field name="company_id" optional="show" groups="base.group_multi_company" string="Company Name (Tabuk or Hikma)"/>
+                <field name="return_name" string="Return Number" optional="show"/>
+                <field name="sale_id_reference"/>
+                <!-- <field name="sale_order_id" string="Sale Order"/> -->
+                <field name="return_date" string="Return Date"/>
+                
+                <field name="invoice_number" string="Invoice Number" optional="hide"/>
+                <field name="invoice_date" string="Invoice date"/>
+                <field name="product_id" string="Product" optional="show"/>
+                <field name="partner_id"/>
+                <field name="city"/>
+                <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                <field name="location_id"/>
+                 <field name="ordered_qty" string="Ordered Qty"/>
+                 <field name="returned_qty" decoration-danger="returned_qty &gt; 0" string="Returned Qty"/>
+                 <field name="remaining_qty" string="Remaining Qty"/>
+                <field name="price_unit" widget="monetary" avg="Average"/>
+                <!-- <field name="amount_total" optional="show" sum="Sum of Total"/> -->
+                <field name="state" optional="hide"/>
+            </list>
+            </field>
+        </record>
+
+
+    <record id="action_order_return_report_quanitiy_all" model="ir.actions.act_window">
+        <field name="name">Sales Return Analysis By Quantity</field>
+        <field name="res_model">order.return.report.quanitiy</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_id"></field>  <!-- force empty -->
+        <field name="search_view_id" ref="view_order_return_report_quanitiy_list"/>
+        <field name="domain">[('state', '!=', 'cancel')]</field>
+        <field name="context">{'search_default_Sales':1,'group_by':[]}</field>
+       
+    </record>
+
+        <menuitem id="menu_reporting_order_quantity_return"
+                name="Sales Return Analysis By Quantity"
+                action="action_order_return_report_quanitiy_all"
+                 parent="stock.menu_warehouse_report"
+                sequence="26"/>
+    </data>
+</odoo>

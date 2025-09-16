@@ -11,8 +11,25 @@ class SaleOrder(models.Model):
     customer_outside_local_city = fields.Boolean(string="Customer Outside Local City")
     global_discount = fields.Boolean(
         string='Global Discount',)
+    state = fields.Selection(
+        selection_add=[('sales_supervisor', 'Sales Supervisor Approval'), ('accountant', 'Accountant Approval')])
 
+    
+    def _confirmation_error_message(self):
+        """ Return whether order can be confirmed or not if not then returm error message. """
+        self.ensure_one()
+        if self.state not in {'sales_supervisor', 'sent'}:
+            return _("Some orders are not in a state requiring confirmation.")
+        if any(
+            not line.display_type
+            and not line.is_downpayment
+            and not line.product_id
+            for line in self.order_line
+        ):
+            return _("A line on these orders missing a product, you cannot confirm it.")
 
+        return False
+        
     def action_confirm(self):
         for order in self:
             insufficient_products = []
@@ -50,6 +67,12 @@ class SaleOrder(models.Model):
                     "for a customer outside the local city."
                 ))
         return super()._create_invoices(grouped=grouped, final=final)
+
+    def action_sales_supervisor(self):
+        self.write({'state': 'sales_supervisor'})
+
+    def action_accountant(self):
+        self.write({'state': 'accountant'})
 
 
 # class SaleOrderLine(models.Model):

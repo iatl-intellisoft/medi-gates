@@ -62,3 +62,7 @@ class SaleInvoiceReport2(models.Model):
                 {self._from()}
             )
         """)
+class SaleReport(models.Model):
+    _inherit = "sale.report"
+
+    city = fields.Char(related='partner_id.city', string='Customer City')

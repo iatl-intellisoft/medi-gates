@@ -87,8 +87,9 @@
                 <th>Order Date</th>
                 <th>Order</th>
                 <th>Product</th>
+                <th>Salesperson</th>
                 <th>Customer</th>
-                <th>City</th>
+                <th>Customer City</th>
                 <th>Salesperson</th>
                 <th>Company</th>
                 <th>Quantity</th>
