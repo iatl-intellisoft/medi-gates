@@ -49,13 +49,70 @@
             </field>
         </record>
 
+        <record id="view_order_return_search" model="ir.ui.view">
+                <field name="name">order.return.report.search</field>
+                <field name="model">order.return.report</field>
+                <field name="arch" type="xml">
+                    <search string="Complately Sales Analysis Report">
+                        <field name="return_date"/>
+                        <field name="invoice_date"/>
+                        <field name="invoice_number"/>
+                        <field name="sale_id_reference"/>
+                        <field name="location_id"/>
+                        <filter string="Return Date" name="year" invisible="0" date="return_date" default_period="year"/>
+                        <filter string="INvoice Date" name="year" invisible="0" date="invoice_date" default_period="year"/>
+                        <filter string="INvoice Number" name="invoice_number"/>
+                        <filter string="Sale Number" name="sale_id_reference"/>
+                        <filter string="Quotations" name="Quotations" domain="[('state','in', ('draft', 'sent'))]"/>
+                        <filter string="Sales Orders" name="Sales" domain="[('state','not in',('draft', 'cancel', 'sent'))]"/>
+                        <separator/>
+                        <!-- <filter name="filter_date" date="date" default_period="month"/>
+                        <filter name="filter_order_date" invisible="1" string="Order Date: Last 365 Days" domain="[('date', '&gt;=', (datetime.datetime.combine(context_today() + relativedelta(days=-365), datetime.time(0,0,0))).strftime('%Y-%m-%d %H:%M:%S'))]"/> -->
+                        <separator/>
+                        <field name="user_id"/>
+                        <field name="team_id"/>
+                        <field name="product_id"/>
+                        <field name="product_tmpl_id"/>
+                        <field name="categ_id"/>
+                        <filter name="to_invoice" string="To Invoice" domain="[('line_invoice_status', '=', 'to invoice')]"/>
+                        <filter name="fully_invoiced" string="Fully Invoiced" domain="[('line_invoice_status', '=', 'invoiced')]"/>
+                        <field name="partner_id"/>
+                        <field name="country_id"/>
+                        <field name="industry_id"/>
+                        <group expand="0" string="Extended Filters">
+                            <field name="categ_id" filter_domain="[('categ_id', 'child_of', self)]"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group expand="1" string="Group By">
+                            <filter string="Salesperson" name="User" context="{'group_by':'user_id'}"/>
+                            <filter string="REturn Location" name="location_id" context="{'group_by':'location_id'}"/>
+                            <filter string="Sales Team" name="sales_channel" context="{'group_by':'team_id'}"/>
+                            <filter string="Customer" name="Customer" context="{'group_by':'partner_id'}"/>
+                            <filter string="Customer City" name="city" context="{'group_by':'city'}"/>
+                            <filter string="Customer Country" name="country_id" context="{'group_by':'country_id'}"/>
+                            <filter string="Customer Industry" name="industry_id" context="{'group_by':'industry_id'}"/>
+                            <filter string="Product" name="product_tmpl_id" context="{'group_by':'product_tmpl_id'}"/>
+                            <filter string="Product Variant" name="product_id" context="{'group_by':'product_id'}"
+                                    groups="product.group_product_variant"/>
+                            <filter string="Product Category" name="Category" context="{'group_by':'categ_id'}"/>
+                            <filter string="Status" name="status" context="{'group_by':'state'}"/>
+                            <filter string="Company" name="company" groups="base.group_multi_company" context="{'group_by':'company_id'}"/>
+                            <separator/>
+                            <!-- <filter string="Order Date" name="group_by_date" context="{'group_by':'date'}"
+                                    invisible="context.get('sale_report_view_hide_date')"/>
+                            <filter string="Order Date" name="group_by_date_day" context="{'group_by':'date:day'}"
+                                    invisible="not context.get('sale_report_view_hide_date')"/> -->
+                        </group>
+                    </search>
+                </field>
+            </record>
 
     <record id="action_order_return_report_all" model="ir.actions.act_window">
         <field name="name">Sales Return Analysis</field>
         <field name="res_model">order.return.report</field>
-        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_mode">list,graph,pivot</field>
         <field name="view_id"></field>  <!-- force empty -->
-        <field name="search_view_id" ref="view_order_return_report_list"/>
+        <field name="search_view_id" ref="view_order_return_search"/>
         <field name="domain">[('state', '!=', 'cancel')]</field>
         <field name="context">{'search_default_Sales':1,'group_by':[]}</field>
        

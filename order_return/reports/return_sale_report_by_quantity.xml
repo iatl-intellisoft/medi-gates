@@ -36,9 +36,9 @@
     <record id="action_order_return_report_quanitiy_all" model="ir.actions.act_window">
         <field name="name">Sales Return Analysis By Quantity</field>
         <field name="res_model">order.return.report.quanitiy</field>
-        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_mode">list,graph,pivot</field>
         <field name="view_id"></field>  <!-- force empty -->
-        <field name="search_view_id" ref="view_order_return_report_quanitiy_list"/>
+        <field name="search_view_id" ref="order_return.view_order_return_search"/>
         <field name="domain">[('state', '!=', 'cancel')]</field>
         <field name="context">{'search_default_Sales':1,'group_by':[]}</field>
        
