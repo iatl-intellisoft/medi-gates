@@ -59,7 +59,7 @@
     <record model="ir.actions.act_window" id="action_hr_deduction_conf">
         <field name="name">Deduction Types</field>
         <field name="res_model">hr.deduct.conf</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="view_hr_deduction_conf_menu" name="Deduction Types" parent="hr.menu_human_resources_configuration"
