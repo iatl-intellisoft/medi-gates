@@ -32,9 +32,9 @@
             <field name="model">hr.payslip</field>
             <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_print_payslip']" position="after">
+                <!-- <xpath expr="//button[@name='action_print_payslip']" position="after">
                     <button string="Print Excel" name="print_excel" type="object"/>
-                </xpath>
+                </xpath> -->
                  <xpath expr="//field[@name='contract_id']" position="after">
                      <field name="employee_grade"/>
                     <field name="usd_rate"/>
@@ -56,9 +56,9 @@
             <field name="model">hr.payslip.run</field>
             <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_draft']" position="after">
+              <!--   <xpath expr="//button[@name='action_draft']" position="after">
                     <button string="Print Excel" name="print_excel" type="object"/>
-                </xpath>
+                </xpath> -->
                 <xpath expr="//field[@name='company_id']" position="after">
                     <field name="usd_rate"/>
                 </xpath>
