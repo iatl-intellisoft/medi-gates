@@ -44,7 +44,7 @@ class HrPayslip(models.Model):
         """
         for rec in self:
             rec.get_loan()
-            return super(HrPayslip, rec.sudo()).compute_sheet()
+        return super(HrPayslip, rec.sudo()).compute_sheet()
 
     def action_payslip_done(self):
         """
