@@ -13,12 +13,12 @@
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
-        'wizard/employee_payslip_report.xml',
-        'wizard/payslip_report_pdf_view.xml',
-        'wizard/department_payslip_view.xml',
+        # 'wizard/employee_payslip_report.xml',
+        # 'wizard/payslip_report_pdf_view.xml',
+        # 'wizard/department_payslip_view.xml',
         'views/hr_payslip_view.xml',
-        'report/department_payslip_view.xml',
-        'report/payslip_report_pdf_view.xml',
+        # 'report/department_payslip_view.xml',
+        # 'report/payslip_report_pdf_view.xml',
     ],
 
     'application': True,
