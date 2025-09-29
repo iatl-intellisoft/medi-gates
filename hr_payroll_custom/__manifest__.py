@@ -11,7 +11,7 @@
 
     'depends': ['hr','hr_payroll','hr_contract'],
     'data': [
-        'security/ir.model.access.csv',
+        # 'security/ir.model.access.csv',
         'security/security.xml',
         # 'wizard/employee_payslip_report.xml',
         # 'wizard/payslip_report_pdf_view.xml',
