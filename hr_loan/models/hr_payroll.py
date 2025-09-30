@@ -19,33 +19,61 @@ class HrPayslip(models.Model):
     loan_ids = fields.One2many('hr.loan.line', 'payslip_id', string="Loans", readonly=True)
     total_amount_paid = fields.Float(string="Total Loan Amount", compute='compute_total_paid_loan')
 
+    # def get_loan(self):
+    #     """
+    #     A method to get posted and approved employee's loan
+    #     """
+    #     array = []
+    #     domain = []
+    #     for rec in self:
+    #         rec.loan_ids.write({'payslip_id': False})
+    #         loan_ids = self.env['hr.loan.line'].search([('employee_id', '=', rec.employee_id.id),
+    #                                                     ('paid', '=', False), ('paid_date', '>=', rec.date_from),
+    #                                                     ('paid_date', '<=', rec.date_to),
+                                                        
+    #                                                     ])
+    #         for loan in loan_ids:
+    #             if loan.loan_id.state == 'approve':
+    #                 array.append(loan.id)
+    #         rec.loan_ids = array
+    #     return array
+
     def get_loan(self):
         """
-        A method to get posted and approved employee's loan
+        Method to fetch and assign loans to payslip where the loan is approved and 
+        payment is scheduled within the payslip period.
         """
-        array = []
-        domain = []
+        HrLoanLine = self.env['hr.loan.line']
+
         for rec in self:
-            rec.loan_ids.write({'payslip_id': False})
-            loan_ids = self.env['hr.loan.line'].search([('employee_id', '=', rec.employee_id.id),
-                                                        ('paid', '=', False), ('paid_date', '>=', rec.date_from),
-                                                        ('paid_date', '<=', rec.date_to),
-                                                        
-                                                        ])
-            for loan in loan_ids:
-                if loan.loan_id.state == 'approve':
-                    array.append(loan.id)
-            rec.loan_ids = array
-        return array
+            # Clear previous loan line links
+            if rec.loan_ids:
+                rec.loan_ids.write({'payslip_id': False})
+
+            # Find unpaid loan lines within the payslip date range
+            loan_lines = HrLoanLine.search([
+                ('employee_id', '=', rec.employee_id.id),
+                ('paid', '=', False),
+                ('paid_date', '>=', rec.date_from),
+                ('paid_date', '<=', rec.date_to),
+                ('loan_id.state', '=', 'approve')
+            ])
+
+            # Link loan lines to this payslip
+            loan_lines.write({'payslip_id': rec.id})
+
+            # Assign the loan lines to the record (only needed if loan_ids is computed/stored manually)
+            rec.loan_ids = loan_lines
+
+        return True
 
     def compute_sheet(self):
         """
         inherit from compute_sheet to compute loan from payslip
         """
-        for rec in self:
-            rec.get_loan()
-        return super(HrPayslip, rec.sudo()).compute_sheet()
-
+        self.get_loan()
+        return super(HrPayslip, self.sudo()).compute_sheet()
+        
     def action_payslip_done(self):
         """
         A method to loan from payslip
