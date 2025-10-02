@@ -283,6 +283,7 @@ class OrderReturnLine(models.Model):
     discount = fields.Float(string="Discount", required=False, )
     discount_amount = fields.Monetary(compute='_compute_discount_amount', string='Discount Amount', readonly=True,
                                       store=True)
+    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company)
 
     @api.depends('discount', 'price_unit', 'qty_return')
     def _compute_discount_amount(self):
