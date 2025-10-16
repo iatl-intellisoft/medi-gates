@@ -55,7 +55,7 @@
   
 
     <!-- ==================== MENU ITEM ==================== -->
-    <menuitem id="menu_stock_move_incoming_tree"
+    <menuitem id="menu_stock_move_incoming"
               name="Incoming Product Moves"
               parent="purchase.menu_purchase_root"
               action="action_stock_move_incoming_tree"
