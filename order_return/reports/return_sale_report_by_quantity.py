@@ -159,7 +159,7 @@ class SaleReturnReportQuanitiy(models.Model):
             am.payment_state AS payment_state,
             concat('order.return', ',', s.id) AS name,
 
-            STRING_AGG(lot.name, ', ') AS lot_numbers
+            STRING_AGG(sml.lot_id, ', ') AS lot_numbers
         """
 
         additional_fields_info = self._select_additional_fields()
