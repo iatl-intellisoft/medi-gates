@@ -42,7 +42,7 @@
                 <field name="report_type">qweb-pdf</field>
                 <field name="report_name">order_return.report_stock_move_incoming_template</field>
                 <field name="report_file">order_return.report_stock_move_incoming_template</field>
-                <field name="binding_model_id" ref="model_stock_move"/>
+                <field name="binding_model_id" ref="stock.model_stock_move"/>
                 <field name="binding_type">report</field>
         </record>
 
