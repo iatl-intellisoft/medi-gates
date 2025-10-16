@@ -18,6 +18,7 @@
                 <field name="invoice_number" string="Invoice Number" optional="hide"/>
                 <field name="invoice_date" string="Invoice date"/>
                 <field name="product_id" string="Product" optional="show"/>
+                <field name="lot_numbers"/>
                 <field name="partner_id"/>
                 <field name="city"/>
                 <field name="user_id" optional="show" widget="many2one_avatar_user"/>

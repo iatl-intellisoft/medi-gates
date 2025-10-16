@@ -92,6 +92,7 @@ class SaleReturnReportQuanitiy(models.Model):
     city = fields.Char(related='partner_id.city', string='Customer City')
     invoice_number = fields.Char(string='Invoice Number')
     sale_id_reference = fields.Char(related='order_reference.origin', string='Source Document')
+    lot_numbers = fields.Char(string="Lot Numbers", readonly=True)
 
 
 
@@ -190,7 +191,7 @@ class SaleReturnReportQuanitiy(models.Model):
             LEFT JOIN product_template t ON p.product_tmpl_id = t.id
             LEFT JOIN uom_uom u ON u.id = l.product_uom
             LEFT JOIN uom_uom u2 ON u2.id = t.uom_id
-            LEFT JOIN stock_move_line sml ON sml.picking_id = s.stock_return_id AND sml.product_id = l.product_id
+            LEFT JOIN stock_move_line sml ON sml.picking_id = s.sale_picking_id AND sml.product_id = l.product_id
             LEFT JOIN stock_production_lot lot ON sml.lot_id = lot.id
             JOIN {currency_table} ON account_currency_table.company_id = s.company_id
         """
