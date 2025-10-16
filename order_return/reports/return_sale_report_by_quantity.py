@@ -156,7 +156,10 @@ class SaleReturnReportQuanitiy(models.Model):
             am.name AS invoice_number,
             am.state AS line_invoice_status,
             am.payment_state AS payment_state,
-            concat('order.return', ',', s.id) AS name"""
+            concat('order.return', ',', s.id) AS name,
+
+            STRING_AGG(lot.name, ', ') AS lot_numbers
+        """
 
         additional_fields_info = self._select_additional_fields()
         template = """,
@@ -170,11 +173,7 @@ class SaleReturnReportQuanitiy(models.Model):
         return f"""CASE COALESCE({value}, 0) WHEN 0 THEN 1.0 ELSE {value} END"""
 
     def _select_additional_fields(self):
-        """Hook to return additional fields SQL specification for select part of the table query.
-
-        :returns: mapping field -> SQL computation of field, will be converted to '_ AS _field' in the final table definition
-        :rtype: dict
-        """
+        """Hook to return additional fields SQL specification for select part of the table query."""
         return {}
 
     def _from_sale(self):
@@ -182,17 +181,19 @@ class SaleReturnReportQuanitiy(models.Model):
         currency_table = self.env.cr.mogrify(currency_table).decode(self.env.cr.connection.encoding)
         return f"""
             order_return_line l
-            LEFT JOIN order_return s ON s.id=l.return_id
+            LEFT JOIN order_return s ON s.id = l.return_id
             LEFT JOIN sale_order so ON so.id = s.sale_id
             LEFT JOIN sale_order_line so_line ON so_line.order_id = s.sale_id AND so_line.product_id = l.product_id
             LEFT JOIN account_move am ON am.return_order_id = s.id
             JOIN res_partner partner ON s.partner_id = partner.id
-            LEFT JOIN product_product p ON l.product_id=p.id
-            LEFT JOIN product_template t ON p.product_tmpl_id=t.id
-            LEFT JOIN uom_uom u ON u.id=l.product_uom
-            LEFT JOIN uom_uom u2 ON u2.id=t.uom_id 
+            LEFT JOIN product_product p ON l.product_id = p.id
+            LEFT JOIN product_template t ON p.product_tmpl_id = t.id
+            LEFT JOIN uom_uom u ON u.id = l.product_uom
+            LEFT JOIN uom_uom u2 ON u2.id = t.uom_id
+            LEFT JOIN stock_move_line sml ON sml.picking_id = s.stock_return_id AND sml.product_id = l.product_id
+            LEFT JOIN stock_production_lot lot ON sml.lot_id = lot.id
             JOIN {currency_table} ON account_currency_table.company_id = s.company_id
-            """
+        """
 
     # def _where_sale(self):
     #     return """
