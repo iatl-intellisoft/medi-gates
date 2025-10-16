@@ -209,7 +209,6 @@ class SaleReturnReportQuanitiy(models.Model):
     def _where_sale(self):
         return """
             s.state = 'done'
-            AND am.state = 'posted'
         """
 
     def _group_by_sale(self):
