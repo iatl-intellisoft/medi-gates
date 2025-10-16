@@ -115,7 +115,7 @@ class SaleReturnReportQuanitiy(models.Model):
             t.uom_id AS product_uom,
             CASE WHEN l.price_unit = 0 THEN SUM(l.qty_return) ELSE 0 END AS product_bonus_uom_qty,
             so_line.product_uom_qty AS ordered_qty,
-            SUM(l.qty_return) AS returned_qty,
+            l.qty_return AS returned_qty,
             (so_line.product_uom_qty - SUM(l.qty_return)) AS remaining_qty,
 
             l.price_unit AS price_unit,
@@ -209,6 +209,7 @@ class SaleReturnReportQuanitiy(models.Model):
     def _where_sale(self):
         return """
             s.state = 'done'
+    
         """
 
     def _group_by_sale(self):
