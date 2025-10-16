@@ -3,7 +3,7 @@ from odoo import models, fields, api, _
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    ppurchase_ref = fields.Char(string='Purchase Ref', compute='_compute_purchase_ref', store=True)
+    purchase_ref = fields.Char(string='Purchase Ref', compute='_compute_purchase_ref', store=True)
     currency_id = fields.Many2one('res.currency', string='Currency', compute='_compute_purchase_ref', store=True)
     stock_out_ref = fields.Char(string='Stock Out Ref', related='picking_id.origin', store=True)
 
