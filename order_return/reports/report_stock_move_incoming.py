@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 
-class StockMoveIncoming(models.Model):
+class StockMove(models.Model):
     _inherit = 'stock.move'
 
     ppurchase_ref = fields.Char(string='Purchase Ref', compute='_compute_purchase_ref', store=True)
