@@ -192,7 +192,7 @@ class SaleReturnReportQuanitiy(models.Model):
             LEFT JOIN uom_uom u ON u.id = l.product_uom
             LEFT JOIN uom_uom u2 ON u2.id = t.uom_id
             LEFT JOIN stock_move_line sml ON sml.picking_id = s.picking_id AND sml.product_id = l.product_id
-            LEFT JOIN stock_move sm ON sm.id = sml.move_id AND sm.state = 'done' AND sm.return_order_id = s.id
+            LEFT JOIN stock_move sm ON sm.id = sml.move_id AND sm.state = 'done' AND sm.stock_return_id = s.id
             LEFT JOIN stock_lot lot ON sml.lot_id = lot.id
 
             JOIN {currency_table} ON account_currency_table.company_id = s.company_id
