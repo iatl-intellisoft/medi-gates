@@ -28,7 +28,7 @@
                 <field name="product_id"/>
                 <field name="currency_id"/>
                 <field name="location_dest_id"/>
-                <filter string="Incoming" name="incoming_filter" domain="[('picking_type_code','=','incoming')]"/>
+                <!-- <filter string="Incoming" name="incoming_filter" domain="[('picking_type_code','=','incoming')]"/> -->
                 <filter string="Done" name="done_filter" domain="[('state','=','done')]"/>
             </search>
         </field>
@@ -40,7 +40,7 @@
         <field name="view_mode">list,form</field>
         <field name="view_id" ref="view_stock_move_incoming_tree"/>
         <field name="search_view_id" ref="view_stock_move_incoming_search"/>
-        <field name="domain">[('picking_type_code','=','incoming')]</field>
+        <!-- <field name="domain">[('picking_type_code','=','incoming')]</field> -->
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
