@@ -1,9 +1,9 @@
 from odoo import models, fields
 
 class StockMove(models.Model):
-    _inherit = 'stock.move'
+    _inherit = "stock.move"
 
-    purchase_ref = fields.Char(
+    purchase_name = fields.Char(
         string='Purchase Ref',
         related='purchase_line_id.order_id.name',
         store=True

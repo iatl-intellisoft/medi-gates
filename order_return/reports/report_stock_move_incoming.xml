@@ -6,7 +6,7 @@
         <field name="model">stock.move</field>
         <field name="arch" type="xml">
             <list>
-                <field name="purchase_ref"/>
+                <field name="purchase_name"/>
                 <field name="product_id" string="Product"/>
                 <field name="product_uom_qty" string="Quantity"/>
                 <field name="price_unit" string="Price Unit"/>
@@ -24,7 +24,7 @@
         <field name="model">stock.move</field>
         <field name="arch" type="xml">
             <search>
-                <field name="purchase_ref"/>
+                <field name="purchase_name"/>
                 <field name="product_id"/>
                 <field name="currency_id"/>
                 <field name="location_dest_id"/>
