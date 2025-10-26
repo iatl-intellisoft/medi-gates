@@ -74,6 +74,21 @@ class SaleOrder(models.Model):
     def action_accountant(self):
         self.write({'state': 'accountant'})
 
+    @api.model
+    def create(self, vals):
+        order = super().create(vals)
+        if order.confirmed_delivery_date and order.invoice_ids:
+            order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
+        return order
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'confirmed_delivery_date' in vals:
+            for order in self:
+                if order.invoice_ids:
+                    order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
+        return res
+
 
 # class SaleOrderLine(models.Model):
 #     _inherit = 'sale.order.line'
