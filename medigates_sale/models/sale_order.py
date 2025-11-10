@@ -2,6 +2,16 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError,UserError
 from datetime import datetime, timedelta
 
+SALE_ORDER_STATE = [
+    ('draft', "Quotation"),
+    ('sent', "Quotation Sent"),
+    ('sales_supervisor', 'Sales Supervisor Approval'), 
+    ('accountant', 'Accountant Approval')
+    ('sale', "Sales Order"),
+    ('cancel', "Cancelled"),
+]
+
+
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -11,8 +21,14 @@ class SaleOrder(models.Model):
     customer_outside_local_city = fields.Boolean(string="Customer Outside Local City")
     global_discount = fields.Boolean(
         string='Global Discount',)
+    # state = fields.Selection(
+    #     selection_add=[('sales_supervisor', 'Sales Supervisor Approval'), ('accountant', 'Accountant Approval')])
     state = fields.Selection(
-        selection_add=[('sales_supervisor', 'Sales Supervisor Approval'), ('accountant', 'Accountant Approval')])
+        selection=SALE_ORDER_STATE,
+        string="Status",
+        readonly=True, copy=False, index=True,
+        tracking=3,
+        default='draft')
 
     
     def _confirmation_error_message(self):
