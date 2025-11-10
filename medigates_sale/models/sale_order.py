@@ -6,7 +6,7 @@ SALE_ORDER_STATE = [
     ('draft', "Quotation"),
     ('sent', "Quotation Sent"),
     ('sales_supervisor', 'Sales Supervisor Approval'), 
-    ('accountant', 'Accountant Approval')
+    ('accountant', 'Accountant Approval'),
     ('sale', "Sales Order"),
     ('cancel', "Cancelled"),
 ]
