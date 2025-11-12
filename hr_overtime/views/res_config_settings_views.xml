@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_res_config_settings_view_form_inherit11" model="ir.ui.view">
+            <field name="name">hr_res_config_settings_view_form</field>
+            <field name="name">hr_res_config_settings_view_form</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="hr_custom.view_res_config_settings_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//block[@id='hr_template']" position="inside">
+                    <setting string="OverTime">
+
+                         <div>
+                            <span class="o_form_label">USD Rate</span>
+                            <field name="usd_rate"/>
+                        </div>
+
+                        <div>
+                            <span class="o_form_label">Working Day Rate</span>
+                            <field name="working_day_rate"/>
+                        </div>
+                        <!-- <div>
+                            <span class="o_form_label">Weekend Rate</span>
+                            <field name="weekend_rate"/>
+                        </div -->>
+                        <div>
+                            <span class="o_form_label">Public Holiday Rate</span>
+                            <field name="public_holiday_rate"/>
+                        </div>
+
+                        <div>
+                            <span class="o_form_label">OverTime Type</span>
+                            <field name="overtime_type"/>
+                        </div>
+                        <div invisible="overtime_type == 'payroll'">
+                            <span class="o_form_label">Salary Rule</span>
+                            <field name="overtime_rule_id"/>
+                        </div>
+                        <div invisible="overtime_type == 'payroll'">
+                            <span class="o_form_label">Journal</span>
+                            <field name="journal_id"/>
+
+                        </div>
+                        <div invisible="overtime_type == 'payroll'">
+                            <span class="o_form_label">Account</span>
+                            <field name="account_id"/>
+                        </div>
+                        <div invisible="overtime_type == 'payroll'">
+                            <span class="o_form_label">Compnay Overtime Partner</span>
+                            <field name="overtime_partner_id"/>
+                        </div>
+                        <div>
+                            <field name="company_id" invisible="1"/>
+
+
+                            <span class="o_form_label">Overtime Template</span>
+                            <div class="text-muted">
+                                Choose your Template
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <label for="overtime_template_id" string="Template"
+                                           class="col-3 col-lg-3 o_light_label"/>
+                                    <field name="overtime_template_id" class="oe_inline"/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </setting>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

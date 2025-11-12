@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="view_product_template_mrp_form" model="ir.ui.view">
+            <field name="name">product.template.inherit.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_code']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+                
+            </field>
+        </record>
+
+    <record id="view_order_form_custom_delivery_fields2" model="ir.ui.view">
+        <field name="name">sale.order.form.delivery.fields</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_confirm']" position="before">
+                <button name="action_sales_supervisor" data-hotkey="q"
+                    string="Sales Supervisor Approval" type="object" context="{'validate_analytic': True}"
+                    invisible="state != 'draft'" groups="medigates_sale.group_sale_supervisor"/>
+            </xpath>
+
+            <xpath expr="//button[@name='action_confirm'][2]" position="replace">
+                   <button name="action_confirm" data-hotkey="q"
+                    string="Confirm" type="object" context="{'validate_analytic': True}"
+                    invisible="state != 'accountant'" groups="medigates_sale.group_sale_accountant"/>
+            </xpath>
+      <!--       <xpath expr="//button[@name='action_confirm']" position="replace">
+                   <button name="action_confirm" data-hotkey="q"
+                    string="Confirm" type="object" context="{'validate_analytic': True}"
+                    invisible="state != 'sales_supervisor'"/>
+            </xpath> -->
+            <xpath expr="//button[@name='action_confirm']" position="after">
+                <button name="action_accountant" data-hotkey="q"
+                    string="Accountant Approval" type="object" context="{'validate_analytic': True}"
+                    invisible="state != 'sales_supervisor'" groups="medigates_sale.group_sale_accountant"/>
+            </xpath>
+            
+            <xpath expr="//button[@id='create_invoice']" position="replace">
+                <button id="create_invoice" name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
+                    type="action" class="btn-primary" data-hotkey="q"
+                    invisible="invoice_status != 'to invoice'" groups="medigates_sale.group_sale_accountant"/>
+            </xpath>
+             <xpath expr="//button[@id='create_invoice_percentage']" position="replace">
+                    <button id="create_invoice_percentage" name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
+                    type="action" context="{'default_advance_payment_method': 'percentage'}" data-hotkey="q"
+                    invisible="invoice_status != 'no' or state != 'sale'" groups="medigates_sale.group_sale_accountant"/>
+            </xpath>
+            <xpath expr="//field[@name='state']" position="replace">
+                <field name="state" widget="statusbar" statusbar_visible="draft,sales_supervisor,sent,accountant,sale"/>
+
+            </xpath>
+            <xpath expr="//field[@name='team_id']" position="after">
+                <field name="customer_outside_local_city"/>
+                <field name="confirmed_delivery_date"/>
+            </xpath>
+             <xpath expr="//field[@name='partner_id']" position="after">
+            <field name="global_discount" readonly="state == 'sale'" invisible="0"/>
+            
+        </xpath>
+            <xpath expr="//notebook/page/field[@name='order_line']/list/field[@name='discount']" position="replace">
+                <field name="discount" invisible="parent.global_discount == True"/>
+        </xpath>
+        </field>
+    </record>
+
+
+    </data>
+</odoo>

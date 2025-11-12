@@ -1,0 +1,69 @@
+<odoo>
+    <data>
+        <record id="view_hr_employee_grade_form_inherit" model="ir.ui.view">
+            <field name="name">hr.payroll.structure.form.inherit</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_employee_grade_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='country_id']" position="replace">
+                    <field name="country_id" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='country_id']" position="after">
+                    <field name="company_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_form_inherit" model="ir.ui.view">
+            <field name="name">hr.salary.rule.form.inherit</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="inherit_id" ref="hr_payroll.hr_salary_rule_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='appears_on_payslip']" position="after">
+                    <field name="company_id"/>
+                    <field name="currency_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_payslip_form_inherit" model="ir.ui.view">
+            <field name="name">hr.payslip.form.inherit</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//button[@name='action_print_payslip']" position="after">
+                    <button string="Print Excel" name="print_excel" type="object"/>
+                </xpath> -->
+                 <xpath expr="//field[@name='contract_id']" position="after">
+                     <field name="employee_grade"/>
+                    <field name="usd_rate"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/list/field[@name='amount']"  position="replace">
+
+                 <field name="amount"
+                    sum="Total Amount" 
+               widget="monetary"
+               options="{'currency_field': 'currency_id'}"/>
+        <field name="currency_id"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+            <field name="name">hr.payslip.run.form.inherit</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+              <!--   <xpath expr="//button[@name='action_draft']" position="after">
+                    <button string="Print Excel" name="print_excel" type="object"/>
+                </xpath> -->
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="usd_rate"/>
+                </xpath>
+                
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <!--General Manager-->
+        <record id="group_sale_supervisor" model="res.groups">
+            <field name="name">Sales Supervisor</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <!--HR Cancel Group-->
+        <record model="res.groups" id="group_sale_accountant">
+            <field name="name">sale Accountant Approval</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

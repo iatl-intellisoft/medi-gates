@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+  
+
+        <record id="view_order_account_report_unpaid_list" model="ir.ui.view">
+            <field name="name">view.sale.report.account.list</field>
+            <field name="model">sale.report.account.unpaid</field>
+            <field name="arch" type="xml">
+                <list string="Unpaid Sales Analysis Report" action="action_open_order" type="object">
+                 <field name="date"/>
+                <field name="order_reference" optional="show"/>
+                <field name="product_id" string="Product" optional="show"/>
+                <field name="partner_id"/>
+                <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                <field name="team_id" optional="hide"/>
+                <field name="company_id" optional="show" groups="base.group_multi_company"/>
+                <field name="product_uom_qty" string="Quantity" sum="Sum of Quantity"/>
+                <field name="price_subtotal" optional="hide" sum="Sum of Untaxed Total"/>
+                <field name="price_unit" widget="monetary" avg="Average"/>
+                <field name="price_total" optional="show" sum="Sum of Total"/>
+                <field name="state" optional="hide"/>
+                <field name="pricelist_id" optional="hide"/>
+                <field name="invoice_number" optional="hide"/>
+                <field name="invoice_date" optional="hide"/>
+                <field name="invoice_status" optional="hide"/>
+                <field name="payment_state" optional="hide"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+            </field>
+        </record>
+
+
+    <record id="action_order_report_account_unpaid_all" model="ir.actions.act_window">
+        <field name="name">Unpaid Sales Analysis Report</field>
+        <field name="res_model">sale.report.account.unpaid</field>
+        <field name="view_mode">list,graph,pivot</field>
+        <field name="view_id"></field>  <!-- force empty -->
+        <field name="search_view_id" ref="order_return.view_order_product_paid_search"/>
+        <field name="domain">[('state', '!=', 'cancel')]</field>
+        <field name="context">{'search_default_Sales':1,'group_by':[]}</field>
+       
+    </record>
+
+        <menuitem id="menu_reporting_order_account"
+                name="Unpaid Sales Analysis Report"
+                action="action_order_report_account_unpaid_all"
+                 parent="sale.menu_sale_report"
+                sequence="28"/>
+    </data>
+</odoo>
