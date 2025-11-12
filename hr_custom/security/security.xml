@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+        <!--General Manager-->
+        <record id="group_hr_general_manager" model="res.groups">
+            <field name="name">General Manager</field>
+            <field name="category_id" ref="base.module_category_human_resources_employees"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <!--HR Cancel Group-->
+        <record model="res.groups" id="group_hr_cancel">
+            <field name="name">HR Cancel Group</field>
+            <field name="implied_ids" eval="[(4, ref('hr.group_hr_manager'))]"/>
+        </record>
+    </data>
+</odoo>

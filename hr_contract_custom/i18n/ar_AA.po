@@ -1,0 +1,251 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* hr_contract_custom
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-11-13 23:15+0000\n"
+"PO-Revision-Date: 2019-11-13 23:15+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__joining_date
+msgid "Actual Joining Date"
+msgstr "تاريخ الانضمام الفعلي"
+
+#. modules: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__age
+msgid "Age"
+msgstr "العمر"
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.view_hr_contract_view_form_inherit
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: hr_contract_custom
+#: selection:hr.contract,state:0
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.view_hr_contract_view_form_inherit
+msgid "Close"
+msgstr "إقفال"
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.contract_pivot
+msgid "Contract Pivot"
+msgstr "محور العقد"
+
+#. modules: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__name
+msgid "Contract Reference"
+msgstr "مرجع العقد"
+
+#. module: hr_contract_custom
+#: model:ir.model,name:hr_contract_custom.model_hr_contract_type
+msgid "Contract Type"
+msgstr "نوع العقد"
+
+#. modules: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.employee_month_report_view_search
+msgid "Contracts"
+msgstr "العقود"
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.employee_month_report_view_search
+msgid "Contracts in offer and open state"
+msgstr "العقود في الحالة عرض او مفتوح"
+
+#. modules: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__department_id
+msgid "Department"
+msgstr "القسم"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__type_id
+msgid "Employee Category"
+msgstr "تصنيف الموظف"
+
+#. modules: hr_contract_custom
+#: model:ir.model,name:hr_contract_custom.model_hr_contract
+msgid "Employee Contract"
+msgstr "عقد الموظف"
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.employee_month_report_view_search
+msgid "Employee Leaved"
+msgstr "أوراق الموظف"
+
+#. module: hr_contract_custom
+#: model:ir.ui.menu,name:hr_contract_custom.menu_employee_monthly_report_id
+msgid "Employee Monthly report"
+msgstr "تقرير الموظف الشهري"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,help:hr_contract_custom.field_hr_contract__resource_calendar_id
+msgid "Employee's working schedule."
+msgstr "جدول عمل الموظف."
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__date_end
+msgid "End Date"
+msgstr "تاريخ الإنتهاء"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,help:hr_contract_custom.field_hr_contract__date_end
+msgid "End date of the contract (if it's a fixed-term contract)."
+msgstr "تاريخ انتهاء العقد (إذا كان عقدًا محدد المدة)."
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,help:hr_contract_custom.field_hr_contract__trial_date_end
+msgid "End date of the trial period (if there is one)."
+msgstr "تاريخ انتهاء الفترة التجريبية (إذا وجدت)."
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__trial_date_end
+msgid "End of Trial Period"
+msgstr "نهاية الفترة التجريبية"
+
+#. module: hr_contract_custom
+#: selection:hr.contract,state:0
+msgid "Expired"
+msgstr "منتهي الصلاحية"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__hour_wage
+msgid "Hour wage"
+msgstr "أجر الساعة"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__job_id
+msgid "Job Position"
+msgstr "المناصب الوظيفية"
+
+#. module: hr_contract_custom
+#: model:ir.actions.act_window,name:hr_contract_custom.action_employee_monthly_report
+msgid "Monthly Report"
+msgstr "Monthly Report"
+
+#. module: hr_contract_custom
+#: selection:hr.contract,state:0
+msgid "New"
+msgstr "جديد"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract_type__alert_date
+msgid "Notification Days"
+msgstr "أيام الإخطار"
+
+#. module: hr_contract_custom
+#: selection:hr.contract,state:0
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.view_hr_contract_view_form_inherit
+msgid "Offer"
+msgstr "عرض"
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.view_hr_contract_view_form_inherit
+msgid "Open"
+msgstr "فتح"
+
+#. module: hr_contract_custom
+#: code:addons/hr_contract_custom/models/contracts.py:109
+#, python-format
+msgid "Please Enter actual employee join date."
+msgstr "الرجاء إدخال تاريخ انضمام الموظف الفعلي"
+
+#. module: hr_contract_custom
+#: selection:hr.contract,state:0
+msgid "Running"
+msgstr "جاري"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__struct_id
+msgid "Salary Structure"
+msgstr "هيكل المرتب"
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.employee_month_report_view_search
+msgid "Search Contract"
+msgstr "البحث في العقود"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__service_years
+msgid "Service Years"
+msgstr "سنين الخدمه"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__date_start
+msgid "Start Date"
+msgstr "تاريخ البدء"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,help:hr_contract_custom.field_hr_contract__date_start
+msgid "Start date of the contract."
+msgstr "تاريخ بدء العقد."
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__state
+msgid "Status"
+msgstr "الحالة"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,help:hr_contract_custom.field_hr_contract__state
+msgid "Status of the contract"
+msgstr "حالة العقد"
+
+#. module: hr_contract_custom
+#: selection:hr.contract,state:0
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.view_hr_contract_view_form_inherit
+msgid "To Renew"
+msgstr "للتجديد"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract_type__trail_period
+msgid "Trail Period"
+msgstr "الفترة التجريبية"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,help:hr_contract_custom.field_hr_contract_type__trail_period
+msgid "Trail Period in Months"
+msgstr "الفترة التجريبية بالأشهر"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,field_description:hr_contract_custom.field_hr_contract__resource_calendar_id
+msgid "Working Schedule"
+msgstr "جدول العمل"
+
+#. module: hr_contract_custom
+#: code:addons/hr_contract_custom/models/contracts.py:134
+#, python-format
+msgid "You can not delete record not in draft state."
+msgstr "لا يمكنك حذف السجل ليس في حالة المسودة"
+
+#. module: hr_contract_custom
+#: model:ir.model.fields,help:hr_contract_custom.field_hr_contract_type__alert_date
+msgid "number of days to send notification before end of contract."
+msgstr "عدد الأيام لإرسال الإخطار قبل نهاية العقد."
+
+#. module: hr_contract_custom
+#: model_terms:ir.ui.view,arch_db:hr_contract_custom.view_hr_contract_view_form_inherit
+msgid "ارجاع الى مسودة"
+msgstr ""
+
