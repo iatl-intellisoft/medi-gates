@@ -8,3 +8,4 @@ access_order_return_report,order.return.report,model_order_return_report,,1,1,1,
 access_order_return_report_quanitiy,order.return.report.quanitiy,model_order_return_report_quanitiy,,1,1,1,1
 access_sale_report_account,sale.report.account,model_sale_report_account,,1,1,1,1
 access_sale_report_account_unpaid,sale.report.account.unpaid,model_sale_report_account_unpaid,,1,1,1,1
+access_sale_report_posted,sale.report.posted,model_sale_report_posted,,1,1,1,1
