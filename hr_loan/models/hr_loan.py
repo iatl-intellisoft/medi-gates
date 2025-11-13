@@ -178,7 +178,7 @@ class HrLoan(models.Model):
         A method to compute employee salary.
         """
         for rec in self:
-            if rec.employee_id.contract_id.employee_grade == 'm2' or rec.employee_id.contract_id.employee_grade == 'p1':
+            if rec.employee_id.contract_id.employee_grade == 'm3' or rec.employee_id.contract_id.employee_grade == 'm2' or rec.employee_id.contract_id.employee_grade == 'm1' or rec.employee_id.contract_id.employee_grade == 'p1' or rec.employee_id.contract_id.employee_grade == 'p2' or rec.employee_id.contract_id.employee_grade == 'p3':
                 self.emp_salary = rec.employee_id.contract_id.usd_salary
             else:
                 self.emp_salary = rec.employee_id.contract_id.wage
