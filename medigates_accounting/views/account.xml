@@ -88,9 +88,9 @@
             <xpath expr="//field[@name='delivery_date']" position="after">
                 <field name="delivery_date_act"/>
             </xpath>
-    <xpath expr="//field[@name='line_ids']/list/field[@name='partner_id']" position="after">
+<!--     <xpath expr="//field[@name='line_ids']/list/field[@name='partner_id']" position="after">
                 <field name="is_paid"/>
-            </xpath>
+            </xpath> -->
         </field>
     </record> 
 

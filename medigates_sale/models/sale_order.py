@@ -30,33 +30,33 @@ class SaleOrder(models.Model):
 
         return False
         
-    def action_confirm(self):
-        for order in self:
-            insufficient_products = []
+    # def action_confirm(self):
+    #     for order in self:
+    #         insufficient_products = []
 
-            for line in order.order_line:
-                product = line.product_id
+    #         for line in order.order_line:
+    #             product = line.product_id
 
-                if product.type != 'consu' and not product.is_storable:
-                    continue  # Skip service and consumables
+    #             if product.type != 'consu' and not product.is_storable:
+    #                 continue  # Skip service and consumables
 
-                ordered_qty = line.product_uom_qty
-                available_qty = product.qty_available
+    #             ordered_qty = line.product_uom_qty
+    #             available_qty = product.qty_available
 
-                if ordered_qty > available_qty:
-                    insufficient_products.append(
-                        f"- {product.display_name}: Ordered {ordered_qty}, Available {available_qty}"
-                    )
+    #             if ordered_qty > available_qty:
+    #                 insufficient_products.append(
+    #                     f"- {product.display_name}: Ordered {ordered_qty}, Available {available_qty}"
+    #                 )
 
-            if insufficient_products:
-                message = _("Cannot confirm Sale Order '%s' due to insufficient stock:\n\n%s") % (
-                    order.name,
-                    "\n".join(insufficient_products)
-                )
-                raise ValidationError(message)
+    #         if insufficient_products:
+    #             message = _("Cannot confirm Sale Order '%s' due to insufficient stock:\n\n%s") % (
+    #                 order.name,
+    #                 "\n".join(insufficient_products)
+    #             )
+    #             raise ValidationError(message)
 
-        # Call the original confirmation logic
-        return super(SaleOrder, self).action_confirm()
+    #     # Call the original confirmation logic
+    #     return super(SaleOrder, self).action_confirm()
 
 
     def _create_invoices(self, grouped=False, final=False):
@@ -90,14 +90,29 @@ class SaleOrder(models.Model):
         return res
 
 
-# class SaleOrderLine(models.Model):
-#     _inherit = 'sale.order.line'
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
 
-#     private_custom = fields.Boolean(string="Private Customer")
+    @api.constrains('product_id', 'product_uom_qty', 'product_uom')
+    def _check_stock_qty_validation(self):
+        """Prevent saving if ordered quantity exceeds available stock."""
+        for line in self:
+            # Skip display lines or missing product
+            if not line.product_id or line.display_type:
+                continue
 
-#     @api.onchange('order_id.private_custom')
-#     def _onchange_partner_private_discount_lock(self):
-#         if self.order_id.partner_id.private_custom == True:
-#             self.private_custom = True
+            # Convert ordered quantity to product's base UoM (the one used in stock)
+            qty_ordered_in_stock_uom = line.product_uom._compute_quantity(
+                line.product_uom_qty, line.product_id.uom_id
+            )
+
+            qty_available = line.product_id.qty_available
+
+            if qty_ordered_in_stock_uom > qty_available:
+                raise ValidationError(
+                    f"Not enough stock for {line.product_id.display_name}.\n"
+                    f"Available: {qty_available} {line.product_id.uom_id.name}(s), "
+                    f"Ordered: {qty_ordered_in_stock_uom:.2f} {line.product_id.uom_id.name}(s)."
+                )
 
 
