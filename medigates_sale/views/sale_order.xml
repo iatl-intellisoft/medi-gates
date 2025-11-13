@@ -54,7 +54,7 @@
                 <field name="state" widget="statusbar" statusbar_visible="draft,sales_supervisor,sent,sale,accountant"/>
 
             </xpath>
-            <xpath expr="//field[@name='commitment_date']" position="after">
+            <xpath expr="//field[@name='team_id']" position="after">
                 <field name="customer_outside_local_city"/>
                 <field name="confirmed_delivery_date"/>
             </xpath>
