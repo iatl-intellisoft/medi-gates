@@ -34,7 +34,7 @@ class SaleOrder(models.Model):
     def _confirmation_error_message(self):
         """ Return whether order can be confirmed or not if not then returm error message. """
         self.ensure_one()
-        if self.state not in {'draft', 'sent'}:
+        if self.state not in {'sales_supervisor', 'sales_manager','sent'}:
             return _("Some orders are not in a state requiring confirmation.")
         if any(
             not line.display_type

@@ -27,7 +27,7 @@
             <xpath expr="//button[@name='action_confirm'][2]" position="replace">
                    <button name="action_confirm" data-hotkey="q"
                     string="Confirm" type="object" context="{'validate_analytic': True}"
-                    invisible="state != 'draft'" groups="medigates_sale.group_sale_accountant"/>
+                    invisible="state != 'sales_supervisor' or state != 'sales_manager'"  groups="medigates_sale.group_sale_accountant"/>
             </xpath>
       <!--       <xpath expr="//button[@name='action_confirm']" position="replace">
                    <button name="action_confirm" data-hotkey="q"
@@ -37,7 +37,7 @@
             <xpath expr="//button[@name='action_confirm']" position="after">
                 <button name="action_sales_manager" data-hotkey="q"
                     string="Sales Manager Approval" type="object" context="{'validate_analytic': True}"
-                    invisible="state != 'draft'" groups="medigates_sale.group_sale_accountant"/>
+                    invisible="state != 'draft' or state != 'sales_supervisor'" groups="medigates_sale.group_sale_accountant"/>
             </xpath>
             
             <xpath expr="//button[@id='create_invoice']" position="replace">
