@@ -27,7 +27,7 @@
             <xpath expr="//button[@name='action_confirm'][2]" position="replace">
                    <button name="action_confirm" data-hotkey="q"
                     string="Confirm" type="object" context="{'validate_analytic': True}"
-                    invisible="state != 'sales_supervisor' or state != 'sales_manager'"  groups="medigates_sale.group_sale_accountant"/>
+                    invisible="state != 'sales_supervisor' or state != 'sales_manager'"/>
             </xpath>
       <!--       <xpath expr="//button[@name='action_confirm']" position="replace">
                    <button name="action_confirm" data-hotkey="q"
