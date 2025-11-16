@@ -301,7 +301,7 @@ class HrLoan(models.Model):
             if self.amount_requested < amount_requested1:
                 self.loan_amount = self.amount_requested
                 
-            elif self.amount_requested > amount_requested1:
+            else:
                 
                 self.loan_amount = emp_salary * self.loan_type.percentage
 
