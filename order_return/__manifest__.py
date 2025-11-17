@@ -30,6 +30,7 @@
         'reports/sale_order_report_paid.xml',
         'reports/sale_order_report_unpaid.xml',
         'reports/report_stock_move_incoming.xml',
+        'reports/sale_report.xml',
 
         
     ],
