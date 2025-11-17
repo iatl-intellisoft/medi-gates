@@ -1,33 +1,6 @@
 <odoo>
     <data>
 
-        <!-- Inherit form View-->
-        <!-- <record id="sale_report_view_tree_inherit" model="ir.ui.view">
-            <field name="name">view.sale.report.form.inherit</field>
-            <field name="model">sale.report</field>
-            <field name="inherit_id" ref="sale.sale_report_view_tree"/>
-            <field name="arch" type="xml">
-                  <xpath expr="//field[@name='line_invoice_status']" position="before">
-                    <field name="line_invoice_status2"/>
-                </xpath>
-
-            </field>
-        </record>
- -->
-        <!-- Inherit search View-->
-        <!-- <record id="sale_report_view_search_inherit" model="ir.ui.view">
-            <field name="name">sale.report.search.inherit</field>
-            <field name="model">sale.report</field>
-            <field name="inherit_id" ref="sale.view_order_product_search"/>
-            <field name="arch" type="xml">
-                  <xpath expr="//filter[@name='fully_invoiced']" position="after">
-                        <filter name="line_invoice_status2" string="Posted Invoice" domain="[('line_invoice_status2', '=', 'posted')]"/>
-                    <field name="line_invoice_status2"/>
-                </xpath>
-
-            </field>
-        </record>
- -->
         <record id="sale_report_posted_view_tree" model="ir.ui.view">
         <field name="name">sale.report.posted.list</field>
         <field name="model">sale.report.posted</field>

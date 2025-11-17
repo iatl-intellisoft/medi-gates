@@ -32,10 +32,10 @@
 				<form string="Loan Request" >
 					<header>
 
-						<button name="action_approve" type="object" string="Approve" class="oe_highlight" invisible="state != 'wait_finance'"/>
+						<button name="action_approve" type="object" string="General Manager Approve" class="oe_highlight" invisible="state != 'wait_finance'"/>
 						<button name="action_submit" class="oe_highlight" type="object" string="Submit" invisible="state != 'confirm'"/>
 						<button name="action_set_to_draft" type="object" string="Set To Draft"  invisible="state not in ('confirm', 'refuse', 'cancel')"  class="oe_highlight"/>
-						<button name="action_confirm" type="object" class="oe_highlight" string="Confirm" invisible="state != 'draft'"/>
+						<button name="action_confirm" type="object" class="oe_highlight" string="HR Confirm" invisible="state != 'draft'"/>
 
 						<button name="action_refuse" type="object" string="Refuse" invisible="state != 'wait_finance'"/>
 						<button name="action_cancel" type="object" string="Cancel" invisible="state != 'approve'" />
@@ -337,6 +337,10 @@
 							<field name="emp_account_id"/>
 							<field name="journal_id"/>
 
+						</group>
+						<group string="Approval Loan Process">
+							<field name="financial_controller"/>
+							<field name="general_manager"/>
 						</group>
 					</sheet>
 				</form>
