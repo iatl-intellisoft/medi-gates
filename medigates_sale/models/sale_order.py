@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 SALE_ORDER_STATE = [
     ('draft', "Quotation"),
     ('sent', "Quotation Sent"),
+    ('sales_supervisor', 'Sales Supervisor Approval'), 
     ('sales_manager', 'Sales Manager Approval'),
-    ('accountant', 'Accountant Approval'),
     ('sale', "Sales Order"),
     ('cancel', "Cancelled"),
 ]
