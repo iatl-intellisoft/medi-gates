@@ -89,11 +89,11 @@
                   <attribute  name="statusbar_visible">draft,assigned,account_approved,done</attribute>
                 </xpath>
             <xpath expr="//button[@name='button_validate'][1]" position="replace">
-                    <button name="button_validate" invisible="state in ('draft', 'confirmed', 'done', 'cancel')" string="Validate" type="object" class="oe_highlight" groups="stock.group_stock_user" data-hotkey="v"/>
+                    <button name="button_validate" invisible="state in ('draft', 'confirmed', 'assigned', 'done', 'cancel')" string="Validate" type="object" class="oe_highlight" groups="stock.group_stock_user" data-hotkey="v"/>
             </xpath>
             <xpath expr="//button[@name='button_validate'][2]" position="replace">
 
-                    <button name="button_validate" invisible="state in ('waiting', 'assigned', 'done', 'cancel')" string="Validate" type="object" groups="stock.group_stock_user" class="o_btn_validate" data-hotkey="v"/>
+                    <button name="button_validate" invisible="state in ('waiting', 'assigned', 'confirmed', 'done', 'cancel')" string="Validate" type="object" groups="stock.group_stock_user" class="o_btn_validate" data-hotkey="v"/>
                 </xpath>
 
                 
