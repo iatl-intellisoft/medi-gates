@@ -80,7 +80,7 @@
     groups="account.group_account_user"
 />
 
- <record id="view_picking_move_custom" model="ir.ui.view">
+<!--  <record id="view_picking_move_custom" model="ir.ui.view">
         <field name="name">stock.picking.form.custom</field>
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
@@ -95,7 +95,7 @@
 
                     <button name="button_validate" invisible="state in ('waiting', 'assigned', 'confirmed', 'done', 'cancel')" string="Validate" type="object" groups="stock.group_stock_user" class="o_btn_validate" data-hotkey="v"/>
                 </xpath>
-
+ -->
                 
 
                <!--  <xpath expr="//header" position="inside">
@@ -107,8 +107,8 @@
                     invisible="invoice_ids == False"/>
         </xpath> -->
 
-        </field>
-    </record> 
+        <!-- </field>
+    </record>  -->
 
 
 
