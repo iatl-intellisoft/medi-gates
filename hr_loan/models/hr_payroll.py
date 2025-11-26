@@ -84,7 +84,7 @@ class HrPayslip(models.Model):
             if loan_lines:
                 for line in loan_lines:
                     line.action_paid_amount()
-            return res
+        return res
 
     def action_payslip_cancel(self):
         """
