@@ -345,8 +345,8 @@ class HrLoan(models.Model):
         """
         A method to approve loan request.
         """
-        # if not self.emp_account_id or not self.treasury_account_id:
-        #     raise UserError('UserError', "You must enter employee account & Treasury account and journal to approve ")
+        if not self.emp_account_id or not self.treasury_account_id:
+            raise UserError('UserError', "You must enter employee account & Treasury account and journal to approve ")
         if not self.loan_line_ids:
             raise UserError('UserError', 'You must compute Loan Request before Approval')
         for loan in self:
