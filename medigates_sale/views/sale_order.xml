@@ -76,7 +76,7 @@
         <field name="name">Sale Orders</field>
         <field name="res_model">sale.order</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('state', 'in', ('sales_manager'))]</field>
+        <field name="domain">[('state', '=', 'sales_manager')]</field>
     </record>
  <!-- Accounting main menu -->
    <menuitem id="menu_account_sale_orders"
