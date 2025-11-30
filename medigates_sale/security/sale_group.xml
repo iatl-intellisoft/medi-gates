@@ -10,5 +10,9 @@
             <field name="name">sale Accountant Approval</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
+        <record model="res.groups" id="group_sale_manager">
+            <field name="name">sale Manager Approval</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
     </data>
 </odoo>

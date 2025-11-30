@@ -7,6 +7,7 @@ SALE_ORDER_STATE = [
     ('sent', "Quotation Sent"),
     ('sales_supervisor', 'Sales Supervisor Approval'), 
     ('sales_manager', 'Sales Manager Approval'),
+    ('accountant', 'Accountant Approval'),
     ('sale', "Sales Order"),
     ('cancel', "Cancelled"),
 ]
@@ -89,6 +90,10 @@ class SaleOrder(models.Model):
 
     def action_sales_manager(self):
         self.write({'state': 'sales_manager'})
+
+    def action_accountant_manager(self):
+        self.write({'state': 'accountant'})
+
 
     @api.model
     def create(self, vals):
