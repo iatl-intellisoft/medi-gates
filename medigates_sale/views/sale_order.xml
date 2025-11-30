@@ -27,7 +27,7 @@
             <xpath expr="//button[@name='action_confirm'][2]" position="replace">
                    <button name="action_confirm" data-hotkey="q"
                     string="Confirm" type="object" context="{'validate_analytic': True}"
-                    invisible="state not in ('accountant')" groups="medigates_sale.group_sale_accountant"/>
+                    invisible="state != 'accountant'" groups="medigates_sale.group_sale_accountant"/>
             </xpath>
       <!--       <xpath expr="//button[@name='action_confirm']" position="replace">
                    <button name="action_confirm" data-hotkey="q"
@@ -37,11 +37,11 @@
             <xpath expr="//button[@name='action_confirm']" position="after">
                  <button name="action_sales_manager" data-hotkey="q"
                     string="Sales Manager  Approval" type="object" context="{'validate_analytic': True}"
-                    invisible="state not in ('draft', 'sales_supervisor')" groups="medigates_sale.group_sale_manager"/>
+                    invisible="state != 'sales_supervisor'" groups="medigates_sale.group_sale_manager"/>
 
                     <button name="action_accountant_manager" data-hotkey="q"
                     string="Accountant Approval" type="object" context="{'validate_analytic': True}"
-                    invisible="state not in ('draft', 'sales_manager')" groups="medigates_sale.group_sale_accountant"/>
+                    invisible="state != 'sales_manager'" groups="medigates_sale.group_sale_accountant"/>
             </xpath>
             
             <xpath expr="//button[@id='create_invoice']" position="replace">
@@ -76,7 +76,7 @@
         <field name="name">Sale Orders</field>
         <field name="res_model">sale.order</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('state', 'in', ('sales_supervisor','sales_manager'))]</field>
+        <field name="domain">[('state', 'in', (sales_manager'))]</field>
     </record>
  <!-- Accounting main menu -->
    <menuitem id="menu_account_sale_orders"
