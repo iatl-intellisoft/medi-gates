@@ -7,6 +7,7 @@ SALE_ORDER_STATE = [
     ('sent', "Quotation Sent"),
     ('sales_supervisor', 'Sales Supervisor Approval'), 
     ('sales_manager', 'Sales Manager Approval'),
+    ('accountant', 'Accountant Approval'),
     ('sale', "Sales Order"),
     ('cancel', "Cancelled"),
 ]
@@ -34,7 +35,7 @@ class SaleOrder(models.Model):
     def _confirmation_error_message(self):
         """ Return whether order can be confirmed or not if not then returm error message. """
         self.ensure_one()
-        if self.state not in {'sales_supervisor', 'sales_manager','sent'}:
+        if self.state not in {'accountant','sent'}:
             return _("Some orders are not in a state requiring confirmation.")
         if any(
             not line.display_type
@@ -89,6 +90,9 @@ class SaleOrder(models.Model):
 
     def action_sales_manager(self):
         self.write({'state': 'sales_manager'})
+
+    def action_accountant_manager(self):
+        self.write({'state': 'accountant'})
 
     @api.model
     def create(self, vals):
