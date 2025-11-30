@@ -38,8 +38,8 @@ class HrLoan(models.Model):
     total_loan = fields.Float(string="Total Loan", compute='_compute_total_loan', store=True)
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('confirm', 'Confirm'),
-        ('wait_finance', 'Waiting Finance Approval'),
+        ('confirm', 'HR Manager Confirm'),
+        ('wait_finance', 'Financial Controller  Approval'),
         ('approve', 'Approved'),
         ('refuse', 'Refused'),
         ('cancel', 'Cancel'),
@@ -345,8 +345,8 @@ class HrLoan(models.Model):
         """
         A method to approve loan request.
         """
-        if not self.emp_account_id or not self.treasury_account_id:
-            raise UserError('UserError', "You must enter employee account & Treasury account and journal to approve ")
+        # if not self.emp_account_id or not self.treasury_account_id:
+        #     raise UserError('UserError', "You must enter employee account & Treasury account and journal to approve ")
         if not self.loan_line_ids:
             raise UserError('UserError', 'You must compute Loan Request before Approval')
         for loan in self:
@@ -466,10 +466,17 @@ class HrLoan(models.Model):
         """
         A method to submit loan request.
         """
-        self.compute_loan_line()
-        self.write({
-            'state': 'wait_finance'
-        })
+        if self.loan_type.financial_controller and not self.loan_type.general_manager:
+            self.action_approve()
+            self.write({'state': 'approve'})
+        else:
+            self.compute_loan_line()
+            self.write({'state': 'wait_finance'})
+
+        # self.compute_loan_line()
+        # self.write({
+        #     'state': 'wait_finance'
+        # })
 
     def button_reset_balance_total(self):
         """
@@ -570,7 +577,6 @@ class LoanType(models.Model):
     name = fields.Char("Name", required=True)
     treasury_account_id = fields.Many2one('account.account', string="Treasury Account", company_dependent=True)
     journal_id = fields.Many2one('account.journal', string="Journal",
-                                 domain=[('type', '=', 'purchase')],
                                  company_dependent=True)
     loan_id = fields.One2many('hr.loan', 'loan_type', string="Loan")
     emp_account_id = fields.Many2one('account.account', string="Employee Account", company_dependent=True)
@@ -592,6 +598,8 @@ class LoanType(models.Model):
     need_reason = fields.Boolean(string='Need Reason')
     usd_loan = fields.Boolean("USD Loan")
     currency_id = fields.Many2one('res.currency', string='Currency')
+    financial_controller = fields.Boolean("Financial Controller")
+    general_manager = fields.Boolean("General Manager")
 
     _sql_constraints = [
         ('code_uniq', 'unique (code)', "The code of loan type must be unique")]
