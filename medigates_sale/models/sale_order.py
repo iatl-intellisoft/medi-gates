@@ -135,4 +135,12 @@ class SaleOrderLine(models.Model):
                     f"Ordered: {qty_ordered_in_stock_uom:.2f} {line.product_id.uom_id.name}(s)."
                 )
 
+class StockMoveLine(models.Model):
+    _inherit = 'stock.move.line'
+
+    lot_expiration_date = fields.Datetime(
+        related="lot_id.expiration_date",
+        store=True
+    )
+
 
