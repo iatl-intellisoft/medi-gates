@@ -140,7 +140,7 @@ class SaleOrderLine(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    lot_expiration_date = fields.Date(
+    lot_expiration_date = fields.Datetime(
         related="lot_id.expiration_date",
         store=True
     )
