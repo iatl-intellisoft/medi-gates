@@ -76,14 +76,14 @@ class SaleOrder(models.Model):
     #     return super(SaleOrder, self).action_confirm()
 
 
-    def _create_invoices(self, grouped=False, final=False):
-        for order in self:
-            if order.customer_outside_local_city and not order.confirmed_delivery_date:
-                raise UserError(_(
-                    "Invoice cannot be created because the Confirmed Delivery Date is missing "
-                    "for a customer outside the local city."
-                ))
-        return super()._create_invoices(grouped=grouped, final=final)
+    # def _create_invoices(self, grouped=False, final=False):
+    #     for order in self:
+    #         if order.customer_outside_local_city and not order.confirmed_delivery_date:
+    #             raise UserError(_(
+    #                 "Invoice cannot be created because the Confirmed Delivery Date is missing "
+    #                 "for a customer outside the local city."
+    #             ))
+    #     return super()._create_invoices(grouped=grouped, final=final)
 
     def action_sales_supervisor(self):
         self.write({'state': 'sales_supervisor'})
