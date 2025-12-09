@@ -23,6 +23,10 @@
                     string="Sales Supervisor Approval" type="object" context="{'validate_analytic': True}"
                     invisible="state != 'draft'" groups="medigates_sale.group_sale_supervisor"/>
             </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="replace">
+
+                <button name="action_cancel" type="object" string="Cancel" invisible="state not in ['draft', 'sent', 'sale', 'sales_supervisor', 'sales_manager'] or not id or locked" data-hotkey="x"/>
+            </xpath>
 
             <xpath expr="//button[@name='action_confirm'][2]" position="replace">
                    <button name="action_confirm" data-hotkey="q"
