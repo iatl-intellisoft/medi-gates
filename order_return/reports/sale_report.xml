@@ -86,7 +86,7 @@
 
         <menuitem id="menu_sale_report_posted"
                 name="Sales Analysis Report By Posted Invoice"
-                action="action_sale_report_posted"
+                action="action_sale_report_posted2"
                  parent="sale.menu_sale_report"
                 sequence="1"/>
     </data></odoo>
