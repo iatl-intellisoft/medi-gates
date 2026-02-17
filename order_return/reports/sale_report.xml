@@ -20,7 +20,8 @@
                 <field name="state" optional="hide"/>
                 <field name="pricelist_id" optional="hide"/>
                 <field name="line_invoice_status" optional="hide"/>
-                 <field name="line_invoice_status2"/>
+                 <field name="line_invoice_status2"/> 
+                 <field name="invoice_date"/>
                 <field name="currency_id" column_invisible="True"/>
             </list>
         </field>

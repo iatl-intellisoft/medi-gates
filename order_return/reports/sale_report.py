@@ -93,6 +93,7 @@ class SaleReportPosted(models.Model):
             ('posted', "Posted"),
             
         ], string="Posted Invoice", readonly=True)
+    invoice_date = fields.Datetime(string="Invoice Date", readonly=True)
 
 
     @api.depends_context('allowed_company_ids')
@@ -166,6 +167,7 @@ class SaleReportPosted(models.Model):
             CASE WHEN l.product_id IS NOT NULL THEN SUM(p.volume * l.product_uom_qty / u.factor * u2.factor) ELSE 0 END AS volume,
             l.discount AS discount,
             am.state AS line_invoice_status2,
+            am.invoice_date AS invoice_date,
             CASE WHEN l.product_id IS NOT NULL THEN SUM(l.price_unit * l.product_uom_qty * l.discount / 100.0
                 / {self._case_value_or_one('s.currency_rate')}
                 * {self._case_value_or_one('account_currency_table.rate')}
@@ -234,6 +236,7 @@ class SaleReportPosted(models.Model):
             l.discount,
             s.id,
             am.state,
+            am.invoice_date,
             account_currency_table.rate"""
 
 
