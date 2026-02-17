@@ -18,6 +18,9 @@
                 <field name="price_unit" widget="monetary" avg="Average"/>
                 <field name="price_total" optional="show" sum="Sum of Total"/>
                 <field name="state" optional="hide"/>
+                <!-- <field name="pricelist_id" optional="hide"/> -->
+                <field name="line_invoice_status" optional="hide"/>
+                 <field name="line_invoice_status2"/> 
                  <field name="invoice_date"/>
                 <field name="currency_id" column_invisible="True"/>
             </list>
@@ -42,7 +45,8 @@
                 <field name="product_id"/>
                 <field name="product_tmpl_id"/>
                 <field name="categ_id"/>
-              
+                 <filter name="line_invoice_status2" string="Posted Invoice" domain="[('line_invoice_status2', '=', 'posted')]"/>
+                    <field name="line_invoice_status2"/> 
                 <field name="partner_id"/>
                 <!-- <field name="country_id"/> -->
                 <!-- <field name="industry_id"/> -->

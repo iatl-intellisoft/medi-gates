@@ -336,6 +336,12 @@ class SaleReportPosted(models.Model):
         string="Invoice Status",
         readonly=True
     )
+    line_invoice_status2 = fields.Selection(
+        selection=[
+            ('draft', "Draft"),
+            ('posted', "Posted"),
+            
+        ], string="Posted Invoice", readonly=True)
 
     # -------------------------------------------------------------------------
     # CURRENCY
@@ -359,6 +365,7 @@ class SaleReportPosted(models.Model):
                 s.name AS name,
                 s.date_order AS date,
                 am.invoice_date AS invoice_date,
+                am.state AS line_invoice_status2,
 
                 s.partner_id AS partner_id,
                 s.company_id AS company_id,
