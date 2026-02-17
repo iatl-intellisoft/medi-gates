@@ -1,7 +1,7 @@
 <odoo>
     <data>
 
-        <record id="sale_report_posted_view_tree" model="ir.ui.view">
+        <record id="sale_report_posted_view_tree2" model="ir.ui.view">
         <field name="name">sale.report.posted.list</field>
         <field name="model">sale.report.posted</field>
         <field name="arch" type="xml">
@@ -23,7 +23,7 @@
         </field>
     </record>
 
-    <record id="sale_report_posted_view_search" model="ir.ui.view">
+    <record id="sale_report_posted_view_search2" model="ir.ui.view">
         <field name="name">sale.report.posted.search</field>
         <field name="model">sale.report.posted</field>
         <field name="arch" type="xml">
