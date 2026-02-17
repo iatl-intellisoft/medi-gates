@@ -73,7 +73,7 @@
         </field>
     </record>
 
-    <record id="action_sale_report_posted" model="ir.actions.act_window">
+    <record id="action_sale_report_posted2" model="ir.actions.act_window">
         <field name="name">Sales Analysis Report By Posted Invoice</field>
         <field name="res_model">sale.report.posted</field>
         <field name="view_mode">list,graph,pivot</field>
