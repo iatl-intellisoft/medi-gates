@@ -327,6 +327,15 @@ class SaleReportPosted(models.Model):
         aggregator="count_distinct",
     )
     price_unit = fields.Float(string="Unit Price", readonly=True)
+    line_invoice_status = fields.Selection(
+        [
+            ('to invoice', 'To Invoice'),
+            ('invoiced', 'Fully Invoiced'),
+            ('no', 'Nothing to Invoice'),
+        ],
+        string="Invoice Status",
+        readonly=True
+    )
 
     # -------------------------------------------------------------------------
     # CURRENCY
@@ -358,6 +367,7 @@ class SaleReportPosted(models.Model):
                 s.state AS state,
 
                 l.product_id AS product_id,
+                l.invoice_status AS line_invoice_status,
                 p.product_tmpl_id AS product_tmpl_id,
                 t.categ_id AS categ_id,
 
@@ -406,6 +416,7 @@ class SaleReportPosted(models.Model):
                 s.team_id,
                 s.state,
                 l.product_id,
+                l.invoice_status,
                 p.product_tmpl_id,
                 t.categ_id
         """
