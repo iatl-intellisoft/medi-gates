@@ -29,29 +29,47 @@
         <field name="arch" type="xml">
             <search string="Search Posted Sales">
 
-                <field name="partner_id"/>
-                <field name="user_id"/>
-                <field name="team_id"/>
-                <field name="product_id"/>
-                <field name="line_invoice_status"/>
+            <field name="partner_id"/>
+            <field name="user_id"/>
+            <field name="team_id"/>
+            <field name="product_id"/>
+            <field name="line_invoice_status"/>
 
-                <filter string="This Month"
-                        name="this_month"
-                        domain="[('date','&gt;=', (context_today().strftime('%%Y-%%m-01')))]"/>
+            <!-- Simple Filters -->
 
-                <filter string="Fully Invoiced"
-                        name="fully_invoiced"
-                        domain="[('line_invoice_status','=','invoiced')]"/>
+            <filter string="Fully Invoiced"
+                    name="fully_invoiced"
+                    domain="[('line_invoice_status','=','invoiced')]"/>
 
-                <group expand="0" string="Group By">
-                    <filter string="Customer" context="{'group_by':'partner_id'}"/>
-                    <filter string="Salesperson" context="{'group_by':'user_id'}"/>
-                    <filter string="Sales Team" context="{'group_by':'team_id'}"/>
-                    <filter string="Product" context="{'group_by':'product_id'}"/>
-                    <filter string="Invoice Month" context="{'group_by':'invoice_date:month'}"/>
-                </group>
+            <filter string="Draft Orders"
+                    name="draft_orders"
+                    domain="[('state','=','draft')]"/>
 
-            </search>
+            <!-- Group By -->
+
+            <group expand="0" string="Group By">
+                <filter string="Customer"
+                        name="group_partner"
+                        context="{'group_by': 'partner_id'}"/>
+
+                <filter string="Salesperson"
+                        name="group_user"
+                        context="{'group_by': 'user_id'}"/>
+
+                <filter string="Sales Team"
+                        name="group_team"
+                        context="{'group_by': 'team_id'}"/>
+
+                <filter string="Product"
+                        name="group_product"
+                        context="{'group_by': 'product_id'}"/>
+
+                <filter string="Invoice Month"
+                        name="group_invoice_month"
+                        context="{'group_by': 'invoice_date:month'}"/>
+            </group>
+
+        </search>
         </field>
     </record>
 
