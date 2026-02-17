@@ -326,6 +326,7 @@ class SaleReportPosted(models.Model):
         selection=[('sale.order', 'Sales Order')],
         aggregator="count_distinct",
     )
+    price_unit = fields.Float(string="Unit Price", readonly=True)
 
     # -------------------------------------------------------------------------
     # CURRENCY
