@@ -425,6 +425,7 @@ class SaleReportPosted(models.Model):
                 l.product_id,
                 l.invoice_status,
                 p.product_tmpl_id,
+                am.state,
                 t.categ_id
         """
 
