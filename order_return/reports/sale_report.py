@@ -6,9 +6,9 @@ from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE
 # # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 # from odoo import api, fields, models
+
+from odoo import models, fields, tools
 # from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE
-
-
 class SaleReportPosted(models.Model):
     _name = "sale.report.posted"
     _description = "Sales Analysis Report By Posted Invoice"
@@ -16,161 +16,313 @@ class SaleReportPosted(models.Model):
     _rec_name = 'date'
     _order = 'date desc'
 
-    # -------------------------------------------------------------------------
-    # FIELDS
-    # -------------------------------------------------------------------------
 
-    name = fields.Char(string="Order Reference", readonly=True)
-    date = fields.Datetime(string="Order Date", readonly=True)
-    invoice_date = fields.Datetime(string="Invoice Date", readonly=True)
+    date = fields.Date(string="Invoice Date")
 
-    partner_id = fields.Many2one('res.partner', string="Customer", readonly=True)
-    company_id = fields.Many2one('res.company', readonly=True)
-    user_id = fields.Many2one('res.users', string="Salesperson", readonly=True)
-    team_id = fields.Many2one('crm.team', string="Sales Team", readonly=True)
+    order_reference = fields.Char(string="Sales Order")
 
-    state = fields.Selection(
-        selection=SALE_ORDER_STATE,
-        string="Order Status",
-        readonly=True
+    partner_id = fields.Many2one(
+        'res.partner',
+        string="Customer"
     )
 
-    product_id = fields.Many2one('product.product', string="Product Variant", readonly=True)
-    product_tmpl_id = fields.Many2one('product.template', string="Product", readonly=True)
-    categ_id = fields.Many2one('product.category', string="Product Category", readonly=True)
-
-    product_uom_qty = fields.Float(string="Qty Ordered", readonly=True)
-    qty_invoiced = fields.Float(string="Qty Invoiced", readonly=True)
-
-    price_subtotal = fields.Monetary(string="Untaxed Amount", readonly=True)
-    price_total = fields.Monetary(string="Total", readonly=True)
-    price_unit = fields.Float(string="Unit Price", readonly=True)
-
-    line_invoice_status = fields.Selection(
-        [
-            ('upselling', "Upselling Opportunity"),
-            ('invoiced', "Fully Invoiced"),
-            ('to invoice', "To Invoice"),
-            ('no', "Nothing to Invoice"),
-        ],
-        string="Invoice Status",
-        readonly=True
+    user_id = fields.Many2one(
+        'res.users',
+        string="Salesperson"
     )
+
+    team_id = fields.Many2one(
+        'crm.team',
+        string="Sales Team"
+    )
+
+    company_id = fields.Many2one(
+        'res.company',
+        string="Company"
+    )
+
+    product_id = fields.Many2one(
+        'product.product',
+        string="Product"
+    )
+
+    product_uom_qty = fields.Float(
+        string="Quantity"
+    )
+
+    price_unit = fields.Float(
+        string="Unit Price"
+    )
+
+    price_subtotal = fields.Float(
+        string="Untaxed Amount"
+    )
+
+    price_total = fields.Float(
+        string="Total"
+    )
+
+    invoice_id = fields.Many2one(
+        'account.move',
+        string="Invoice"
+    )
+
+    state = fields.Selection([
+        ('draft', 'Quotation'),
+        ('sent', 'Quotation Sent'),
+        ('sale', 'Sales Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled'),
+    ], string="Status")
 
     currency_id = fields.Many2one(
         'res.currency',
-        compute='_compute_currency_id',
-        readonly=True
+        string="Currency"
     )
-
-    order_reference = fields.Reference(
-        string='Order',
-        selection=[('sale.order', 'Sales Order')],
-        aggregator="count_distinct",
-    )
-
-    # -------------------------------------------------------------------------
-    # CURRENCY
-    # -------------------------------------------------------------------------
-
-    @api.depends_context('allowed_company_ids')
-    def _compute_currency_id(self):
-        for rec in self:
-            rec.currency_id = self.env.company.currency_id
-
-    # -------------------------------------------------------------------------
-    # SQL QUERY
-    # -------------------------------------------------------------------------
-
-    def _query(self):
-        return """
-            SELECT
-                MIN(l.id) AS id,
-
-                s.id AS order_id,
-                s.name AS name,
-                s.date_order AS date,
-                am.invoice_date AS invoice_date,
-
-                s.partner_id AS partner_id,
-                s.company_id AS company_id,
-                s.user_id AS user_id,
-                s.team_id AS team_id,
-                s.state AS state,
-
-                l.product_id AS product_id,
-                p.product_tmpl_id AS product_tmpl_id,
-                t.categ_id AS categ_id,
-
-                SUM(l.product_uom_qty) AS product_uom_qty,
-                SUM(l.qty_invoiced) AS qty_invoiced,
-
-                SUM(aml.price_subtotal) AS price_subtotal,
-                SUM(aml.price_total) AS price_total,
-
-                AVG(aml.price_unit) AS price_unit,
-
-                l.invoice_status AS line_invoice_status,
-
-                CONCAT('sale.order', ',', s.id) AS order_reference
-
-            FROM sale_order_line l
-
-            JOIN sale_order s
-                ON s.id = l.order_id
-
-            JOIN sale_order_line_invoice_rel rel
-                ON rel.order_line_id = l.id
-
-            JOIN account_move_line aml
-                ON aml.id = rel.invoice_line_id
-
-            JOIN account_move am
-                ON am.id = aml.move_id
-
-            LEFT JOIN product_product p
-                ON l.product_id = p.id
-
-            LEFT JOIN product_template t
-                ON p.product_tmpl_id = t.id
-
-            WHERE
-                l.display_type IS NULL
-                AND am.move_type = 'out_invoice'
-                AND am.state = 'posted'
-
-            GROUP BY
-                s.id,
-                s.name,
-                s.date_order,
-                am.invoice_date,
-                s.partner_id,
-                s.company_id,
-                s.user_id,
-                s.team_id,
-                s.state,
-                l.product_id,
-                p.product_tmpl_id,
-                t.categ_id,
-                l.invoice_status
-        """
-
-    @property
-    def _table_query(self):
-        return self._query()
-
-    # -------------------------------------------------------------------------
-    # ACTION
-    # -------------------------------------------------------------------------
 
     def action_open_order(self):
         self.ensure_one()
+
+        sale_order = self.env['sale.order'].search([
+            ('name', '=', self.order_reference)
+        ], limit=1)
+
+        if not sale_order:
+            return False
+
         return {
             'type': 'ir.actions.act_window',
+            'name': 'Sales Order',
             'res_model': 'sale.order',
             'view_mode': 'form',
-            'res_id': int(self.order_reference.id),
+            'res_id': sale_order.id,
+            'target': 'current',
         }
+
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, self._table)
+
+        self.env.cr.execute("""
+            CREATE OR REPLACE VIEW sale_report_posted AS (
+
+                SELECT
+
+                    ROW_NUMBER() OVER() AS id,
+
+                    am.invoice_date AS date,
+
+                    so.name AS order_reference,
+
+                    so.partner_id AS partner_id,
+
+                    so.user_id AS user_id,
+
+                    so.team_id AS team_id,
+
+                    am.company_id AS company_id,
+
+                    aml.product_id AS product_id,
+
+                    aml.quantity AS product_uom_qty,
+
+                    aml.price_unit AS price_unit,
+
+                    aml.price_subtotal AS price_subtotal,
+
+                    aml.price_total AS price_total,
+
+                    am.id AS invoice_id,
+
+                    so.state AS state,
+
+                    am.currency_id AS currency_id
+
+                FROM account_move_line aml
+
+                INNER JOIN account_move am
+                    ON am.id = aml.move_id
+
+                INNER JOIN sale_order_line_invoice_rel sol_rel
+                    ON sol_rel.invoice_line_id = aml.id
+
+                INNER JOIN sale_order_line sol
+                    ON sol.id = sol_rel.order_line_id
+
+                INNER JOIN sale_order so
+                    ON so.id = sol.order_id
+
+                WHERE
+                    am.state = 'posted'
+                    AND am.move_type = 'out_invoice'
+                    AND so.invoice_status = 'invoiced'
+                    AND so.state != 'cancel'
+                    AND aml.display_type IS NULL
+
+            )
+        """)
+
+# class SaleReportPosted(models.Model):
+#     _name = "sale.report.posted"
+#     _description = "Sales Analysis Report By Posted Invoice"
+#     _auto = False
+#     _rec_name = 'date'
+#     _order = 'date desc'
+
+#     # -------------------------------------------------------------------------
+#     # FIELDS
+#     # -------------------------------------------------------------------------
+
+#     name = fields.Char(string="Order Reference", readonly=True)
+#     date = fields.Datetime(string="Order Date", readonly=True)
+#     invoice_date = fields.Datetime(string="Invoice Date", readonly=True)
+
+#     partner_id = fields.Many2one('res.partner', string="Customer", readonly=True)
+#     company_id = fields.Many2one('res.company', readonly=True)
+#     user_id = fields.Many2one('res.users', string="Salesperson", readonly=True)
+#     team_id = fields.Many2one('crm.team', string="Sales Team", readonly=True)
+
+#     state = fields.Selection(
+#         selection=SALE_ORDER_STATE,
+#         string="Order Status",
+#         readonly=True
+#     )
+
+#     product_id = fields.Many2one('product.product', string="Product Variant", readonly=True)
+#     product_tmpl_id = fields.Many2one('product.template', string="Product", readonly=True)
+#     categ_id = fields.Many2one('product.category', string="Product Category", readonly=True)
+
+#     product_uom_qty = fields.Float(string="Qty Ordered", readonly=True)
+#     qty_invoiced = fields.Float(string="Qty Invoiced", readonly=True)
+
+#     price_subtotal = fields.Monetary(string="Untaxed Amount", readonly=True)
+#     price_total = fields.Monetary(string="Total", readonly=True)
+#     price_unit = fields.Float(string="Unit Price", readonly=True)
+
+#     line_invoice_status = fields.Selection(
+#         [
+#             ('upselling', "Upselling Opportunity"),
+#             ('invoiced', "Fully Invoiced"),
+#             ('to invoice', "To Invoice"),
+#             ('no', "Nothing to Invoice"),
+#         ],
+#         string="Invoice Status",
+#         readonly=True
+#     )
+
+#     currency_id = fields.Many2one(
+#         'res.currency',
+#         compute='_compute_currency_id',
+#         readonly=True
+#     )
+
+#     order_reference = fields.Reference(
+#         string='Order',
+#         selection=[('sale.order', 'Sales Order')],
+#         aggregator="count_distinct",
+#     )
+
+#     # -------------------------------------------------------------------------
+#     # CURRENCY
+#     # -------------------------------------------------------------------------
+
+#     @api.depends_context('allowed_company_ids')
+#     def _compute_currency_id(self):
+#         for rec in self:
+#             rec.currency_id = self.env.company.currency_id
+
+#     # -------------------------------------------------------------------------
+#     # SQL QUERY
+#     # -------------------------------------------------------------------------
+
+#     def _query(self):
+#         return """
+#             SELECT
+#                 MIN(l.id) AS id,
+
+#                 s.id AS order_id,
+#                 s.name AS name,
+#                 s.date_order AS date,
+#                 am.invoice_date AS invoice_date,
+
+#                 s.partner_id AS partner_id,
+#                 s.company_id AS company_id,
+#                 s.user_id AS user_id,
+#                 s.team_id AS team_id,
+#                 s.state AS state,
+
+#                 l.product_id AS product_id,
+#                 p.product_tmpl_id AS product_tmpl_id,
+#                 t.categ_id AS categ_id,
+
+#                 SUM(l.product_uom_qty) AS product_uom_qty,
+#                 SUM(l.qty_invoiced) AS qty_invoiced,
+
+#                 SUM(aml.price_subtotal) AS price_subtotal,
+#                 SUM(aml.price_total) AS price_total,
+
+#                 AVG(aml.price_unit) AS price_unit,
+
+#                 l.invoice_status AS line_invoice_status,
+
+#                 CONCAT('sale.order', ',', s.id) AS order_reference
+
+#             FROM sale_order_line l
+
+#             JOIN sale_order s
+#                 ON s.id = l.order_id
+
+#             JOIN sale_order_line_invoice_rel rel
+#                 ON rel.order_line_id = l.id
+
+#             JOIN account_move_line aml
+#                 ON aml.id = rel.invoice_line_id
+
+#             JOIN account_move am
+#                 ON am.id = aml.move_id
+
+#             LEFT JOIN product_product p
+#                 ON l.product_id = p.id
+
+#             LEFT JOIN product_template t
+#                 ON p.product_tmpl_id = t.id
+
+#             WHERE
+#                 l.display_type IS NULL
+#                 AND am.move_type = 'out_invoice'
+#                 AND am.state = 'posted'
+
+#             GROUP BY
+#                 s.id,
+#                 s.name,
+#                 s.date_order,
+#                 am.invoice_date,
+#                 s.partner_id,
+#                 s.company_id,
+#                 s.user_id,
+#                 s.team_id,
+#                 s.state,
+#                 l.product_id,
+#                 p.product_tmpl_id,
+#                 t.categ_id,
+#                 l.invoice_status
+#         """
+
+#     @property
+#     def _table_query(self):
+#         return self._query()
+
+#     # -------------------------------------------------------------------------
+#     # ACTION
+#     # -------------------------------------------------------------------------
+
+#     def action_open_order(self):
+#         self.ensure_one()
+#         return {
+#             'type': 'ir.actions.act_window',
+#             'res_model': 'sale.order',
+#             'view_mode': 'form',
+#             'res_id': int(self.order_reference.id),
+#         }
 
 
 # class SaleReportPosted(models.Model):
