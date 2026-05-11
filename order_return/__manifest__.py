@@ -14,8 +14,13 @@
     'license': "AGPL-3",
     'category': "Hidden",
     'version': '0.1',
-
-    'depends': ['base', 'stock', 'purchase_stock','account'],
+    'depends': [
+        'base',
+        'sale',
+        'stock',
+        'purchase_stock',
+        'account',
+    ],
 
     'data': [
         'security/security_views.xml',
