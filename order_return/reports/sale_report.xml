@@ -1,6 +1,6 @@
 <odoo>
     <data>
-
+<!-- 
         <record id="sale_report_posted_view_tree2" model="ir.ui.view">
         <field name="name">sale.report.posted.list</field>
         <field name="model">sale.report.posted</field>
@@ -34,8 +34,7 @@
             <field name="team_id"/>
             <field name="product_id"/>
             <field name="line_invoice_status"/>
-
-            <!-- Simple Filters -->
+ 
 
             <filter string="Fully Invoiced"
                     name="fully_invoiced"
@@ -44,8 +43,7 @@
             <filter string="Draft Orders"
                     name="draft_orders"
                     domain="[('state','=','draft')]"/>
-
-            <!-- Group By -->
+ 
 
             <group expand="0" string="Group By">
                 <filter string="Customer"
@@ -71,9 +69,174 @@
 
         </search>
         </field>
+    </record> --> 
+
+    <!-- TREE VIEW -->
+
+    <record id="sale_report_posted_view_list"
+            model="ir.ui.view">
+
+        <field name="name">
+            sale.report.posted.list
+        </field>
+
+        <field name="model">
+            sale.report.posted
+        </field>
+
+        <field name="arch"
+               type="xml">
+
+            <list string="Sales Analysis Report By Posted Invoice">
+
+                <field name="date"/>
+
+                <field name="order_reference"/>
+
+                <field name="partner_id"/>
+
+                <field name="user_id"
+                       widget="many2one_avatar_user"
+                       optional="show"/>
+
+                <field name="team_id"
+                       optional="show"/>
+
+                <field name="company_id"
+                       optional="show"
+                       groups="base.group_multi_company"/>
+
+                <field name="product_id"
+                       optional="show"/>
+
+                <field name="product_uom_qty"
+                       sum="Total Qty"/>
+
+                <field name="price_unit"
+                       widget="monetary"/>
+
+                <field name="price_subtotal"
+                       sum="Subtotal"/>
+
+                <field name="price_total"
+                       sum="Total"/>
+
+                <field name="state"/>
+
+                <field name="invoice_id"/>
+
+                <field name="currency_id"
+                       column_invisible="True"/>
+
+            </list>
+
+        </field>
+
     </record>
 
-    <record id="action_sale_report_posted2" model="ir.actions.act_window">
+
+    <!-- SEARCH VIEW -->
+
+    <record id="sale_report_posted_view_search"
+            model="ir.ui.view">
+
+        <field name="name">
+            sale.report.posted.search
+        </field>
+
+        <field name="model">
+            sale.report.posted
+        </field>
+
+        <field name="arch"
+               type="xml">
+
+            <search string="Sales Analysis Report By Posted Invoice">
+
+                <field name="order_reference"/>
+
+                <field name="partner_id"/>
+
+                <field name="user_id"/>
+
+                <field name="team_id"/>
+
+                <field name="product_id"/>
+
+                <field name="invoice_id"/>
+
+                <field name="date"/>
+
+                <separator/>
+
+                <filter string="This Month"
+                        name="this_month"
+                        domain="[('date', '&gt;=', context_today().strftime('%%Y-%%m-01'))]"/>
+
+                <group expand="0"
+                       string="Group By">
+
+                    <filter string="Customer"
+                            name="group_partner"
+                            context="{'group_by':'partner_id'}"/>
+
+                    <filter string="Salesperson"
+                            name="group_user"
+                            context="{'group_by':'user_id'}"/>
+
+                    <filter string="Sales Team"
+                            name="group_team"
+                            context="{'group_by':'team_id'}"/>
+
+                    <filter string="Product"
+                            name="group_product"
+                            context="{'group_by':'product_id'}"/>
+
+                    <filter string="Invoice"
+                            name="group_invoice"
+                            context="{'group_by':'invoice_id'}"/>
+
+                    <filter string="Date"
+                            name="group_date"
+                            context="{'group_by':'date'}"/>
+
+                </group>
+
+            </search>
+
+        </field>
+
+    </record>
+
+
+    <!-- ACTION -->
+
+    <record id="action_sale_report_posted2"
+            model="ir.actions.act_window">
+
+        <field name="name">
+            Sales Analysis Report By Posted Invoice
+        </field>
+
+        <field name="res_model">
+            sale.report.posted
+        </field>
+
+        <field name="view_mode">
+            list,pivot,graph
+        </field>
+
+        <field name="search_view_id"
+               ref="sale_report_posted_view_search"/>
+
+        <field name="context">
+            {'group_by': []}
+        </field>
+
+    </record>
+
+ 
+    <!-- <record id="action_sale_report_posted2" model="ir.actions.act_window">
         <field name="name">Sales Analysis Report By Posted Invoice</field>
         <field name="res_model">sale.report.posted</field>
         <field name="view_mode">list,graph,pivot</field>
@@ -82,7 +245,7 @@
         <field name="domain">[('state', '!=', 'cancel')]</field>
         <field name="context">{'search_default_Sales':1,'group_by':[]}</field>
        
-    </record>
+    </record> -->
 
         <menuitem id="menu_sale_report_posted"
                 name="Sales Analysis Report By Posted Invoice"
