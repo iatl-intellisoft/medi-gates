@@ -25,17 +25,17 @@
     'data': [
         'security/security_views.xml',
         'security/ir.model.access.csv',
-        'wizard/order_return_picking_views.xml',
-        'views/return_reason_views.xml',
-        'views/return_order_views.xml',
-        'views/stock_picking_views.xml',
+        'reports/sale_report.xml',
         'reports/reports.xml',
         'reports/order_return_report.xml',
         'reports/return_sale_report_by_quantity.xml',
         'reports/sale_order_report_paid.xml',
         'reports/sale_order_report_unpaid.xml',
         'reports/report_stock_move_incoming.xml',
-        'reports/sale_report.xml',
+        'wizard/order_return_picking_views.xml',
+        'views/return_reason_views.xml',
+        'views/return_order_views.xml',
+        'views/stock_picking_views.xml',
 
         
     ],
