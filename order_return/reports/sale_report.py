@@ -1,14 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
-from odoo import api, fields, models
-
-from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE
-# # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
-# from odoo import api, fields, models
-
-from odoo import models, fields, tools
-# from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE
+from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE 
+from odoo import models, fields, tools, api
 class SaleReportPosted(models.Model):
     _name = "sale.report.posted"
     _description = "Sales Analysis Report By Posted Invoice"
