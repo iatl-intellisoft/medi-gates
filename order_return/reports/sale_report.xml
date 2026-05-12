@@ -1,10 +1,10 @@
 <odoo>
     <data>
-        <record id="sales_report_posted_view_tree2" model="ir.ui.view">
-        <field name="name">sales.report.posted.list</field>
-        <field name="model">sales.report.posted</field>
+        <record id="sale_report_posted_view_tree2" model="ir.ui.view">
+        <field name="name">sale.report.posted.list</field>
+        <field name="model">sale.report.posted</field>
         <field name="arch" type="xml">
-            <list string="Sales Analysis Report By Posted Invoice" action="action_open_order" type="object">
+            <list string="Sale Analysis Report By Posted Invoice" action="action_open_order" type="object">
                 <field name="date"/>
                 <field name="order_reference"/>
                 <field name="partner_id"/>
@@ -23,9 +23,9 @@
         </field>
     </record>
 
-    <record id="sales_report_posted_view_search2" model="ir.ui.view">
-        <field name="name">sales.report.posted.search</field>
-        <field name="model">sales.report.posted</field>
+    <record id="sale_report_posted_view_search2" model="ir.ui.view">
+        <field name="name">sale.report.posted.search</field>
+        <field name="model">sale.report.posted</field>
         <field name="arch" type="xml">
             <search string="Search Posted Sales">
 <field name="order_reference"/>
@@ -85,21 +85,14 @@
     <record id="action_sale_report_posted2"
             model="ir.actions.act_window">
 
-        <field name="name">
-            Sales Analysis Report By Posted Invoice
-        </field>
-
-        <field name="res_model">sales.report.posted</field>
-
+        <field name="name">Sale Analysis Report By Posted Invoice</field>
+        <field name="res_model">sale.report.posted</field>
         <field name="view_mode">list,graph,pivot</field>
         <field name="view_id"></field> 
-        <field name="search_view_id"
-               ref="sales_report_posted_view_search2"/>
-
+        <field name="search_view_id" ref="sale_report_posted_view_search2"/>
         <field name="context">
             {'group_by': []}
         </field>
-
     </record>
 
  
