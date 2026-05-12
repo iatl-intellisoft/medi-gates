@@ -11,8 +11,14 @@ SALE_ORDER_STATE = [
     ('sale', "Sales Order"),
     ('cancel', "Cancelled"),
 ]
-
-
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+    
+    @api.model
+    def _prepare_invoice(self, order):
+        vals = super()._prepare_invoice(order)
+        vals['delivery_date_act'] = order.confirmed_delivery_date
+        return vals
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -90,11 +96,7 @@ class SaleOrder(models.Model):
                 raise UserError(_(
                     "Invoice cannot be created because the Confirmed Delivery Date is missing "
                     "for a customer outside the local city."
-                ))
-            
-            if order.confirmed_delivery_date :
-                order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
-    
+                ))    
         return super()._create_invoices(
             grouped=grouped,
             final=final,
