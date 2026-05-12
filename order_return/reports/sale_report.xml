@@ -1,159 +1,34 @@
 <odoo>
     <data>
-<!-- 
-        <record id="sale_report_posted_view_tree2" model="ir.ui.view">
-        <field name="name">sale.report.posted.list</field>
-        <field name="model">sale.report.posted</field>
+        <record id="sales_report_posted_view_tree2" model="ir.ui.view">
+        <field name="name">sales.report.posted.list</field>
+        <field name="model">sales.report.posted</field>
         <field name="arch" type="xml">
             <list string="Sales Analysis Report By Posted Invoice" action="action_open_order" type="object">
                 <field name="date"/>
-                <field name="invoice_date"/>
-                <field name="name"/>
+                <field name="order_reference"/>
                 <field name="partner_id"/>
-                <field name="user_id"/>
-                <field name="team_id"/>
-                <field name="product_id"/>
-                <field name="product_uom_qty" sum="Total Qty Ordered"/>
-                <field name="qty_invoiced" sum="Total Qty Invoiced"/>
-                <field name="price_unit"/>
-                <field name="price_subtotal" sum="Untaxed Total"/>
+                <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="team_id" optional="show"/>
+                <field name="company_id" optional="show" groups="base.group_multi_company"/>
+                <field name="product_id" optional="show"/>
+                <field name="product_uom_qty" sum="Total Qty"/>
+                <field name="price_unit" widget="monetary"/>
+                <field name="price_subtotal" sum="Subtotal"/>
                 <field name="price_total" sum="Total"/>
-                <field name="line_invoice_status"/>
+                <field name="state"/>
+                <field name="invoice_id"/>
+                <field name="currency_id" column_invisible="True"/>
             </list>
         </field>
     </record>
 
-    <record id="sale_report_posted_view_search2" model="ir.ui.view">
-        <field name="name">sale.report.posted.search</field>
-        <field name="model">sale.report.posted</field>
+    <record id="sales_report_posted_view_search2" model="ir.ui.view">
+        <field name="name">sales.report.posted.search</field>
+        <field name="model">sales.report.posted</field>
         <field name="arch" type="xml">
             <search string="Search Posted Sales">
-
-            <field name="partner_id"/>
-            <field name="user_id"/>
-            <field name="team_id"/>
-            <field name="product_id"/>
-            <field name="line_invoice_status"/>
- 
-
-            <filter string="Fully Invoiced"
-                    name="fully_invoiced"
-                    domain="[('line_invoice_status','=','invoiced')]"/>
-
-            <filter string="Draft Orders"
-                    name="draft_orders"
-                    domain="[('state','=','draft')]"/>
- 
-
-            <group expand="0" string="Group By">
-                <filter string="Customer"
-                        name="group_partner"
-                        context="{'group_by': 'partner_id'}"/>
-
-                <filter string="Salesperson"
-                        name="group_user"
-                        context="{'group_by': 'user_id'}"/>
-
-                <filter string="Sales Team"
-                        name="group_team"
-                        context="{'group_by': 'team_id'}"/>
-
-                <filter string="Product"
-                        name="group_product"
-                        context="{'group_by': 'product_id'}"/>
-
-                <filter string="Invoice Month"
-                        name="group_invoice_month"
-                        context="{'group_by': 'invoice_date:month'}"/>
-            </group>
-
-        </search>
-        </field>
-    </record> --> 
-
-    <!-- TREE VIEW -->
-
-    <record id="sale_report_posted_view_list"
-            model="ir.ui.view">
-
-        <field name="name">
-            sale.report.posted.list
-        </field>
-
-        <field name="model">
-            sale.report.posted
-        </field>
-
-        <field name="arch"
-               type="xml">
-
-            <list string="Sales Analysis Report By Posted Invoice">
-
-                <field name="date"/>
-
-                <field name="order_reference"/>
-
-                <field name="partner_id"/>
-
-                <field name="user_id"
-                       widget="many2one_avatar_user"
-                       optional="show"/>
-
-                <field name="team_id"
-                       optional="show"/>
-
-                <field name="company_id"
-                       optional="show"
-                       groups="base.group_multi_company"/>
-
-                <field name="product_id"
-                       optional="show"/>
-
-                <field name="product_uom_qty"
-                       sum="Total Qty"/>
-
-                <field name="price_unit"
-                       widget="monetary"/>
-
-                <field name="price_subtotal"
-                       sum="Subtotal"/>
-
-                <field name="price_total"
-                       sum="Total"/>
-
-                <field name="state"/>
-
-                <field name="invoice_id"/>
-
-                <field name="currency_id"
-                       column_invisible="True"/>
-
-            </list>
-
-        </field>
-
-    </record>
-
-
-    <!-- SEARCH VIEW -->
-
-    <record id="sale_report_posted_view_search"
-            model="ir.ui.view">
-
-        <field name="name">
-            sale.report.posted.search
-        </field>
-
-        <field name="model">
-            sale.report.posted
-        </field>
-
-        <field name="arch"
-               type="xml">
-
-            <search string="Sales Analysis Report By Posted Invoice">
-
-                <field name="order_reference"/>
+<field name="order_reference"/>
 
                 <field name="partner_id"/>
 
@@ -203,13 +78,9 @@
                 </group>
 
             </search>
-
         </field>
-
     </record>
 
-
-    <!-- ACTION -->
 
     <record id="action_sale_report_posted2"
             model="ir.actions.act_window">
@@ -219,15 +90,13 @@
         </field>
 
         <field name="res_model">
-            sale.report.posted
+            sales.report.posted
         </field>
 
-        <field name="view_mode">
-            list,pivot,graph
-        </field>
-
+        <field name="view_mode">list,graph,pivot</field>
+        <field name="view_id"></field> 
         <field name="search_view_id"
-               ref="sale_report_posted_view_search"/>
+               ref="sales_report_posted_view_search2"/>
 
         <field name="context">
             {'group_by': []}
