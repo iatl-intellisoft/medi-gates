@@ -11,14 +11,6 @@ SALE_ORDER_STATE = [
     ('sale', "Sales Order"),
     ('cancel', "Cancelled"),
 ]
-class AccountMove(models.Model):
-    _inherit = 'account.move'
-    
-    @api.model
-    def _prepare_invoice(self, order):
-        vals = super()._prepare_invoice(order)
-        vals['delivery_date_act'] = order.confirmed_delivery_date
-        return vals
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -52,7 +44,12 @@ class SaleOrder(models.Model):
             return _("A line on these orders missing a product, you cannot confirm it.")
 
         return False
-        
+    
+    @api.model
+    def _prepare_invoice(self):
+        vals = super()._prepare_invoice()
+        vals['delivery_date_act'] = order.confirmed_delivery_date
+        return vals
     # def action_confirm(self):
     #     for order in self:
     #         insufficient_products = []
