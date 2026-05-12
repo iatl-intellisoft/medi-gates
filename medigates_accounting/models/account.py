@@ -178,6 +178,7 @@ class AccountMove(models.Model):
 
     delivery_date_act = fields.Date(
         string='Actual delivery  Date',
+		related= 'invoice_origin.sale_order_id.confirmed_delivery_date
         copy=False,
         store=True,
         readonly=False,
