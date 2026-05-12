@@ -89,9 +89,7 @@
             Sales Analysis Report By Posted Invoice
         </field>
 
-        <field name="res_model">
-            sales.report.posted
-        </field>
+        <field name="res_model">sales.report.posted</field>
 
         <field name="view_mode">list,graph,pivot</field>
         <field name="view_id"></field> 
