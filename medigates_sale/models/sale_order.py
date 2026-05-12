@@ -91,6 +91,9 @@ class SaleOrder(models.Model):
                     "Invoice cannot be created because the Confirmed Delivery Date is missing "
                     "for a customer outside the local city."
                 ))
+            
+            if order.confirmed_delivery_date :
+                order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
     
         return super()._create_invoices(
             grouped=grouped,
