@@ -1,9 +1,9 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE 
 from odoo import models, fields, tools, api
-class SalesReportPosted2(models.Model):
-    _name = "sales.report.posted"
-    _description = "Sales Analysis Report By Posted Invoice"
+class SaleReportPosted(models.Model):
+    _name = "sale.report.posted"
+    _description = "Sale Analysis Report By Posted Invoice"
     _auto = False
     _rec_name = 'date'
     _order = 'date desc'
