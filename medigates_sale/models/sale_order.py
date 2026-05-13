@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError,UserError
 from datetime import datetime, timedelta
-
+ 
 SALE_ORDER_STATE = [
     ('draft', "Quotation"),
     ('sent', "Quotation Sent"),
