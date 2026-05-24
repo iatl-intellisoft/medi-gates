@@ -90,6 +90,16 @@ class SaleReportPosted(models.Model):
             ('posted', "Posted"),
         ], string="Posted Invoice", readonly=True)
 
+    payment_state = fields.Selection(
+        selection=[
+            ('not_paid', 'Not Paid'),
+            ('in_payment', 'In Payment'),
+            ('paid', 'Paid'),
+            ('partial', 'Partial'),
+            ('reversed', 'Reversed'),
+            ('invoicing_legacy', 'Legacy'),
+        ], string="Payment Status", readonly=True)
+
     @api.depends_context('allowed_company_ids')
     def _compute_currency_id(self):
         self.currency_id = self.env.company.currency_id
@@ -152,6 +162,7 @@ class SaleReportPosted(models.Model):
             SUM(p.weight * l.product_uom_qty / u.factor * u2.factor) AS weight,
             SUM(p.volume * l.product_uom_qty / u.factor * u2.factor) AS volume,
             am.state AS line_invoice_status2,
+            am.payment_state AS payment_state,
             SUM(l.price_unit * l.product_uom_qty * l.discount / 100.0
                 / {self._case_value_or_one('s.currency_rate')}
                 * {self._case_value_or_one('account_currency_table.rate')}
@@ -178,15 +189,15 @@ class SaleReportPosted(models.Model):
             LEFT JOIN uom_uom u2 ON u2.id = t.uom_id
             JOIN {currency_table} ON account_currency_table.company_id = s.company_id
             LEFT JOIN LATERAL (
-                SELECT am.state, am.invoice_date
+                SELECT am.state, am.invoice_date, am.payment_state
                 FROM account_move am
                 WHERE am.invoice_origin = s.name
-                  AND am.move_type = 'out_invoice'
-                  AND am.state = 'posted'
+                AND am.move_type = 'out_invoice'
+                AND am.state = 'posted'
+                AND am.payment_state IN ('paid', 'in_payment')
                 LIMIT 1
             ) am ON TRUE
             """
-
     def _where_sale(self):
         return """
             l.display_type IS NULL
@@ -215,6 +226,7 @@ class SaleReportPosted(models.Model):
             partner.zip,
             l.is_downpayment,
             am.state,
+            am.payment_state,
             account_currency_table.rate
             """
 
