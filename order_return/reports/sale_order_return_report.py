@@ -1,5 +1,3 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
-
 from odoo import api, fields, models
 
 from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE
@@ -50,12 +48,6 @@ class SaleReturnReport(models.Model):
     state_id = fields.Many2one(comodel_name='res.country.state', string="Customer State", readonly=True)
 
     # sale.order.line fields
-    # order_return_reference = fields.Reference(
-    #     string='Order',
-    #     selection=[('order.return', 'Sales Order Return')],
-    #     aggregator="count_distinct",
-    # )
-
     categ_id = fields.Many2one(
         comodel_name='product.category', string="Product Category", readonly=True)
     product_id = fields.Many2one(
@@ -64,67 +56,35 @@ class SaleReturnReport(models.Model):
         comodel_name='product.template', string="Product", readonly=True)
     product_uom = fields.Many2one(comodel_name='uom.uom', string="Unit of Measure", readonly=True)
     product_uom_qty = fields.Float(string="Qty Ordered", readonly=True)
-    # qty_to_deliver = fields.Float(string="Qty To Deliver", readonly=True)
-    # qty_delivered = fields.Float(string="Qty Delivered", readonly=True)
-    # qty_to_invoice = fields.Float(string="Qty To Invoice", readonly=True)
-    # qty_invoiced = fields.Float(string="Qty Invoiced", readonly=True)
-    # return_order_id = fields.Many2one('account.move', string="Return Invoice")
 
-    # price_subtotal = fields.Monetary(string="Untaxed Total", readonly=True)
-    # amount_total = fields.Float(string="Total", readonly=True)
-    # untaxed_amount_to_invoice = fields.Monetary(string="Untaxed Amount To Invoice", readonly=True)
-    # # untaxed_amount_invoiced = fields.Monetary(string="Untaxed Amount Invoiced", readonly=True)
     line_invoice_status = fields.Selection(
         selection=[
             ('draft', "Draft"),
             ('posted', "Posted"),
-            
         ], string="Invoice Status", readonly=True)
     payment_state = fields.Selection(
         selection=[
             ('draft', "Draft"),
             ('paid', "Paid"),
-            
-        ], string="Invoice Status", readonly=True)
+        ], string="Payment Status", readonly=True)
 
-    # weight = fields.Float(string="Gross Weight", readonly=True)
-    # volume = fields.Float(string="Volume", readonly=True)
     price_unit = fields.Float(string="Unit Price", aggregator='avg', readonly=True)
     discount = fields.Float(string="Discount %", readonly=True, aggregator='avg')
     discount_amount = fields.Monetary(string="Discount Amount", readonly=True)
-    # line_invoice_status = fields.Reference(
-    #     string='Order',
-    #     selection=[('account.move', 'Customer Invoice')],
-    #     aggregator="count_distinct",
-    # )
     invoice_date = fields.Datetime(string="Invoice Date", readonly=True)
     city = fields.Char(related='partner_id.city', string='Customer City')
-    location_id = fields.Many2one('stock.location', string="Return Location", tracking=True, )
+    location_id = fields.Many2one('stock.location', string="Return Location", tracking=True)
     product_bonus_uom_qty = fields.Float(string="Bonus Qty returned", readonly=True)
-
 
     # aggregates or computed fields
     nbr = fields.Integer(string="# of Lines", readonly=True)
     currency_id = fields.Many2one(comodel_name='res.currency', compute='_compute_currency_id')
-    city = fields.Char(related='partner_id.city', string='Customer City')
     invoice_number = fields.Char(string='Invoice Number')
     sale_id_reference = fields.Char(related='order_reference.origin', string='Source Document')
-
 
     @api.depends_context('allowed_company_ids')
     def _compute_currency_id(self):
         self.currency_id = self.env.company.currency_id
-
-    # def _with_sale(self):
-    #     return """
-    #     s.state = 'done'
-    #     AND am.state = 'posted'
-    #     AND am.payment_state = 'paid'
-    #     """
-    def _where_sale(self): 
-        return """ 
-        s.state = 'sale' 
-        """
 
     def _select_sale(self):
         select_ = f"""
@@ -205,22 +165,17 @@ class SaleReturnReport(models.Model):
             LEFT JOIN product_product p ON l.product_id=p.id
             LEFT JOIN product_template t ON p.product_tmpl_id=t.id
             LEFT JOIN uom_uom u ON u.id=l.product_uom
-            LEFT JOIN uom_uom u2 ON u2.id=t.uom_id 
+            LEFT JOIN uom_uom u2 ON u2.id=t.uom_id
             JOIN {currency_table} ON account_currency_table.company_id = s.company_id
             """
 
-    # def _where_sale(self):
-    #     return """
-    #     s.state = 'done'
-    #     AND am.state = 'posted'
-    #     AND am.payment_state = 'paid'
-    #     """
-
     def _where_sale(self):
+        # ✅ إصلاح: إزالة الدالة المكررة واستخدام شرط مناسب
+        # يعرض المرتجعات بحالة sale أو done، ويستثني الملغية فقط
+        # إذا كانت فاتورة موجودة، تقبل أي حالة (مش مشروطة بـ posted أو paid)
         return """
-            s.state = 'done'
-            AND am.state = 'posted'
-            AND am.payment_state != 'paid'
+            s.state IN ('sale', 'done')
+            AND (am.id IS NULL OR am.state = 'posted')
         """
 
     def _group_by_sale(self):
@@ -260,17 +215,6 @@ class SaleReturnReport(models.Model):
             am.state,
             am.payment_state,
             account_currency_table.rate"""
-
-    # def _query(self):
-    #     with_ = self._with_sale()
-    #     return f"""
-    #         {"WITH" + with_ + "(" if with_ else ""}
-    #         SELECT {self._select_sale()}
-    #         FROM {self._from_sale()}
-    #         WHERE {self._where_sale()}
-    #         GROUP BY {self._group_by_sale()}
-    #         {")" if with_ else ""}
-    #     """
 
     def _query(self):
         return f"""
