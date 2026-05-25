@@ -36,6 +36,7 @@
         'views/return_reason_views.xml',
         'views/return_order_views.xml',
         'views/stock_picking_views.xml',
+        'views/product_template_vendor_view.xml', 
 
         
     ],
