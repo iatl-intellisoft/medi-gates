@@ -97,7 +97,7 @@
                     <field name="invoice_status"/>
                     <field name="product_uom_qty" sum="Qty Ordered"/>
                     <field name="qty_invoiced" sum="Qty Invoiced"/>
-                    <field name="price_subtotal" sum="Untaxed Total"/>
+                    <!-- <field name="price_subtotal" sum="Untaxed Total"/> -->
                     <field name="price_total" sum="Total"/>
                     <field name="untaxed_amount_invoiced" sum="Untaxed Amount Invoiced"/>
                     <field name="discount_amount" sum="Discount Amount" optional="hide"/>
@@ -110,7 +110,7 @@
 
         <!-- Menu Item -->
         <menuitem id="menu_sale_report_posted"
-                  name="Sales by Posted Invoice"
+                  name="Sales Analysis Report by Posted Invoice"
                   parent="sale.menu_sale_report"
                   action="action_sale_report_posted"
                  />
