@@ -83,7 +83,7 @@ class SaleReturnReport(models.Model):
     payment_state = fields.Selection(
         selection=[
             ('draft', "Draft"),
-            ('paid,', "Paid"),
+            ('paid', "Paid"),
             
         ], string="Invoice Status", readonly=True)
 
