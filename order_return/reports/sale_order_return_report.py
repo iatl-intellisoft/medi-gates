@@ -115,11 +115,15 @@ class SaleReturnReport(models.Model):
     def _compute_currency_id(self):
         self.currency_id = self.env.company.currency_id
 
-    def _with_sale(self):
-        return """
-        s.state = 'done'
-        AND am.state = 'posted'
-        AND am.payment_state = 'paid'
+    # def _with_sale(self):
+    #     return """
+    #     s.state = 'done'
+    #     AND am.state = 'posted'
+    #     AND am.payment_state = 'paid'
+    #     """
+    def _where_sale(self): 
+        return """ 
+        s.state = 'sale' 
         """
 
     def _select_sale(self):
@@ -224,7 +228,6 @@ class SaleReturnReport(models.Model):
             l.product_id,
             l.return_id,
             l.price_unit,
-            l.qty_return,
             t.uom_id,
             t.categ_id,
             s.name,
