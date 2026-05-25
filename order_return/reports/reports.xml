@@ -31,8 +31,12 @@
                     <field name="location_id"/>
                     <field name="product_uom_qty" string="Qty Returned" sum="Sum of Quantity"/>
                     <field name="product_bonus_uom_qty" string="Bonus Qty Returned" sum="Bonus Returned Qty"/>
-                    <field name="price_unit" widget="monetary" avg="Average"/>
-                    <field name="state" optional="hide"/>
+                    <field name="price_unit" widget="monetary" avg="Average Price"/>
+                    <!-- ✅ إضافة: عمود إجمالي السعر مع sum -->
+                    <field name="price_subtotal" widget="monetary" string="Total Price" sum="Total"/>
+                    <field name="currency_id" invisible="1"/>
+                    <!-- ✅ إصلاح: state يقرأ الآن حالات draft/confirmed/done -->
+                    <field name="state" optional="show"/>
                     <field name="line_invoice_status" string="Invoice Status" optional="hide"/>
                 </list>
             </field>
@@ -92,8 +96,8 @@
             <field name="res_model">order.return.report</field>
             <field name="view_mode">list,graph,pivot</field>
             <field name="search_view_id" ref="view_order_return_search"/>
-            <!-- ✅ إصلاح: تم تغيير domain ليتوافق مع الحالات المدعومة في _where_sale -->
-            <field name="domain">[('state', 'in', ('sale', 'done'))]</field>
+            <!-- ✅ إصلاح: domain يتوافق مع حالات order.return الفعلية -->
+            <field name="domain">[('state', 'in', ('confirmed', 'done'))]</field>
             <field name="context">{'group_by': []}</field>
         </record>
 
