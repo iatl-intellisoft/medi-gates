@@ -1,7 +1,5 @@
 from odoo import api, fields, models
 
-from odoo.addons.sale.models.sale_order import SALE_ORDER_STATE
-
 
 class SaleReturnReport(models.Model):
     _name = "order.return.report"
@@ -9,10 +7,6 @@ class SaleReturnReport(models.Model):
     _auto = False
     _rec_name = 'return_date'
     _order = 'return_date desc'
-
-    @api.model
-    def _get_done_states(self):
-        return ['sale']
 
     # sale.order fields
     return_name = fields.Char(string="Order Reference", readonly=True)
@@ -24,7 +18,13 @@ class SaleReturnReport(models.Model):
     pricelist_id = fields.Many2one(comodel_name='product.pricelist', readonly=True)
     team_id = fields.Many2one(comodel_name='crm.team', string="Sales Team", readonly=True)
     user_id = fields.Many2one(comodel_name='res.users', string="Salesperson", readonly=True)
-    state = fields.Selection(selection=SALE_ORDER_STATE, string="Status", readonly=True)
+    # ✅ إصلاح: استخدام حالات order.return الفعلية بدل SALE_ORDER_STATE
+    state = fields.Selection(
+        selection=[
+            ('draft', "Draft"),
+            ('confirmed', "Confirmed"),
+            ('done', "Done"),
+        ], string="Status", readonly=True)
     invoice_status = fields.Selection(
         selection=[
             ('upselling', "Upselling Opportunity"),
@@ -69,6 +69,8 @@ class SaleReturnReport(models.Model):
         ], string="Payment Status", readonly=True)
 
     price_unit = fields.Float(string="Unit Price", aggregator='avg', readonly=True)
+    # ✅ إضافة: حقل إجمالي السعر
+    price_subtotal = fields.Monetary(string="Total Price", readonly=True)
     discount = fields.Float(string="Discount %", readonly=True, aggregator='avg')
     discount_amount = fields.Monetary(string="Discount Amount", readonly=True)
     invoice_date = fields.Datetime(string="Invoice Date", readonly=True)
@@ -127,6 +129,12 @@ class SaleReturnReport(models.Model):
                 * {self._case_value_or_one('account_currency_table.rate')}
                 ) ELSE 0
             END AS discount_amount,
+            -- ✅ إضافة: حساب إجمالي السعر (qty * unit_price)
+            CASE WHEN l.product_id IS NOT NULL THEN SUM(l.price_unit * l.qty_return
+                / {self._case_value_or_one('so.currency_rate')}
+                * {self._case_value_or_one('account_currency_table.rate')}
+                ) ELSE 0
+            END AS price_subtotal,
             s.location_id AS location_id,
             am.invoice_date AS invoice_date,
             am.name AS invoice_number,
@@ -170,11 +178,9 @@ class SaleReturnReport(models.Model):
             """
 
     def _where_sale(self):
-        # ✅ إصلاح: إزالة الدالة المكررة واستخدام شرط مناسب
-        # يعرض المرتجعات بحالة sale أو done، ويستثني الملغية فقط
-        # إذا كانت فاتورة موجودة، تقبل أي حالة (مش مشروطة بـ posted أو paid)
+        # ✅ إصلاح: استخدام حالات order.return الفعلية (confirmed, done)
         return """
-            s.state IN ('sale', 'done')
+            s.state IN ('confirmed', 'done')
             AND (am.id IS NULL OR am.state = 'posted')
         """
 
