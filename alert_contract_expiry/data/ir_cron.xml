@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<data>
-
-        <record id="ir_cron_contract_expiry_alert123" model="ir.cron">
+<data><record id="ir_cron_contract_expiry_alert123" model="ir.cron">
             <field name="name">Employee Contract Expiry Alert</field>
             <field name="model_id" ref="hr.model_hr_contract"/>
             <field name="state">code</field>
