@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo> 
+<data>
+ <record id="email_template_contract_expiry123" model="mail.template">
+        <field name="name">Contract Expiry Alert</field>
+        <field name="model_id" ref="hr.model_hr_contract"/>
+        <field name="subject">Contract Expiry Alert - ${object.name}</field>
+        <field name="email_from">${user.email_formatted}</field>
+        <field name="body_html" type="html">
+            <![CDATA[
+            <div>
+                <p>Dear User,</p>
+
+                <p>
+                    The contract of employee
+                    <strong>${object.name}</strong>
+                    will expire on
+                    <strong>${object.contract_expire}</strong>.
+                </p>
+
+                <p>
+                    Please take the necessary action.
+                </p>
+
+                <p>
+                    Regards,<br/>
+                    HR System
+                </p>
+            </div>
+            ]]>
+
+        </field>
+
+    </record>
+ 
+</data>
+   
+</odoo>
