@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_contract_warning" model="ir.ui.view">
+        <field name="name">hr.employee.contract.warning</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet" position="before">
+
+                <field name="contract_warning" invisible="1"/>
+
+                <div class="alert alert-warning"
+                     invisible="not contract_warning">
+
+                    <field name="contract_warning_message"
+                           nolabel="1"
+                           readonly="1"/>
+
+                </div>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
