@@ -9,7 +9,7 @@ class AccountPaymentTermLine(models.Model):
     """
     _inherit = 'account.payment.term.line'
 
-    after = fields.Selection(
+    delay_type  = fields.Selection(
         selection_add=[
             ('delivery_date_act', '15 Days After Actual Delivery Date'),
         ],
