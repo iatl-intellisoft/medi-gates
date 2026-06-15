@@ -16,6 +16,6 @@
     'license': 'LGPL-3',
     'depends': ['account','sale'],
     'data': [ 
-        'views/account_payment_term_line_view.xml',
+        # 'views/account_payment_term_line_view.xml',
     ],
 }
