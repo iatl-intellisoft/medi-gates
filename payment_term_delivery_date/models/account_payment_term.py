@@ -47,13 +47,16 @@ class AccountPaymentTerm(models.Model):
         """Make amount-computation work for 'delivery_date_act' lines.
 
         Core Odoo's _compute_terms only knows how to compute installment
-        amounts for 'percent' and 'fixed' line values. To avoid touching
-        the database, we build an in-memory (non-persisted) copy of `self`
-        where 'delivery_date_act' lines are relabelled as 'percent' (same
-        value_amount), run the core computation on that copy, and return
-        its result. The due-date for 'delivery_date_act' lines is corrected
-        afterwards in account.move (_apply_delivery_date_act_due_dates),
-        based on delivery_date_act + 15 days.
+        amounts for 'percent' and 'fixed' line values. To avoid the issues
+        caused by copy_data()/new() on unsaved (NewId) records, we
+        temporarily relabel 'delivery_date_act' lines as 'percent'
+        in-place (in memory, via a plain Python attribute set - this does
+        NOT trigger ORM writes/recomputation), run the core computation,
+        then restore the original value.
+
+        The due-date for 'delivery_date_act' lines is corrected afterwards
+        in account.move (_apply_delivery_date_act_due_dates), based on
+        delivery_date_act + 15 days.
         """
         delivery_lines = self.line_ids.filtered(
             lambda l: l.value == 'delivery_date_act'
@@ -62,20 +65,14 @@ class AccountPaymentTerm(models.Model):
         if not delivery_lines:
             return super()._compute_terms(*args, **kwargs)
 
-        # Build in-memory copies of the payment term lines, relabelling
-        # 'delivery_date_act' as 'percent' so the core logic treats them
-        # as ordinary percentage-based installments.
-        new_line_vals = []
-        for line in self.line_ids:
-            vals = line.copy_data()[0]
-            vals['payment_id'] = self.id
-            if line.value == 'delivery_date_act':
-                vals['value'] = 'percent'
-            new_line_vals.append(vals)
-
-        temp_term = self.new({
-            **self.copy_data()[0],
-            'line_ids': [(0, 0, vals) for vals in new_line_vals],
-        })
-
-        return super(AccountPaymentTerm, temp_term)._compute_terms(*args, **kwargs)
+        # Save originals, temporarily set cache value to 'percent'.
+        originals = {line.id: line.value for line in delivery_lines}
+        try:
+            for line in delivery_lines:
+                line.env.cache.set(line, line._fields['value'], 'percent')
+            return super()._compute_terms(*args, **kwargs)
+        finally:
+            for line in delivery_lines:
+                line.env.cache.set(
+                    line, line._fields['value'], originals[line.id]
+                )
