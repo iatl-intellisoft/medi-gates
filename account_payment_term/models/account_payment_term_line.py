@@ -5,6 +5,9 @@ class AccountPaymentTermLine(models.Model):
 
     delay_type = fields.Selection(
         selection_add=[
-            ("actual_delivery", "Days After Actual Delivery Date")
-        ]
+            ('actual_delivery', 'Days After Actual Delivery Date')
+        ],
+        ondelete={
+            'actual_delivery': 'set default',
+        }
     )
