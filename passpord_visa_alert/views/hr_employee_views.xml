@@ -2,7 +2,7 @@
 
 <odoo>
 
-    <record id="hr_employee_form_passport_warning" model="ir.ui.view">
+    <!-- <record id="hr_employee_form_passport_warning" model="ir.ui.view">
         <field name="name">hr.employee.form.passport.warning</field>
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form"/>
@@ -15,7 +15,7 @@
                 </div>
             </xpath>
         </field>
-    </record>
+    </record> -->
 
     <record id="hr_employee_form_visa_warning" model="ir.ui.view">
         <field name="name">hr.employee.form.visa.warning</field>
