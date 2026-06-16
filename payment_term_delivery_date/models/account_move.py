@@ -1,49 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
-
 from odoo import api, models
+from odoo import models
 
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    def _apply_delivery_date_due_date(self):
-        for move in self:
-            if not move.invoice_payment_term_id:
-                continue
+    def _get_payment_terms_computation_date(self):
+        self.ensure_one()
 
-            if not move.delivery_date_act:
-                continue
+        if self.delivery_date_act:
+            return self.delivery_date_act
 
-            delivery_line = move.invoice_payment_term_id.line_ids.filtered(
-                lambda l: l.delay_type == 'delivery_date_act'
-            )[:1]
+        return super()._get_payment_terms_computation_date()
 
-            if not delivery_line:
-                continue
+    @api.onchange('delivery_date_act')
+    def _onchange_delivery_date_act(self):
+        self._recompute_payment_terms_lines()
 
-            move.invoice_date_due = (
-                move.delivery_date_act
-                + timedelta(days=delivery_line.nb_days)
-            )
-
-    @api.onchange(
-        'delivery_date_act',
-        'invoice_payment_term_id'
-    )
-    def _onchange_delivery_date_due(self):
-        self._apply_delivery_date_due_date()
-
-    def write(self, vals):
-        res = super().write(vals)
-
-        if (
-            'delivery_date_act' in vals
-            or 'invoice_payment_term_id' in vals
-        ):
-            self.filtered(
-                lambda m: m.state == 'draft'
-            )._apply_delivery_date_due_date()
-
-        return res
