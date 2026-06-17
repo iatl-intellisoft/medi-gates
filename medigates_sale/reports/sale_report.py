@@ -5,10 +5,11 @@ class SaleInvoiceReport2(models.Model):
     _name = 'sale.invoice.report2'
     _description = 'Sales Invoice Financial Report'
     _auto = False  # computed (read-only) model
+	
 
     partner_id = fields.Many2one('res.partner', string="Customer")
-	company_id = fields.Many2one( 'res.company', string='Company', readonly=True)
     warehouse_id = fields.Many2one('stock.warehouse', string="Warehouse")
+    company_id = fields.Many2one( 'res.company', string='Company', readonly=True)
     city = fields.Char(string="City")
     invoice_id = fields.Many2one('account.move', string="Invoice")
     invoice_date = fields.Date(string="Invoice Date")
