@@ -20,6 +20,11 @@ class SaleInvoiceReport2(models.Model):
     commitment_rate = fields.Float(string="Payment Term Commitment (%)")
     currency_id = fields.Many2one('res.currency', string='Currency')
     sale_order_name = fields.Char(string="Sale Order Number")
+	company_id = fields.Many2one(
+		'res.company',
+		string='Company',
+		readonly=True,
+	)
 
 
 
@@ -28,6 +33,7 @@ class SaleInvoiceReport2(models.Model):
 	    return """
 	        SELECT
 	            row_number() OVER () AS id,
+				inv.company_id,
 	            inv.partner_id,
 	            so.warehouse_id,
 	            rp.city,
