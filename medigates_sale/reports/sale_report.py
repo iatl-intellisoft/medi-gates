@@ -7,6 +7,7 @@ class SaleInvoiceReport2(models.Model):
     _auto = False  # computed (read-only) model
 
     partner_id = fields.Many2one('res.partner', string="Customer")
+	company_id = fields.Many2one( 'res.company', string='Company', readonly=True)
     warehouse_id = fields.Many2one('stock.warehouse', string="Warehouse")
     city = fields.Char(string="City")
     invoice_id = fields.Many2one('account.move', string="Invoice")
@@ -20,13 +21,6 @@ class SaleInvoiceReport2(models.Model):
     commitment_rate = fields.Float(string="Payment Term Commitment (%)")
     currency_id = fields.Many2one('res.currency', string='Currency')
     sale_order_name = fields.Char(string="Sale Order Number")
-	company_id = fields.Many2one(
-		'res.company',
-		string='Company',
-		readonly=True,
-	)
-
-
 
 
     def _select(self):
