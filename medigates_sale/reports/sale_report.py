@@ -28,7 +28,6 @@ class SaleInvoiceReport2(models.Model):
 	    return """
 	        SELECT
 	            row_number() OVER () AS id,
-				inv.company_id,
 	            inv.partner_id,
 	            so.warehouse_id,
 	            rp.city,
@@ -42,7 +41,8 @@ class SaleInvoiceReport2(models.Model):
 	            CASE WHEN inv.invoice_date_due >= CURRENT_DATE THEN inv.amount_residual ELSE 0 END AS not_past_due,
 	            CASE WHEN inv.amount_total > 0 THEN ROUND(((inv.amount_total - inv.amount_residual) / inv.amount_total) * 100, 2) ELSE 0 END AS commitment_rate,
 	            inv.currency_id,
-	            so.name AS sale_order_name
+	            so.name AS sale_order_name,
+				inv.company_id
 	    """
 
 
