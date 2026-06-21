@@ -191,15 +191,10 @@ class AccountMove(models.Model):
             self.delivery_date_act = self.invoice_date
 	
     def action_post(self):
-        res = super().action_post()
+        for move in self.filtered(lambda m: m.state == 'draft'):
+            move.date = move.actual_delivery_date or move.invoice_date
 
-        for move in self:
-            if move.delivery_date_act:
-                move.write({'date': move.delivery_date_act})
-            elif move.invoice_date:
-                move.write({'date': move.invoice_date})
-
-        return res
+        return super().action_post()
 
 
 
