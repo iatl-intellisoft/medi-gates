@@ -5,6 +5,18 @@ from odoo.exceptions import UserError, ValidationError
 class AccountPayment(models.Model):
     _inherit = "account.payment"
 
+    delivery_date_act = fields.Date()
+    def action_post(self):
+        res = super().action_post()
+
+        for payment in self:
+            if payment.move_id:
+                payment.move_id.delivery_date_act = (
+                    payment.delivery_date_act or
+                    payment.move_id.invoice_date
+                )
+
+        return res
     # def unlink(self):
     #     if self.state != 'draft':
     #         raise UserError(
@@ -80,15 +92,31 @@ class AccountPaymentRegister(models.TransientModel):
         res['line_ids'] = [(6, 0, available_lines.ids)]
 
         return res
-
     def _create_payment_vals_from_wizard(self, batch_result):
-        payment_vals = super(AccountPaymentRegister, self)._create_payment_vals_from_wizard(batch_result)
-        payment_vals['destination_account_id'] = \
-        self.line_ids.filtered(lambda r: r.display_type not in ('product', 'rounding'))[
-            0].account_id.id,
-        # payment_vals['move_id'] = self.line_ids.move_id.id
+        payment_vals = super()._create_payment_vals_from_wizard(batch_result)
+    
+        payment_vals['destination_account_id'] = (
+            self.line_ids.filtered(
+                lambda r: r.display_type not in ('product', 'rounding')
+            )[0].account_id.id
+        )
+    
+        invoice = self.line_ids.move_id
+    
+        payment_vals['delivery_date_act'] = (
+            invoice.delivery_date_act or invoice.invoice_date
+        )
 
         return payment_vals
+
+    # def _create_payment_vals_from_wizard(self, batch_result):
+    #     payment_vals = super(AccountPaymentRegister, self)._create_payment_vals_from_wizard(batch_result)
+    #     payment_vals['destination_account_id'] = \
+    #     self.line_ids.filtered(lambda r: r.display_type not in ('product', 'rounding'))[
+    #         0].account_id.id,
+    #     # payment_vals['move_id'] = self.line_ids.move_id.id
+
+    #     return payment_vals
 
     # def _create_payment_vals_from_wizard(self, batch_result):
     #     payment_vals = {
