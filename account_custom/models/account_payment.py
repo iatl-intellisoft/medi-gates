@@ -11,10 +11,13 @@ class AccountPayment(models.Model):
 
         for payment in self:
             if payment.move_id:
-                payment.move_id.delivery_date_act = (
-                    payment.delivery_date_act or
-                    payment.move_id.invoice_date
-                )
+                date = payment.delivery_date_act or payment.move_id.invoice_date
+                payment.move_id.write({
+                    'delivery_date_act': date,
+                    'date': date,
+                })
+
+        return res
 
         return res
     # def unlink(self):
