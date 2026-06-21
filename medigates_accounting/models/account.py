@@ -190,11 +190,11 @@ class AccountMove(models.Model):
         if not self.delivery_date_act:
             self.delivery_date_act = self.invoice_date
 	
-    def action_post(self):
-        for move in self.filtered(lambda m: m.state == 'draft'):
-            move.date = move.delivery_date_act or move.invoice_date
+    # def action_post(self):
+    #     for move in self.filtered(lambda m: m.state == 'draft'):
+    #         move.date = move.delivery_date_act or move.invoice_date
 
-        return super().action_post()
+    #     return super().action_post()
 
 
 
