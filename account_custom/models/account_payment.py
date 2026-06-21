@@ -95,6 +95,7 @@ class AccountPaymentRegister(models.TransientModel):
         return res
     def _create_payment_vals_from_wizard(self, batch_result):
         payment_vals = super()._create_payment_vals_from_wizard(batch_result)
+        
     
         payment_vals['destination_account_id'] = (
             self.line_ids.filtered(
@@ -107,6 +108,7 @@ class AccountPaymentRegister(models.TransientModel):
         payment_vals['delivery_date_act'] = (
             invoice.delivery_date_act or invoice.invoice_date
         )
+        payment_vals['date'] = invoice.delivery_date_act or invoice.invoice_date
 
         return payment_vals
 
