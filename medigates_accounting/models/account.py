@@ -192,7 +192,7 @@ class AccountMove(models.Model):
 	
     def action_post(self):
         for move in self.filtered(lambda m: m.state == 'draft'):
-            move.date = move.actual_delivery_date or move.invoice_date
+            move.date = move.delivery_date_act or move.invoice_date
 
         return super().action_post()
 
