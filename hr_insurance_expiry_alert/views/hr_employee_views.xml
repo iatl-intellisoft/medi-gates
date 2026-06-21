@@ -1,0 +1,64 @@
+<odoo>
+    <data>
+
+        <record id="view_employee_form_insurance" model="ir.ui.view">
+            <field name="name">hr.employee.form.insurance.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="التأمين" name="insurance_info">
+                        <group>
+                            <group string="بيانات التأمين">
+                                <field name="insurance_number"/>
+                                <field name="insurance_expiry_date"/>
+                            </group>
+                            <group string="الحالة">
+                                <field name="insurance_days_remaining"/>
+                                <field name="insurance_state" widget="badge"
+                                       decoration-success="insurance_state == 'valid'"
+                                       decoration-warning="insurance_state == 'expiring'"
+                                       decoration-danger="insurance_state == 'expired'"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <record id="view_employee_tree_insurance" model="ir.ui.view">
+            <field name="name">hr.employee.tree.insurance.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <field name="department_id" position="after">
+                    <field name="insurance_expiry_date" optional="show"/>
+                    <field name="insurance_state" optional="show" widget="badge"
+                           decoration-success="insurance_state == 'valid'"
+                           decoration-warning="insurance_state == 'expiring'"
+                           decoration-danger="insurance_state == 'expired'"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_employee_filter_insurance" model="ir.ui.view">
+            <field name="name">hr.employee.filter.insurance.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <separator/>
+                    <filter string="تأمين قارب على الانتهاء"
+                            name="insurance_expiring"
+                            domain="[('insurance_state', '=', 'expiring')]"/>
+                    <filter string="تأمين منتهي"
+                            name="insurance_expired"
+                            domain="[('insurance_state', '=', 'expired')]"/>
+                    <filter string="حالة التأمين" name="group_insurance_state"
+                            context="{'group_by': 'insurance_state'}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
