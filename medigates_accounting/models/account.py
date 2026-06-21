@@ -179,10 +179,24 @@ class AccountMove(models.Model):
     delivery_date_act = fields.Date(
         string='Actual delivery  Date',
 		# related= 'invoice_origin.sale_order_id.confirmed_delivery_date',
+		compute='_compute_actual_delivery_date',
         copy=False,
         store=True,
         readonly=False,
     )
+
+
+    @api.depends('invoice_date', 'invoice_origin')
+    def _compute_actual_delivery_date(self):
+        for move in self:
+            if move.move_type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund') and move.invoice_origin:
+                invoice = self.env['account.move'].search([('name', '=', move.invoice_origin)], limit=1)
+                if invoice and invoice.delivery_date_act:
+                    move.delivery_date_act = invoice.delivery_date_act
+                else:
+                    move.delivery_date_act = move.invoice_date
+            else:
+                move.delivery_date_act = move.invoice_date
 
 
 
