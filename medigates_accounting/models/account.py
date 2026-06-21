@@ -178,7 +178,7 @@ class AccountMove(models.Model):
 
     delivery_date_act = fields.Date(
         string='Actual delivery  Date',
-		related= 'invoice_origin.sale_order_id.confirmed_delivery_date',
+		# related= 'invoice_origin.sale_order_id.confirmed_delivery_date',
         copy=False,
         store=True,
         readonly=False,
@@ -189,6 +189,17 @@ class AccountMove(models.Model):
     def _onchange_invoice_date(self):
         if not self.delivery_date_act:
             self.delivery_date_act = self.invoice_date
+	
+    def action_post(self):
+        res = super().action_post()
+
+        for move in self:
+            if move.delivery_date_act:
+                move.write({'date': move.delivery_date_act})
+            elif move.invoice_date:
+                move.write({'date': move.invoice_date})
+
+        return res
 
 
 
