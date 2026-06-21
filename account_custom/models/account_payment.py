@@ -6,18 +6,16 @@ class AccountPayment(models.Model):
     _inherit = "account.payment"
 
     delivery_date_act = fields.Date()
+
     def action_post(self):
         res = super().action_post()
 
         for payment in self:
             if payment.move_id:
-                date = payment.delivery_date_act or payment.move_id.invoice_date
-                payment.move_id.write({
-                    'delivery_date_act': date,
-                    'date': date,
-                })
-
-        return res
+                payment.move_id.delivery_date_act = (
+                    payment.delivery_date_act or
+                    payment.move_id.invoice_date
+                )
 
         return res
     # def unlink(self):
