@@ -48,7 +48,9 @@ class SaleOrder(models.Model):
     @api.model
     def _prepare_invoice(self):
         vals = super()._prepare_invoice()
-        vals['delivery_date_act'] = self.confirmed_delivery_date
+        if self.confirmed_delivery_date:
+            vals['delivery_date_act'] = self.confirmed_delivery_date
+            vals['invoice_date'] = self.confirmed_delivery_date
         return vals
     # def action_confirm(self):
     #     for order in self:
