@@ -7,11 +7,13 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//header" position="inside"> 
-                    <field name="insurance_days_remaining"/>
-                    <field name="insurance_warning_message" widget="badge"
-                           decoration-success="insurance_state == 'valid'"
-                           decoration-warning="insurance_state == 'expiring'"
-                           decoration-danger="insurance_state == 'expired'"/>
+                    <div name="button_box" class="oe_button_box">
+                        <field name="insurance_days_remaining" invisible="1"/>
+                        <field name="insurance_warning_message" widget="badge"
+                               decoration-success="insurance_state == 'valid'"
+                               decoration-warning="insurance_state == 'expiring'"
+                               decoration-danger="insurance_state == 'expired'"/>
+                     </div>
                 </xpath>
                 <notebook position="inside">
                     <page string="التأمين" name="insurance_info">
