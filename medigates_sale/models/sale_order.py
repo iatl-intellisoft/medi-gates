@@ -127,17 +127,17 @@ class SaleOrder(models.Model):
     #                 order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
     #     return res
     def write(self, vals):
-    res = super().write(vals)
-
-    if 'confirmed_delivery_date' in vals and vals.get('confirmed_delivery_date'):
-        for order in self:
-            # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
-            invoices = order.invoice_ids
-            invoices.write({
-                'invoice_date': vals['actual_delivery_date'],
-            })
-
-    return res
+        res = super().write(vals)
+    
+        if 'confirmed_delivery_date' in vals and vals.get('confirmed_delivery_date'):
+            for order in self:
+                # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
+                invoices = order.invoice_ids
+                invoices.write({
+                    'invoice_date': vals['actual_delivery_date'],
+                })
+    
+        return res
 
 
 class SaleOrderLine(models.Model):
