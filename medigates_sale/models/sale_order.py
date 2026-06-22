@@ -134,7 +134,7 @@ class SaleOrder(models.Model):
                 # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
                 invoices = order.invoice_ids
                 invoices.write({
-                    'invoice_date': vals['actual_delivery_date'],
+                    'invoice_date': vals['confirmed_delivery_date'],
                 })
     
         return res
