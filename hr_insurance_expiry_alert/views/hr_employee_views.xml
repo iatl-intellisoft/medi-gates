@@ -6,6 +6,13 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//header" position="inside"> 
+                    <field name="insurance_days_remaining"/>
+                    <field name="insurance_warning_message" widget="badge"
+                           decoration-success="insurance_state == 'valid'"
+                           decoration-warning="insurance_state == 'expiring'"
+                           decoration-danger="insurance_state == 'expired'"/>
+                </xpath>
                 <notebook position="inside">
                     <page string="التأمين" name="insurance_info">
                         <group>
