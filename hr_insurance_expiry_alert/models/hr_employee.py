@@ -53,7 +53,7 @@ class HrEmployee(models.Model):
                 employee.insurance_state = 'valid'
             if employee.insurance_days_remaining < 0:
                 employee.insurance_warning_message = 'تأمين الموظف منتهي منذ %s يوم ' % abs(employee.insurance_days_remaining)        
-            else employee.insurance_days_remaining < 0:
+            elif employee.insurance_days_remaining > 0 and employee.insurance_days_remaining < 30 :
                 employee.insurance_warning_message = 'متبقي علي نهاية تأمين الموظف %s يوم' % employee.insurance_days_remaining 
 
 
