@@ -1,13 +1,12 @@
 <odoo>
     <data>
-
         <record id="view_employee_form_insurance" model="ir.ui.view">
             <field name="name">hr.employee.form.insurance.inherit</field>
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//header" position="inside"> 
-                    <div name="button_box" class="oe_button_box">
+                    <div >
                         <field name="insurance_days_remaining" invisible="1"/>
                         <field name="insurance_warning_message" widget="badge"
                                decoration-success="insurance_state == 'valid'"
@@ -49,7 +48,6 @@
                 </field>
             </field>
         </record>
-
         <record id="view_employee_filter_insurance" model="ir.ui.view">
             <field name="name">hr.employee.filter.insurance.inherit</field>
             <field name="model">hr.employee</field>
@@ -68,6 +66,5 @@
                 </xpath>
             </field>
         </record>
-
     </data>
 </odoo>
