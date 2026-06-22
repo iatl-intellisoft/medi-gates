@@ -26,6 +26,8 @@ class HrEmployee(models.Model):
         compute='_compute_insurance_state',
         groups='hr.group_hr_user',
     )
+    insurance_warning_message = fields.Char(
+    )
     insurance_state = fields.Selection([
         ('none', 'غير محدد'),
         ('valid', 'ساري'),
@@ -49,6 +51,11 @@ class HrEmployee(models.Model):
                 employee.insurance_state = 'expiring'
             else:
                 employee.insurance_state = 'valid'
+            if emp.insurance_days_remaining < 0:
+                emp.insurance_warning_message = 'منتهي منذ %s يوم' % abs(emp.insurance_days_remaining)        
+            else:
+                emp.insurance_warning_message = 'متبقي %s يوم' % emp.insurance_days_remaining
+
 
     def _get_insurance_alert_recipients(self):
         """ يقرأ عناوين البريد من إعدادات الموظفين، وإن لم تكن محددة
