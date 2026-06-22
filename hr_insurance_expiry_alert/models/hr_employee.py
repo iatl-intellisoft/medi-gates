@@ -51,10 +51,10 @@ class HrEmployee(models.Model):
                 employee.insurance_state = 'expiring'
             else:
                 employee.insurance_state = 'valid'
-            if emp.insurance_days_remaining < 0:
-                emp.insurance_warning_message = 'منتهي منذ %s يوم' % abs(emp.insurance_days_remaining)        
+            if employee.insurance_days_remaining < 0:
+                employee.insurance_warning_message = 'منتهي منذ %s يوم' % abs(emp.insurance_days_remaining)        
             else:
-                emp.insurance_warning_message = 'متبقي %s يوم' % emp.insurance_days_remaining
+                employee.insurance_warning_message = 'متبقي %s يوم' % emp.insurance_days_remaining
 
 
     def _get_insurance_alert_recipients(self):
