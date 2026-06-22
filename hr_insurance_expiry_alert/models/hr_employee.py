@@ -52,9 +52,9 @@ class HrEmployee(models.Model):
             else:
                 employee.insurance_state = 'valid'
             if employee.insurance_days_remaining < 0:
-                employee.insurance_warning_message = 'منتهي منذ %s يوم' % abs(employee.insurance_days_remaining)        
-            else:
-                employee.insurance_warning_message = 'متبقي %s يوم' % employee.insurance_days_remaining
+                employee.insurance_warning_message = 'منتهي منذ %s يوم' % abs(employee.insurance_days_remaining)  'علي نهاية تأمين الموظف'      
+            else employee.insurance_days_remaining < 0:
+                employee.insurance_warning_message = 'متبقي %s يوم' % employee.insurance_days_remaining 'علي نهاية تأمين الموظف'
 
 
     def _get_insurance_alert_recipients(self):
