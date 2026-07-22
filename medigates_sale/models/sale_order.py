@@ -50,7 +50,7 @@ class SaleOrder(models.Model):
         vals = super()._prepare_invoice()
         if self.confirmed_delivery_date:
             vals['delivery_date_act'] = self.confirmed_delivery_date
-            vals['invoice_date'] = self.confirmed_delivery_date
+            # vals['invoice_date'] = self.confirmed_delivery_date
         return vals
     # def action_confirm(self):
     #     for order in self:
@@ -134,7 +134,7 @@ class SaleOrder(models.Model):
                 # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
                 invoices = order.invoice_ids
                 invoices.write({
-                    'invoice_date': vals['confirmed_delivery_date'],
+                    # 'invoice_date': vals['confirmed_delivery_date'],
                 })
     
         return res
