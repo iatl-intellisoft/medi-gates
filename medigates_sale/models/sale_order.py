@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError,UserError
 from datetime import datetime, timedelta
-
+ 
 SALE_ORDER_STATE = [
     ('draft', "Quotation"),
     ('sent', "Quotation Sent"),
@@ -11,8 +11,6 @@ SALE_ORDER_STATE = [
     ('sale', "Sales Order"),
     ('cancel', "Cancelled"),
 ]
-
-
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -35,7 +33,7 @@ class SaleOrder(models.Model):
     def _confirmation_error_message(self):
         """ Return whether order can be confirmed or not if not then returm error message. """
         self.ensure_one()
-        if self.state not in {'accountant','sent'}:
+        if self.state not in {'accountant', 'sent'}:
             return _("Some orders are not in a state requiring confirmation.")
         if any(
             not line.display_type
@@ -46,7 +44,14 @@ class SaleOrder(models.Model):
             return _("A line on these orders missing a product, you cannot confirm it.")
 
         return False
-        
+    
+    @api.model
+    def _prepare_invoice(self):
+        vals = super()._prepare_invoice()
+        if self.confirmed_delivery_date:
+            vals['delivery_date_act'] = self.confirmed_delivery_date
+            vals['invoice_date'] = self.confirmed_delivery_date
+        return vals
     # def action_confirm(self):
     #     for order in self:
     #         insufficient_products = []
@@ -84,7 +89,18 @@ class SaleOrder(models.Model):
     #                 "for a customer outside the local city."
     #             ))
     #     return super()._create_invoices(grouped=grouped, final=final)
-
+    def _create_invoices(self, grouped=False, final=False, date=None):
+        for order in self:
+            if order.customer_outside_local_city and not order.confirmed_delivery_date:
+                raise UserError(_(
+                    "Invoice cannot be created because the Confirmed Delivery Date is missing "
+                    "for a customer outside the local city."
+                ))    
+        return super()._create_invoices(
+            grouped=grouped,
+            final=final,
+            date=date
+        )
 
     def action_sales_supervisor(self):
         self.write({'state': 'sales_supervisor'})
@@ -95,6 +111,7 @@ class SaleOrder(models.Model):
     def action_accountant_manager(self):
         self.write({'state': 'accountant'})
 
+
     @api.model
     def create(self, vals):
         order = super().create(vals)
@@ -102,12 +119,24 @@ class SaleOrder(models.Model):
             order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
         return order
 
+    # def write(self, vals):
+    #     res = super().write(vals)
+    #     if 'confirmed_delivery_date' in vals:
+    #         for order in self:
+    #             if order.invoice_ids:
+    #                 order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
+    #     return res
     def write(self, vals):
         res = super().write(vals)
-        if 'confirmed_delivery_date' in vals:
+    
+        if 'confirmed_delivery_date' in vals and vals.get('confirmed_delivery_date'):
             for order in self:
-                if order.invoice_ids:
-                    order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
+                # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
+                invoices = order.invoice_ids
+                invoices.write({
+                    'invoice_date': vals['confirmed_delivery_date'],
+                })
+    
         return res
 
 
@@ -136,6 +165,7 @@ class SaleOrderLine(models.Model):
                     f"Ordered: {qty_ordered_in_stock_uom:.2f} {line.product_id.uom_id.name}(s)."
                 )
 
+
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
@@ -143,5 +173,3 @@ class StockMoveLine(models.Model):
         related="lot_id.expiration_date",
         store=True
     )
-
-
