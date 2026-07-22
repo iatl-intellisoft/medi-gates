@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_employee_form_visa_warning" model="ir.ui.view">
+        <field name="name">hr.employee.form.visa.warning</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="visa_warning" invisible="1"/>
+                <field name="visa_warning_message" invisible="1"/>
+                <div>
+                    <field name="visa_warning_message" 
+                           widget="badge"
+                           decoration-warning="visa_warning"
+                           invisible="not visa_warning"
+                           readonly="1"
+                         />
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
