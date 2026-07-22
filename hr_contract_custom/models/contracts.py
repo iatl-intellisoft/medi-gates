@@ -30,7 +30,10 @@ class Contracts(models.Model):
         ('p3', 'P3'),
         ('s1', 'S1'),
         ('s2', 'S2'),
-        ('s3', 'S3')
+        ('s3', 'S3'),
+        ('p_1', 'p1'),
+        ('p_2', 'p2'),
+        ('p_3', 'p3')
     ], string='Grade',
         track_visibility='onchange', default='m3', store='True')
     currency_id_usd = fields.Many2one('res.currency', string='Currency USD')
