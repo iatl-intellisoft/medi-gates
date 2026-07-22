@@ -111,6 +111,22 @@
     </field>
 </record>
 
+<record id="sale_invoice_report2_company_rule" model="ir.rule">
+    <field name="name">Sale Invoice Report Multi Company</field>
+    <field name="model_id" ref="model_sale_invoice_report2"/>
+    <field name="global" eval="True"/>
+    <field name="domain_force">
+        [('company_id', 'in', company_ids)]
+    </field>
+</record>
+<!-- <record id="sale_invoice_report_company_rule" model="ir.rule">
+    <field name="name">Sales Invoice Report Multi Company</field>
+    <field name="model_id" ref="model_sale_invoice_report2"/>
+    <field name="domain_force">
+        [('company_id', 'in', company_ids)]
+    </field>
+</record> -->
+
 <!-- Menu Item -->
 <menuitem id="menu_sale_invoice_report201"
           name="Sales Invoice Report"
