@@ -1,0 +1,287 @@
+from odoo import api, fields, models
+
+class SaleReturnReport(models.Model):
+    _name = "order.return"
+    _description = "Sales Return Analysis Report"
+    _auto = False
+    _rec_name = 'return_date'
+    _order = 'return_date desc'
+
+    # --- Source Links ---
+    sale_id = fields.Many2one('sale.order', string="Sales Order", readonly=True)
+    sale_picking_id = fields.Many2one('stock.picking', string="Return Picking", readonly=True)
+    return_order_id = fields.Many2one('account.move', string="Credit Note", domain=[('move_type', '=', 'out_refund')], readonly=True)
+
+    # --- Basic Info ---
+    name = fields.Char(string="Return Reference", readonly=True)
+    return_date = fields.Datetime(string="Return Date", readonly=True)
+    partner_id = fields.Many2one('res.partner', string="Customer", readonly=True)
+    company_id = fields.Many2one('res.company', string="Company", readonly=True)
+    currency_id = fields.Many2one('res.currency', string="Currency", readonly=True)
+
+    # --- Sales Info ---
+    user_id = fields.Many2one('res.users', string="Salesperson", readonly=True)
+    team_id = fields.Many2one('crm.team', string="Sales Team", readonly=True)
+    state = fields.Selection(selection=[
+        ('draft', 'Draft'),
+        ('posted', 'Posted'),
+        ('cancel', 'Cancelled'),
+    ], string="Status", readonly=True)
+    pricelist_id = fields.Many2one('product.pricelist', string="Pricelist", readonly=True)
+    campaign_id = fields.Many2one('utm.campaign', string="Campaign", readonly=True)
+    medium_id = fields.Many2one('utm.medium', string="Medium", readonly=True)
+    source_id = fields.Many2one('utm.source', string="Source", readonly=True)
+
+    # --- Customer Info ---
+    commercial_partner_id = fields.Many2one('res.partner', string="Customer Entity", readonly=True)
+    country_id = fields.Many2one('res.country', string="Country", readonly=True)
+    industry_id = fields.Many2one('res.partner.industry', string="Industry", readonly=True)
+    partner_zip = fields.Char(string="ZIP", readonly=True)
+    state_id = fields.Many2one('res.country.state', string="State", readonly=True)
+    city = fields.Char(string="City", readonly=True)
+
+    # --- Product Info ---
+    product_id = fields.Many2one('product.product', string="Product Variant", readonly=True)
+    product_tmpl_id = fields.Many2one('product.template', string="Product", readonly=True)
+    categ_id = fields.Many2one('product.category', string="Category", readonly=True)
+    product_uom = fields.Many2one('uom.uom', string="Unit of Measure", readonly=True)
+    weight = fields.Float(string="Weight", readonly=True)
+    volume = fields.Float(string="Volume", readonly=True)
+
+    # --- Return Quantities ---
+    product_uom_qty = fields.Float(string="Qty Returned", readonly=True)
+    product_bonus_uom_qty = fields.Float(string="Bonus Qty Returned", readonly=True)
+
+    # --- Financials ---
+    price_unit = fields.Float(string="Unit Price", readonly=True)
+    discount = fields.Float(string="Discount %", readonly=True)
+    discount_amount = fields.Monetary(string="Discount Amount", readonly=True)
+    price_subtotal = fields.Monetary(string="Untaxed Subtotal", readonly=True)
+    amount_total = fields.Monetary(string="Total", readonly=True)
+
+    # --- Invoicing ---
+    invoice_date = fields.Datetime(string="Invoice Date", readonly=True)
+    line_invoice_status = fields.Selection(
+        selection=[
+            ('upselling', "Upselling Opportunity"),
+            ('invoiced', "Fully Invoiced"),
+            ('to invoice', "To Invoice"),
+            ('no', "Nothing to Invoice"),
+        ],
+        string="Invoice Status",
+        readonly=True
+    )
+
+    # --- Aggregate ---
+    nbr = fields.Integer(string="# of Lines", readonly=True)
+
+    # --- Action to open related return ---
+    def action_open_return(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'view_mode': 'form',
+            'res_id': self.return_order_id.id,
+        }
+
+    @property
+    def _table_query(self):
+        return self._query()
+
+    def _query(self):
+        return """
+        SELECT
+            MIN(aml.id) AS id,
+            am.id AS return_order_id,
+            am.name AS name,
+            am.invoice_date AS return_date,
+            am.partner_id,
+            am.company_id,
+            am.currency_id,
+            am.state,
+            sol.order_id AS sale_id,
+            sp.id AS sale_picking_id,
+            rp.commercial_partner_id,
+            rp.country_id,
+            rp.industry_id,
+            rp.state_id,
+            rp.zip AS partner_zip,
+            rp.city,
+            am.user_id,
+            am.team_id,
+            so.pricelist_id,
+            so.campaign_id,
+            so.medium_id,
+            so.source_id,
+            pp.id AS product_id,
+            pt.id AS product_tmpl_id,
+            pt.categ_id,
+            aml.product_uom_id AS product_uom,
+            pt.weight,
+            pt.volume,
+            aml.quantity AS product_uom_qty,
+            CASE WHEN aml.price_unit = 0 THEN aml.quantity ELSE 0 END AS product_bonus_uom_qty,
+            aml.price_unit,
+            aml.discount,
+            (aml.price_unit * aml.quantity * aml.discount / 100.0) AS discount_amount,
+            aml.price_subtotal,
+            aml.price_total AS amount_total,
+            COUNT(*) AS nbr,
+            aml.date AS invoice_date,
+            'invoiced' AS line_invoice_status
+
+        FROM account_move am
+        JOIN account_move_line aml ON aml.move_id = am.id
+        LEFT JOIN sale_order_line_invoice_rel rel ON rel.invoice_line_id = aml.id
+        LEFT JOIN sale_order_line sol ON sol.id = rel.order_line_id
+        LEFT JOIN sale_order so ON so.id = sol.order_id
+        LEFT JOIN res_partner rp ON am.partner_id = rp.id
+        LEFT JOIN stock_picking sp ON sp.origin = so.name AND sp.picking_type_id IN (
+            SELECT id FROM stock_picking_type WHERE return_picking_type_id IS NOT NULL
+        )
+        LEFT JOIN product_product pp ON aml.product_id = pp.id
+        LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+
+        WHERE am.move_type = 'out_refund' AND am.state = 'posted'
+
+        GROUP BY
+            am.id, am.name, am.invoice_date, am.partner_id, am.company_id, am.currency_id, am.state,
+            sol.order_id, sp.id,
+            rp.commercial_partner_id, rp.country_id, rp.industry_id, rp.state_id, rp.zip, rp.city,
+            am.user_id, am.team_id,
+            so.pricelist_id, so.campaign_id, so.medium_id, so.source_id,
+            pp.id, pt.id, pt.categ_id, aml.product_uom_id, pt.weight, pt.volume,
+            aml.quantity, aml.price_unit, aml.discount, aml.price_subtotal, aml.price_total, aml.date
+        """
+
+
+amount_total_qty = fields.Float(string="Total Qty Returned", readonly=True)
+
+
+SUM(aml.quantity) AS amount_total_qty,
+
+line_invoice_number = fields.Char(related='return_order_id.ref', string='Invoice Number')
+return_order_id = fields.Many2one('account.move', string="Return Invoice")
+line_invoice_number = fields.Char(related='return_order_id.ref', string='Invoice Number')
+
+sql/ am.name AS line_invoice_number
+Join account_move in _from_sale():
+LEFT JOIN account_move_line aml ON aml.sale_line_ids = l.id
+LEFT JOIN account_move am ON aml.move_id = am.id
+
+Then define the field as a normal field (not related):
+line_invoice_number = fields.Char(string='Invoice Number', readonly=True)
+
+////
+Add a return report showing the returned quantity, the remaining quantity of sale order after return, and the original ordered quantity in the sale order. list view odoo18 
+
+1. Python Model Changes
+
+If your “return report” model is SQL‐view based (as before), you’ll extend _select_sale(), _from_sale(), and _group_by_sale(). If it's ORM (regular model) you’d use computed fields.
+
+Here’s assuming ORM model (simpler for ordered/returned quantities), but I can also show SQL‑view version if you prefer.
+
+ORM Version Example
+
+from odoo import api, fields, models
+
+class OrderReturnReport(models.Model):
+    _name = 'order.return.report'
+    _description = 'Sales Return with Remaining Qty'
+
+    sale_order_id = fields.Many2one('sale.order', string="Sale Order", readonly=True)
+    product_id = fields.Many2one('product.product', string="Product", readonly=True)
+    ordered_qty = fields.Float(string="Ordered Quantity", readonly=True)
+    returned_qty = fields.Float(string="Returned Quantity", readonly=True)
+    remaining_qty = fields.Float(string="Remaining Quantity", readonly=True)
+
+    @api.depends('sale_order_id.order_line.qty_ordered', 'sale_order_id.order_line.returned_qty')
+    def _compute_remaining(self):
+        for rec in self:
+            # sum on sale order lines matching product, etc.
+            ordered = 0.0
+            returned = 0.0
+            if rec.sale_order_id and rec.product_id:
+                for line in rec.sale_order_id.order_line.filtered(lambda l: l.product_id == rec.product_id):
+                    ordered += line.product_uom_qty
+                    # returned_qty: you need to track the return qty per sale order line
+                    # This depends on your return mechanism; assuming you have a field
+                    returned += line.returned_qty  
+            rec.ordered_qty = ordered
+            rec.returned_qty = returned
+            rec.remaining_qty = ordered - returned
+
+
+            ////////
+
+            2. SQL‑View Based Report Version
+
+If you're using your SQL‐view report approach like earlier:
+
+Modify _select_sale() to include:
+
+so_line.product_uom_qty AS ordered_qty,
+SUM(l.qty_return / u.factor * u2.factor) AS returned_qty,
+(so_line.product_uom_qty - SUM(l.qty_return / u.factor * u2.factor)) AS remaining_qty,
+
+/////
+
+Assumptions:
+
+so_line is alias for sale_order_line linked via your joins
+
+l is your return line table
+
+You’ll need to:
+
+Join to sale_order_line (alias sol) on product + sale order
+
+Group by so_line.product_uom_qty (or part of grouping)
+
+Be careful with GROUP BY so fields that are not aggregated must be grouped
+
+Sample changes:
+
+In your _from_sale() ensure:
+
+LEFT JOIN sale_order_line sol ON sol.order_id = s.sale_id AND sol.product_id = l.product_id
+
+
+/////
+
+Then in _select_sale():
+
+sol.product_uom_qty AS ordered_qty,
+CASE WHEN l.price_unit > 0 THEN SUM(l.qty_return / u.factor * u2.factor) ELSE 0 END AS returned_qty,
+(sol.product_uom_qty - 
+  CASE WHEN l.price_unit > 0 THEN SUM(l.qty_return / u.factor * u2.factor) ELSE 0 END
+) AS remaining_qty,
+
+
+In _group_by_sale() add sol.product_uom_qty.
+
+///////
+
+3. XML List View
+
+Add the fields to your tree view, e.g.:
+
+<record id="view_order_return_report_tree" model="ir.ui.view">
+  <field name="name">order.return.report.tree.remaining</field>
+  <field name="model">order.return.report</field>
+  <field name="arch" type="xml">
+    <tree string="Return Analysis with Remaining Qty">
+      <field name="sale_order_id" string="Sale Order"/>
+      <field name="product_id" string="Product"/>
+      <field name="ordered_qty" string="Ordered Qty"/>
+      <field name="returned_qty" string="Returned Qty"/>
+      <field name="remaining_qty" string="Remaining Qty"/>
+      <!-- plus other fields you already have -->
+    </tree>
+  </field>
+</record>
+/////
+
+
+

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- QWeb Reports -->
+        <record id="order_return_template_report" model="ir.actions.report">
+            <field name="name">Return Report</field>
+            <field name="model">order.return</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">order_return.order_return_template</field>
+            <field name="report_file">order_return.order_return_template</field>
+            <field name="binding_model_id" ref="model_order_return"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="view_order_return_report_list" model="ir.ui.view">
+            <field name="name">view.order.return.list</field>
+            <field name="model">order.return.report</field>
+            <field name="arch" type="xml">
+                <list string="Sales Return Analysis" action="action_open_order" type="object">
+                    <field name="company_id" optional="show" groups="base.group_multi_company" string="Company Name"/>
+                    <field name="return_name" string="Return Number" optional="show"/>
+                    <field name="sale_id_reference"/>
+                    <field name="return_date" string="Return Date"/>
+                    <field name="invoice_number" string="Invoice Number" optional="hide"/>
+                    <field name="invoice_date" string="Invoice Date"/>
+                    <field name="product_id" string="Product" optional="show"/>
+                    <field name="partner_id"/>
+                    <field name="city"/>
+                    <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                    <field name="location_id"/>
+                    <field name="product_uom_qty" string="Qty Returned" sum="Sum of Quantity"/>
+                    <field name="product_bonus_uom_qty" string="Bonus Qty Returned" sum="Bonus Returned Qty"/>
+                    <field name="price_unit" widget="monetary" avg="Average Price"/>
+                    <!-- ✅ إضافة: عمود إجمالي السعر مع sum -->
+                    <field name="price_subtotal" widget="monetary" string="Total Price" sum="Total"/>
+                    <field name="currency_id" invisible="1"/>
+                    <!-- ✅ إصلاح: state يقرأ الآن حالات draft/confirmed/done -->
+                    <field name="state" optional="show"/>
+                    <field name="line_invoice_status" string="Invoice Status" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_order_return_search" model="ir.ui.view">
+            <field name="name">order.return.report.search</field>
+            <field name="model">order.return.report</field>
+            <field name="arch" type="xml">
+                <search string="Sales Return Analysis Report">
+                    <field name="return_date"/>
+                    <field name="invoice_date"/>
+                    <field name="invoice_number"/>
+                    <field name="sale_id_reference"/>
+                    <field name="location_id"/>
+                    <!-- ✅ إصلاح: تم حذف فلاتر Quotations و Sales Orders لأنها غير منطقية على تقرير المرتجعات -->
+                    <filter string="Return Date" name="filter_return_date" date="return_date" default_period="year"/>
+                    <filter string="Invoice Date" name="filter_invoice_date" date="invoice_date" default_period="year"/>
+                    <!-- ✅ إصلاح: تم تصحيح تكرار name="year" في الفلاتر -->
+                    <separator/>
+                    <field name="user_id"/>
+                    <field name="team_id"/>
+                    <field name="product_id"/>
+                    <field name="product_tmpl_id"/>
+                    <field name="categ_id"/>
+                    <field name="partner_id"/>
+                    <field name="country_id"/>
+                    <field name="industry_id"/>
+                    <group expand="0" string="Extended Filters">
+                        <field name="categ_id" filter_domain="[('categ_id', 'child_of', self)]"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group expand="1" string="Group By">
+                        <filter string="Salesperson" name="group_user" context="{'group_by':'user_id'}"/>
+                        <filter string="Return Location" name="group_location" context="{'group_by':'location_id'}"/>
+                        <filter string="Sales Team" name="group_team" context="{'group_by':'team_id'}"/>
+                        <filter string="Customer" name="group_partner" context="{'group_by':'partner_id'}"/>
+                        <filter string="Customer City" name="group_city" context="{'group_by':'city'}"/>
+                        <filter string="Customer Country" name="group_country" context="{'group_by':'country_id'}"/>
+                        <filter string="Customer Industry" name="group_industry" context="{'group_by':'industry_id'}"/>
+                        <filter string="Product" name="group_product_tmpl" context="{'group_by':'product_tmpl_id'}"/>
+                        <filter string="Product Variant" name="group_product" context="{'group_by':'product_id'}"
+                                groups="product.group_product_variant"/>
+                        <filter string="Product Category" name="group_categ" context="{'group_by':'categ_id'}"/>
+                        <filter string="Status" name="group_status" context="{'group_by':'state'}"/>
+                        <filter string="Company" name="group_company" groups="base.group_multi_company" context="{'group_by':'company_id'}"/>
+                        <separator/>
+                        <filter string="Return Date" name="group_return_date" context="{'group_by':'return_date'}"/>
+                        <filter string="Invoice Date" name="group_invoice_date" context="{'group_by':'invoice_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_order_return_report_all" model="ir.actions.act_window">
+            <field name="name">Sales Return Analysis</field>
+            <field name="res_model">order.return.report</field>
+            <field name="view_mode">list,graph,pivot</field>
+            <field name="search_view_id" ref="view_order_return_search"/>
+            <!-- ✅ إصلاح: domain يتوافق مع حالات order.return الفعلية -->
+            <field name="domain">[('state', 'in', ('confirmed', 'done'))]</field>
+            <field name="context">{'group_by': []}</field>
+        </record>
+
+        <menuitem id="menu_reporting_order_return"
+                  name="Sales Return Analysis"
+                  action="action_order_return_report_all"
+                  parent="sale.menu_sale_report"
+                  sequence="25"/>
+
+    </data>
+</odoo>

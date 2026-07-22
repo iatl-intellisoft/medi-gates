@@ -1,0 +1,93 @@
+<odoo>
+
+      <!-- ==================== TREE VIEW ==================== -->
+    <record id="view_stock_move_incoming_list" model="ir.ui.view">
+        <field name="name">stock.move.incoming.tree</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <list string="Moves" create="0" default_order="date desc" duplicate="0">
+                    <field name="date" groups="base.group_no_one" decoration-danger="(state not in ('cancel','done')) and date > current_date"/>
+                    <field name="purchase_name"/>
+                    <field name="reference"/>
+                    <field name="picking_type_id" column_invisible="True"/>
+                    <field name="location_usage" column_invisible="True"/>
+                    <field name="location_dest_usage" column_invisible="True"/>
+                    <field name="product_id" readonly="state == 'done'"/>
+                    <field name="price_unit" string="Price Unit"/>
+                    <field name="currency_id" string="Currency"/>
+                    <field name="location_id" options="{'no_create': True}" string="From"
+                        decoration-muted="location_usage not in ('internal','transit')"/>
+                    <field name="location_dest_id" options="{'no_create': True}" string="To"
+                        decoration-muted="location_dest_usage not in ('internal','transit')"/>
+                    <field name="product_packaging_id" groups="product.group_stock_packaging"
+                        optional="hide" context="{'default_product_id': product_id}"
+                        readonly="not product_id"/>
+                    <field name="product_uom_qty" sum="Total Demand" readonly="state == 'done'"/>
+                    <field name="quantity" string="Quantity" sum="Total Quantity"
+                        decoration-danger="(location_usage in ('internal','transit')) and (location_dest_usage not in ('internal','transit'))"
+                        decoration-success="(location_usage not in ('internal','transit')) and (location_dest_usage in ('internal','transit'))"/>
+                    <field name="product_uom" options="{'no_open': True, 'no_create': True}" string="Unit" groups="uom.group_uom"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state" widget='badge' optional="show"
+                           decoration-danger="state=='cancel'"
+                           decoration-info="state== 'assigned'"
+                           decoration-muted="state == 'draft'"
+                           decoration-success="state == 'done'"
+                           decoration-warning="state not in ('draft','cancel','done','assigned')"/>
+                </list>
+           <!--  <list>
+                <field name="purchase_name"/>
+                <field name="product_id" string="Product"/>
+                <field name="product_uom_qty" string="Quantity"/>
+                <field name="price_unit" string="Price Unit"/>
+                <field name="currency_id" string="Currency"/>
+                <field name="stock_out_ref" string="Stock Out Ref"/>
+                <field name="location_dest_id" string="Destination"/>
+                <field name="state" string="Status"/>
+            </list> -->
+        </field>
+    </record>
+
+    <!-- ==================== SEARCH VIEW ==================== -->
+   <!--  <record id="view_stock_move_incoming_search" model="ir.ui.view">
+        <field name="name">stock.move.incoming.search</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="purchase_name"/>
+                <field name="product_id"/>
+                <field name="currency_id"/>
+                <field name="location_dest_id"/>
+                <filter string="Incoming" name="incoming_filter" domain="[('picking_type_code','=','incoming')]"/>
+                <filter string="Done" name="done_filter" domain="[('state','=','done')]"/>
+            </search>
+        </field>
+    </record> -->
+    <!-- ==================== ACTION ==================== -->
+    <record id="action_stock_move_incoming_list" model="ir.actions.act_window">
+        <field name="name">Moves Analysis</field>
+        <field name="res_model">stock.move</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_stock_move_incoming_list"/>
+        <field name="search_view_id" ref="stock.view_move_search"/>
+        <!-- <field name="domain">[('picking_type_code','=','incoming')]</field> -->
+         <field name="context">{'search_default_done': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No incoming stock moves found.
+            </p>
+            <p>
+                This view shows all incoming stock moves with purchase reference, product, quantity, price, currency, origin, destination, and state.
+            </p>
+        </field>
+    </record>
+
+  
+
+    <!-- ==================== MENU ITEM ==================== -->
+    <menuitem id="menu_stock_move_purchase"
+              name="Moves Analysis"
+              parent="purchase.purchase_report_main"
+              action="action_stock_move_incoming_list"
+              sequence="3"/>
+</odoo>

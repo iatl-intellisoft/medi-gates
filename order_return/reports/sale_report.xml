@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Action -->
+        <record id="action_sale_report_posted" model="ir.actions.act_window">
+            <field name="name">Sales by Posted Invoice</field>
+            <field name="res_model">sale.report.posted</field>
+            <field name="view_mode">list,pivot,graph</field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_sale_report_posted_search" model="ir.ui.view">
+            <field name="name">sale.report.posted.search</field>
+            <field name="model">sale.report.posted</field>
+            <field name="arch" type="xml">
+                <search string="Sales by Posted Invoice">
+                    <filter string="My Sales" name="my_sales"
+                            domain="[('user_id', '=', uid)]"/>
+                    <filter string="My Teams" name="my_teams"
+                            domain="[('team_id.member_ids', '=', uid)]"/>
+                    <separator/>
+                    <filter string="Invoice Date" name="order_date" date="date"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Salesperson" name="salesperson"
+                                context="{'group_by': 'user_id'}"/>
+                        <filter string="Sales Team" name="sales_team"
+                                context="{'group_by': 'team_id'}"/>
+                        <filter string="Customer" name="customer"
+                                context="{'group_by': 'partner_id'}"/>
+                        <filter string="Customer Country" name="country"
+                                context="{'group_by': 'country_id'}"/>
+                        <separator/>
+                        <filter string="Invoice Date" name="group_invoice_date"
+                                context="{'group_by': 'date:month'}"/>
+                        <filter string="Order Status" name="order_status"
+                                context="{'group_by': 'state'}"/>
+                        <filter string="Invoice Status" name="invoice_status"
+                                context="{'group_by': 'invoice_status'}"/>
+                        <separator/>
+                        <filter string="Company" name="company"
+                                context="{'group_by': 'company_id'}"/>
+                        <filter string="Pricelist" name="pricelist"
+                                context="{'group_by': 'pricelist_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_sale_report_posted_graph" model="ir.ui.view">
+            <field name="name">sale.report.posted.graph</field>
+            <field name="model">sale.report.posted</field>
+            <field name="arch" type="xml">
+                <graph string="Sales by Posted Invoice" type="bar" sample="1">
+                    <field name="date" interval="month"/>
+                    <field name="price_subtotal" type="measure"/>
+                    <field name="price_total" type="measure"/>
+                    <field name="untaxed_amount_invoiced" type="measure"/>
+                    <field name="product_uom_qty" type="measure"/>
+                    <field name="qty_invoiced" type="measure"/>
+                    <field name="nbr" string="# of Lines" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Pivot View -->
+        <record id="view_sale_report_posted_pivot" model="ir.ui.view">
+            <field name="name">sale.report.posted.pivot</field>
+            <field name="model">sale.report.posted</field>
+            <field name="arch" type="xml">
+                <pivot string="Sales by Posted Invoice" sample="1">
+                    <field name="date" interval="month" type="row"/>
+                    <field name="team_id" type="col"/>
+                    <field name="price_subtotal" type="measure"/>
+                    <field name="price_total" type="measure"/>
+                    <field name="untaxed_amount_invoiced" type="measure"/>
+                    <field name="product_uom_qty" type="measure"/>
+                    <field name="qty_invoiced" type="measure"/>
+                    <field name="nbr" string="# of Lines" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- List View -->
+        <record id="view_sale_report_posted_list" model="ir.ui.view">
+            <field name="name">sale.report.posted.list</field>
+            <field name="model">sale.report.posted</field>
+            <field name="arch" type="xml">
+                <list string="Sales by Posted Invoice" sample="1">
+                    <field name="date" string="Invoice Date"/>
+                    <field name="name" string="Order Reference"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="team_id" optional="hide"/>
+                    <field name="state"/>
+                    <field name="invoice_status"/>
+                    <field name="product_uom_qty" sum="Qty Ordered"/>
+                    <field name="qty_invoiced" sum="Qty Invoiced"/>
+                    <!-- <field name="price_subtotal" sum="Untaxed Total"/> -->
+                    <field name="price_total" sum="Total"/>
+                    <field name="untaxed_amount_invoiced" sum="Untaxed Amount Invoiced"/>
+                    <field name="discount_amount" sum="Discount Amount" optional="hide"/>
+                    <field name="country_id" optional="hide"/>
+                    <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_sale_report_posted"
+                  name="Sales Analysis Report by Posted Invoice"
+                  parent="sale.menu_sale_report"
+                  action="action_sale_report_posted"
+                 />
+
+    </data>
+</odoo>
