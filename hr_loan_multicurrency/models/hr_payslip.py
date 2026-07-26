@@ -58,7 +58,7 @@ class HrPayslip(models.Model):
             input_type = self.env['hr.payslip.input.type'].search(
                 [('code', '=', LOAN_INPUT_CODE)], limit=1)
 
-        self.env['hr.payslip.input.line'].create({
+        self.env['hr.payslip.input'].create({
             'payslip_id': self.id,
             'input_type_id': input_type.id if input_type else False,
             'code': LOAN_INPUT_CODE,
