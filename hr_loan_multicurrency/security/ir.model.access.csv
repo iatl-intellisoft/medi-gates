@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_loan_fx_manager,hr.loan.fx.manager,model_hr_loan_fx,hr_payroll.group_hr_payroll_manager,1,1,1,1
+access_hr_loan_fx_user,hr.loan.fx.user,model_hr_loan_fx,hr_payroll.group_hr_payroll_user,1,1,1,0
+access_hr_loan_fx_line_manager,hr.loan.fx.line.manager,model_hr_loan_fx_line,hr_payroll.group_hr_payroll_manager,1,1,1,1
+access_hr_loan_fx_line_user,hr.loan.fx.line.user,model_hr_loan_fx_line,hr_payroll.group_hr_payroll_user,1,1,0,0
