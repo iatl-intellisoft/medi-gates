@@ -177,11 +177,16 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     delivery_date_act = fields.Date(
-	    string='Actual Delivery Date',
-	    related='sale_order_id.confirmed_delivery_date',
+	    string="Actual Delivery Date",
+	    compute="_compute_delivery_date_act",
 	    store=True,
-	    readonly=False,
 	)
+	
+	@api.depends('invoice_line_ids.sale_line_ids')
+	def _compute_delivery_date_act(self):
+	    for move in self:
+	        sale_orders = move.invoice_line_ids.sale_line_ids.order_id
+	        move.delivery_date_act = sale_orders[:1].confirmed_delivery_date if sale_orders else False
 
     @api.onchange('invoice_date')
     def _onchange_invoice_date(self):
