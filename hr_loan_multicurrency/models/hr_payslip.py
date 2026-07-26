@@ -65,9 +65,9 @@ class HrPayslip(models.Model):
             'name': _('استقطاع قسط قرض: %s') % loan.name,
             'amount': amount_company_currency,
         })
-        # نحتفظ بمرجع مؤقت (context) لربط القسيمة بسطر القرض عند التثبيت
-        self._context = dict(self._context, loan_line_to_settle=due_line.id)
         self.loan_line_id = due_line.id
+
+        
 
     def action_payslip_done(self):
         res = super().action_payslip_done()
