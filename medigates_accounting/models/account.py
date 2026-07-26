@@ -177,13 +177,11 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     delivery_date_act = fields.Date(
-        string='Actual delivery  Date',
-		related= 'invoice_origin.sale_order_id.confirmed_delivery_date',
-        copy=False,
-        store=True,
-        readonly=False,
-    )
-
+	    string='Actual Delivery Date',
+	    related='sale_order_id.confirmed_delivery_date',
+	    store=True,
+	    readonly=False,
+	)
 
     @api.onchange('invoice_date')
     def _onchange_invoice_date(self):
