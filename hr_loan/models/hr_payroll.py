@@ -274,6 +274,7 @@ class HrPayslip(models.Model):
 class HrPayslipLine(models.Model):
     _inherit = 'hr.payslip.line'
 
+    foreign_amount = fields.Float(string='Foreign Amount')
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
