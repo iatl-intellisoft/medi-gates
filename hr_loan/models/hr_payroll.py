@@ -105,16 +105,59 @@ class HrPayslip(models.Model):
     #     self.get_loan()
     #     return super(HrPayslip, self.sudo()).compute_sheet()
         
+    # def action_payslip_done(self):
+    #     """
+    #     A method to loan from payslip
+    #     """
+    #     for rec in self:
+    #         res = super(HrPayslip, rec.sudo()).action_payslip_done()
+    #         loan_lines = rec.env['hr.loan.line'].search([('payslip_id', '=', rec.id)])
+    #         if loan_lines:
+    #             for line in loan_lines:
+    #                 line.action_paid_amount()
+    #     return res
+
     def action_payslip_done(self):
         """
-        A method to loan from payslip
+        Mark loan installments as paid and update move line currencies.
         """
         for rec in self:
             res = super(HrPayslip, rec.sudo()).action_payslip_done()
-            loan_lines = rec.env['hr.loan.line'].search([('payslip_id', '=', rec.id)])
-            if loan_lines:
-                for line in loan_lines:
-                    line.action_paid_amount()
+
+            if rec.move_id:
+                company_currency = rec.company_id.currency_id
+
+                for move_line in rec.move_id.line_ids:
+                    payslip_line = rec.line_ids.filtered(
+                        lambda l: (
+                            l.name == move_line.name
+                            and abs(
+                                l.total - (move_line.debit or move_line.credit)
+                            ) < 0.00001
+                        )
+                    )[:1]
+
+                    if (
+                        payslip_line
+                        and payslip_line.currency_id
+                        and payslip_line.currency_id != company_currency
+                    ):
+                        amount = (
+                            move_line.debit
+                            if move_line.debit
+                            else -move_line.credit
+                        )
+
+                        move_line.write({
+                            'currency_id': payslip_line.currency_id.id,
+                            'amount_currency': amount,
+                        })
+
+            loan_lines = self.env['hr.loan.line'].search([
+                ('payslip_id', '=', rec.id)
+            ])
+            loan_lines.action_paid_amount()
+
         return res
 
     def action_payslip_cancel(self):
