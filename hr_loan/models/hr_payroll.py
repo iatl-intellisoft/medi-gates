@@ -67,33 +67,34 @@ class HrPayslip(models.Model):
 
         return True
         
-    def compute_sheet(self):
-        self.get_loan()
-    
-        res = super(HrPayslip, self.sudo()).compute_sheet()
-    
-        for slip in self:
-            loan_line = slip.loan_ids[:1]
-            if not loan_line:
-                continue
-    
-            salary_line = slip.line_ids.filtered(
-                lambda l: l.code == 'LOAN'
-            )
-    
-            if salary_line:
-                salary_line.write({
-                    'currency_id': loan_line.loan_id.currency_id.id,
-                })
-    
-        return res
-
     # def compute_sheet(self):
-    #     """
-    #     inherit from compute_sheet to compute loan from payslip
-    #     """
     #     self.get_loan()
-    #     return super(HrPayslip, self.sudo()).compute_sheet()
+    
+    #     res = super(HrPayslip, self.sudo()).compute_sheet()
+    
+    #     for slip in self:
+    #         loan_line = slip.loan_ids[:1]
+    #         if not loan_line:
+    #             continue
+    
+    #         salary_line = slip.line_ids.filtered(
+    #             lambda l: l.code == 'LOAN'
+    #         )
+    
+    #         if salary_line:
+    #             salary_line.write({
+    #                 'currency_id': loan_line.loan_id.currency_id.id,
+    #             })
+    
+    #     return res
+
+    
+    def compute_sheet(self):
+        """
+        inherit from compute_sheet to compute loan from payslip
+        """
+        self.get_loan()
+        return super(HrPayslip, self.sudo()).compute_sheet()
         
     def action_payslip_done(self):
         """
@@ -123,11 +124,11 @@ class HrPayslip(models.Model):
             rec.loan_ids.write({'payslip_id': False, 'paid': False})
         return super(HrPayslip, self).action_draft()
         
-class HrPayslipLine(models.Model):
-    _inherit = 'hr.payslip.line'
+# class HrPayslipLine(models.Model):
+#     _inherit = 'hr.payslip.line'
 
-    currency_id = fields.Many2one(
-        'res.currency',
-        string='Currency',
-        default=lambda self: self.env.company.currency_id,
-    )
+#     currency_id = fields.Many2one(
+#         'res.currency',
+#         string='Currency',
+#         default=lambda self: self.env.company.currency_id,
+#     )
