@@ -77,7 +77,7 @@ class HrPayslip(models.Model):
                 if line.salary_rule_id.currency_id:
                     line.currency_id = line.salary_rule_id.currency_id.id
                     if line.salary_rule_id.currency_id.name == 'USD':
-                        line.foreign_amount = line.amount
+                        line.foreign_amount = line.total
                         
     
         return res
