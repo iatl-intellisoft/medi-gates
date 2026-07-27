@@ -70,20 +70,18 @@ class HrPayslip(models.Model):
     def compute_sheet(self):
         self.get_loan()
     
-        res = super(HrPayslip, self.sudo()).compute_sheet()
+        res = super().compute_sheet()
     
         for slip in self:
-            loan_line = slip.loan_ids[:1]
-            if not loan_line:
+            loan = slip.loan_ids[:1]
+            if not loan:
                 continue
     
-            salary_line = slip.line_ids.filtered(
-                lambda l: l.code == 'LOAN'
-            )
+            loan_salary_line = slip.line_ids.filtered(lambda l: l.code == 'USDL')
     
-            if salary_line:
-                salary_line.write({
-                    'currency_id': loan_line.loan_id.currency_id.id,
+            if loan_salary_line:
+                loan_salary_line.write({
+                    'currency_id': loan.loan_id.currency_id.id,
                 })
     
         return res
