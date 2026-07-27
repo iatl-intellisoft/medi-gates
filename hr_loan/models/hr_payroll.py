@@ -76,6 +76,9 @@ class HrPayslip(models.Model):
             for line in slip.line_ids:
                 if line.salary_rule_id.currency_id:
                     line.currency_id = line.salary_rule_id.currency_id.id
+                    if line.salary_rule_id.currency_id.name == 'USD':
+                        line.foreign_amount = line.amount
+                        
     
         return res
         
@@ -199,8 +202,8 @@ class HrPayslip(models.Model):
         if currency and currency != company_currency:
             sign = 1 if debit else -1
             vals['currency_id'] = currency.id
-            vals['amount_currency'] = sign * abs(line.amount)
-            # vals['amount_currency'] = sign * abs(line.foreign_amount) 
+            # vals['amount_currency'] = sign * abs(line.amount)
+            vals['amount_currency'] = sign * abs(line.foreign_amount) 
         else:
             vals['currency_id'] = company_currency.id
             vals['amount_currency'] = 0.0
