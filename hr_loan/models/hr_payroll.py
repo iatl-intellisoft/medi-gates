@@ -66,25 +66,36 @@ class HrPayslip(models.Model):
             rec.loan_ids = loan_lines
 
         return True
-        
     def compute_sheet(self):
         self.get_loan()
     
         res = super().compute_sheet()
     
         for slip in self:
-            loan = slip.loan_ids[:1]
-            if not loan:
-                continue
-    
-            loan_salary_line = slip.line_ids.filtered(lambda l: l.code == 'USDL')
-    
-            if loan_salary_line:
-                loan_salary_line.write({
-                    'currency_id': loan.loan_id.currency_id.id,
-                })
+            for line in slip.line_ids:
+                if line.salary_rule_id.currency_id:
+                    line.currency_id = line.salary_rule_id.currency_id.id
     
         return res
+        
+    # def compute_sheet(self):
+    #     self.get_loan()
+    
+    #     res = super().compute_sheet()
+    
+    #     for slip in self:
+    #         loan = slip.loan_ids[:1]
+    #         if not loan:
+    #             continue
+    
+    #         loan_salary_line = slip.line_ids.filtered(lambda l: l.code == 'USDL')
+    
+    #         if loan_salary_line:
+    #             loan_salary_line.write({
+    #                 'currency_id': loan.loan_id.currency_id.id,
+    #             })
+    
+    #     return res
 
     
     # def compute_sheet(self):
