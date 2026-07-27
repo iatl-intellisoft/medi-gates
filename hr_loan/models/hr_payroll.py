@@ -199,7 +199,8 @@ class HrPayslip(models.Model):
         if currency and currency != company_currency:
             sign = 1 if debit else -1
             vals['currency_id'] = currency.id
-            vals['amount_currency'] = sign * abs(line.foreign_amount)
+            vals['amount_currency'] = sign * abs(line.amount)
+            # vals['amount_currency'] = sign * abs(line.foreign_amount) 
         else:
             vals['currency_id'] = company_currency.id
             vals['amount_currency'] = 0.0
