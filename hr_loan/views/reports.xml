@@ -1,5 +1,4 @@
 <odoo>
-    <data>
         <report
                 string="Loan Requests Forms"
                 id="action_loan_requests_report"
@@ -8,5 +7,4 @@
                 name="hr_loan.report_loan_document"
                 file="hr_loan.report_loan_document"
         />
-    </data>
 </odoo>
