@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
+from odoo.tools import float_is_zero
 
 
 class HrPayslip(models.Model):
