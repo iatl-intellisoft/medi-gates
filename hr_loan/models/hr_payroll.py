@@ -217,6 +217,15 @@ class HrPayslip(models.Model):
             line_id for line_id in existing_lines
             if line_id.get('currency_id') == currency.id
         )
+    def _get_amount_in_company_currency(self, line):
+        company_currency = self.company_id.currency_id
+        currency = line.currency_id
+        if currency and currency != company_currency:
+            date = self.date or self.date_to
+            return currency._convert(
+                line.foreign_amount, company_currency, self.company_id, date
+            )
+        return line.total
 
     def _prepare_slip_lines(self, date, line_ids):
         """نفس منطق hr_payroll_account الأصلي، مع إصلاح تجميع amount_currency
@@ -227,7 +236,8 @@ class HrPayslip(models.Model):
         new_lines = []
 
         for line in self.line_ids.filtered(lambda l: l.category_id):
-            amount = line.total
+            # amount = line.total
+            amount = self._get_amount_in_company_currency(line)
             if line.code == 'NET':
                 for tmp_line in self.line_ids.filtered(lambda l: l.category_id):
                     if tmp_line.salary_rule_id.not_computed_in_net:
