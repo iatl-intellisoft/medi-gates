@@ -221,10 +221,10 @@ class HrPayslip(models.Model):
         company_currency = self.company_id.currency_id
         currency = line.currency_id
         if currency and currency != company_currency:
-            date = self.date or self.date_to
-            return currency._convert(
-                line.foreign_amount, company_currency, self.company_id, date
-            )
+            rate = self.usd_rate or self.payslip_run_id.usd_rate
+            if not rate:
+                raise UserError(_("USD exchange rate is not set for this payslip batch."))
+            return line.foreign_amount * rate
         return line.total
 
     def _prepare_slip_lines(self, date, line_ids):
