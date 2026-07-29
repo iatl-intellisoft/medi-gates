@@ -195,6 +195,19 @@ class HrPayslip(models.Model):
 # class HrPayslip(models.Model):
 #     _inherit = 'hr.payslip'
 
+    # def _prepare_line_values(self, line, account_id, date, debit, credit):
+    #     vals = super()._prepare_line_values(line, account_id, date, debit, credit)
+    #     company_currency = self.company_id.currency_id
+    #     currency = line.currency_id
+    #     if currency and currency != company_currency:
+    #         sign = 1 if debit else -1
+    #         vals['currency_id'] = currency.id
+    #         # vals['amount_currency'] = sign * abs(line.amount)
+    #         vals['amount_currency'] = sign * abs(line.foreign_amount) 
+    #     else:
+    #         vals['currency_id'] = company_currency.id
+    #         vals['amount_currency'] = 0.0
+    #     return vals
     def _prepare_line_values(self, line, account_id, date, debit, credit):
         vals = super()._prepare_line_values(line, account_id, date, debit, credit)
         company_currency = self.company_id.currency_id
@@ -202,11 +215,7 @@ class HrPayslip(models.Model):
         if currency and currency != company_currency:
             sign = 1 if debit else -1
             vals['currency_id'] = currency.id
-            # vals['amount_currency'] = sign * abs(line.amount)
-            vals['amount_currency'] = sign * abs(line.foreign_amount) 
-        else:
-            vals['currency_id'] = company_currency.id
-            vals['amount_currency'] = 0.0
+            vals['amount_currency'] = sign * abs(line.foreign_amount)
         return vals
 
     def _get_existing_lines(self, line_ids, line, account_id, debit, credit):
