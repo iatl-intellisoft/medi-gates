@@ -28,17 +28,17 @@ class Contracts(models.Model):
         ('p1', 'P1'),
         ('p2', 'P2'),
         ('p3', 'P3'),
-        ('s1', 'S1'),
-        ('s2', 'S2'),
-        ('s3', 'S3'),
         ('p_1', 'p1'),
         ('p_2', 'p2'),
-        ('p_3', 'p3')
+        ('p_3', 'p3'),
+        ('s1', 'S1'),
+        ('s2', 'S2'),
+        ('s3', 'S3')
     ], string='Grade',
         track_visibility='onchange', default='m3', store='True')
     currency_id_usd = fields.Many2one('res.currency', string='Currency USD')
 
-    usd_salary = fields.Float(string='USD Salary', store=True)
+    usd_salary = fields.Float(string='Salary', store=True)
     manager_insentive = fields.Float(string="Manager's Insentive SDG", store=True)
 
 
