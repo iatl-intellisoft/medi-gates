@@ -176,7 +176,7 @@ class ResPartner(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 	
-	delivery_date_act = fields.Date(
+    delivery_date_act = fields.Date(
 	    string="Actual Delivery Date",
 	    compute="_compute_delivery_date_act",
 	    store=True,
