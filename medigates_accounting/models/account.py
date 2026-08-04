@@ -196,7 +196,7 @@ class AccountMove(models.Model):
 	    store=True,
 	)
     @api.depends(
-    'sale_order_id.confirmed_delivery_date'
+    'sale_order_id'
     )
     def _compute_delivery_date_act(self):
         for move in self:
