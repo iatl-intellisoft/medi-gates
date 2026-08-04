@@ -175,13 +175,29 @@ class ResPartner(models.Model):
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
-
     delivery_date_act = fields.Date(
-        string='Actual delivery  Date',
-        copy=False,
-        store=True,
-        readonly=False,
+	    string="Actual Delivery Date",
+	    compute="_compute_delivery_date_act",
+	    store=True,
+	)
+    @api.depends(
+    'invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date'
     )
+    def _compute_delivery_date_act(self):
+        for move in self:
+            sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
+            move.delivery_date_act = sale_order.confirmed_delivery_date if sale_order else False
+
+    @api.onchange('invoice_date')
+    def _onchange_invoice_date(self):
+        if not self.delivery_date_act:
+            self.delivery_date_act = self.invoice_date
+	
+    # def action_post(self):
+    #     for move in self.filtered(lambda m: m.state == 'draft'):
+    #         move.date = move.delivery_date_act or move.invoice_date
+
+    #     return super().action_post()
 
 
 
@@ -282,6 +298,60 @@ class AccountMove(models.Model):
                         'amount_currency': invoice.amount_total_in_currency_signed,
                     }
 
+    # # @api.model
+    # def action_post(self):
+    #     res = super(AccountMove, self).action_post()
+    #     for move in self:
+    #         # Find related picking via sale_id
+    #         if move.invoice_origin:
+    #             pickings = self.env['stock.picking'].search([('sale_id.name', '=', move.invoice_origin)])
+    #             pickings.write({'state': 'account_approved'})
+    #     return res
+
+# class StockPicking(models.Model):
+#     _inherit = 'stock.picking'
+
+#     state = fields.Selection(selection_add=[('account_approved', 'Account Approved')])
+
+#     invoice_ids = fields.Many2many(
+#         'account.move',
+#         string='Invoices',
+#         compute='_compute_invoice_ids'
+#     )
+
+#     @api.depends('sale_id')
+#     def _compute_invoice_ids(self):
+#         for picking in self:
+#             if picking.sale_id:
+#                 picking.invoice_ids = self.env['account.move'].search([
+#                     ('invoice_origin', '=', picking.sale_id.name),
+#                     ('move_type', 'in', ['out_invoice', 'out_refund'])
+#                 ])
+#             else:
+#                 picking.invoice_ids = False
+
+#     # def action_view_invoices(self):
+#     #     self.ensure_one()
+#     #     action = self.env.ref('account.action_print_pdf').read()[0]
+#     #     action['domain'] = [('id', 'in', self.invoice_ids.ids)]
+#     #     return action
+
+#     def action_view_invoices(self):
+#         self.ensure_one()
+#         if not self.invoice_ids:
+#             return {
+#                 'type': 'ir.actions.client',
+#                 'tag': 'display_notification',
+#                 'params': {
+#                     'title': 'No invoices found',
+#                     'message': 'There are no invoices linked to this sale order.',
+#                     'type': 'warning',
+#                 }
+#             }
+
+#         action = self.env.ref('account.action_move_out_invoice_type').read()[0]
+#         action['domain'] = [('id', 'in', self.invoice_ids.ids)]
+#         return action
 
 
-
+    
