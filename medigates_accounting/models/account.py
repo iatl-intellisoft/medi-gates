@@ -176,7 +176,7 @@ class ResPartner(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 	
-	sale_order_id = fields.Many2one(
+    sale_order_id = fields.Many2one(
         'sale.order',
         compute='_compute_sale_order',
         store=True,
