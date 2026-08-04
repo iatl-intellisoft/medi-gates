@@ -176,28 +176,14 @@ class ResPartner(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 	
-    sale_order_id = fields.Many2one(
-        'sale.order',
-        compute='_compute_sale_order',
-        store=True,
-    )
-
-    @api.depends('invoice_origin')
-    def _compute_sale_order(self):
-        SaleOrder = self.env['sale.order']
-        for move in self:
-            move.sale_order_id = SaleOrder.search(
-                [('name', '=', move.invoice_origin)],
-                limit=1
-            )
-    delivery_date_act = fields.Date(
+	delivery_date_act = fields.Date(
 	    string="Actual Delivery Date",
 	    compute="_compute_delivery_date_act",
 	    store=True,
 	)
     @api.depends(
-    'sale_order_id.confirmed_delivery_date'
-    )
+	    'invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date'
+	)
     def _compute_delivery_date_act(self):
         for move in self:
             sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
