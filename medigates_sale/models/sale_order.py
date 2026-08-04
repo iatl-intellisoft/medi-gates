@@ -16,7 +16,7 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
 
-    confirmed_delivery_date = fields.Date(string="Confirmed Delivery Date")
+    confirmed_delivery_date = fields.Date(string="Confirmed Delivery Date",store=True)
     customer_outside_local_city = fields.Boolean(string="Customer Outside Local City")
     global_discount = fields.Boolean(
         string='Global Discount',)
