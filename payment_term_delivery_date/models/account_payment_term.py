@@ -16,6 +16,23 @@ class AccountPaymentTermLine(models.Model):
 class AccountPaymentTerm(models.Model):
     _inherit = 'account.payment.term'
 
+    def _compute_terms(self, date_ref, currency, company, tax_amount,
+                        tax_amount_currency, sign, untaxed_amount,
+                        untaxed_amount_currency, cash_rounding=None,
+                        delivery_date_act=False):
+        result = super()._compute_terms(
+            date_ref, currency, company, tax_amount, tax_amount_currency,
+            sign, untaxed_amount, untaxed_amount_currency,
+            cash_rounding=cash_rounding,
+        )
+        delivery_date_act = delivery_date_act or self.env.context.get('delivery_date_act')
+        if not delivery_date_act:
+            return result
+        for line, value in zip(self.line_ids, result):
+            if line.delay_type == 'delivery_date_act':
+                value['date'] = delivery_date_act + timedelta(days=line.nb_days)
+        return result
+                            
     def _compute_terms(
         self,
         date_ref,
