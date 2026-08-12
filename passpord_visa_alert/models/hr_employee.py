@@ -5,6 +5,18 @@ from odoo import api, fields, models
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
     
+    insurance_expiry_date = fields.Date(
+        string="Insurance Expiration Date"
+        store=True
+    )
+    insurance_warning = fields.Boolean(
+        compute='_compute_insurance_warning',
+        store=False,
+    )
+    insurance_warning_message = fields.Text(
+        compute='_compute_insurance_warning',
+        store=False,
+    )
     visa_warning = fields.Boolean(
         compute='_compute_visa_warning',
         store=False,
@@ -13,6 +25,28 @@ class HrEmployee(models.Model):
         compute='_compute_visa_warning',
         store=False,
     )
+    @api.depends('insurance_expiry_date')
+    def _compute_insurance_warning(self):
+        today = fields.Date.today()
+
+        for employee in self:
+            employee.insurance_warning = False
+            employee.insurance_warning_message = False
+            insurance_days_left = (employee.insurance_expiry_date - today).days
+
+            if insurance_days_left < 0:
+                employee.insurance_warning = True
+                employee.insurance_warning_message = (
+                    f'Employee insurance expired on {employee.insurance_expiry_date}'
+                )
+
+            elif insurance_days_left <= 15:
+                employee.insurance_warning = True
+                employee.insurance_warning_message = (
+                    f'Employee insurance will expire after {insurance_days_left} day(s) '
+                    f'on {employee.insurance_expiry_date}'
+                )
+
 
     @api.depends('visa_expire')
     def _compute_visa_warning(self):
@@ -22,34 +56,20 @@ class HrEmployee(models.Model):
             employee.visa_warning = False
             employee.visa_warning_message = False
 
-            # visa = self.env['hr.visa'].search(
-            #     [
-            #         ('employee_id', '=', employee.id),
-            #         ('state', '=', 'open'),
-            #         ('date_end', '!=', False),
-            #     ],
-            #     order='date_end desc',
-            #     limit=1,
-            # )
+            visa_days_left = (employee.visa_expire - today).days 
 
-            # if not visa:
-            #     continue
-
-            days_left = (employee.visa_expire - today).days
-
-            if days_left < 0:
+            if visa_days_left < 0:
                 employee.visa_warning = True
                 employee.visa_warning_message = (
                     f'Employee visa expired on {employee.visa_expire}'
                 )
 
-            elif days_left <= 21:
+            elif visa_days_left <= 15:
                 employee.visa_warning = True
                 employee.visa_warning_message = (
-                    f'Employee visa will expire after {days_left} day(s) '
+                    f'Employee visa will expire after {visa_days_left} day(s) '
                     f'on {employee.visa_expire}'
                 )
-
 
 
     # visa_alert_sent = fields.Boolean(
