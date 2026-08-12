@@ -40,14 +40,14 @@ class HrEmployee(models.Model):
             if days_left < 0:
                 employee.visa_warning = True
                 employee.visa_warning_message = (
-                    f'Employee visa expired on {visa.date_end}'
+                    f'Employee visa expired on {employee.visa_expire}'
                 )
 
             elif days_left <= 21:
                 employee.visa_warning = True
                 employee.visa_warning_message = (
                     f'Employee visa will expire after {days_left} day(s) '
-                    f'on {visa.date_end}'
+                    f'on {employee.visa_expire}'
                 )
 
 
