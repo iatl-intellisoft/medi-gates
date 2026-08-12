@@ -4,98 +4,145 @@ from odoo import api, fields, models
 
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
-
-    visa_alert_sent = fields.Boolean(
-        string='Visa Alert Sent',
-        default=False,
-        copy=False
-    )
-
+    
     visa_warning = fields.Boolean(
-        compute='_compute_visa_warning'
+        compute='_compute_visa_warning',
+        store=False,
     )
-
-    visa_warning_message = fields.Char(
-        compute='_compute_visa_warning'
+    visa_warning_message = fields.Text(
+        compute='_compute_visa_warning',
+        store=False,
     )
 
     @api.depends('visa_expire')
     def _compute_visa_warning(self):
         today = fields.Date.today()
 
-        for rec in self:
-            rec.visa_warning = False
-            rec.visa_warning_message = False
+        for employee in self:
+            employee.visa_warning = False
+            employee.visa_warning_message = False
 
-            if not rec.visa_expire:
-                continue
+            # visa = self.env['hr.visa'].search(
+            #     [
+            #         ('employee_id', '=', employee.id),
+            #         ('state', '=', 'open'),
+            #         ('date_end', '!=', False),
+            #     ],
+            #     order='date_end desc',
+            #     limit=1,
+            # )
 
-            if rec.visa_expire <= today:
-                rec.visa_warning = True
-                rec.visa_warning_message = (
-                    'Visa has expired.'
+            # if not visa:
+            #     continue
+
+            days_left = (employee.visa_expire - today).days
+
+            if days_left < 0:
+                employee.visa_warning = True
+                employee.visa_warning_message = (
+                    f'Employee visa expired on {visa.date_end}'
                 )
 
-            elif rec.visa_expire <= today + timedelta(days=21):
-                rec.visa_warning = True
-                rec.visa_warning_message = (
-                    'Visa will expire within 21 days.'
+            elif days_left <= 21:
+                employee.visa_warning = True
+                employee.visa_warning_message = (
+                    f'Employee visa will expire after {days_left} day(s) '
+                    f'on {visa.date_end}'
                 )
 
-    def write(self, vals):
-        res = super().write(vals)
 
-        if 'visa_expire' in vals:
-            self.write({
-                'visa_alert_sent': False
-            })
 
-        return res
+    # visa_alert_sent = fields.Boolean(
+    #     string='Visa Alert Sent',
+    #     default=False,
+    #     copy=False
+    # )
 
-    @api.model
-    def cron_visa_expiry_alert(self):
+    # visa_warning = fields.Boolean(
+    #     compute='_compute_visa_warning'
+    # )
 
-        target_date = (
-            fields.Date.today()
-            + timedelta(days=21)
-        )
+    # visa_warning_message = fields.Char(
+    #     compute='_compute_visa_warning'
+    # )
 
-        employees = self.search([
-            ('visa_expire', '=', target_date),
-            ('visa_alert_sent', '=', False),
-        ])
+    # @api.depends('visa_expire')
+    # def _compute_visa_warning(self):
+    #     today = fields.Date.today()
 
-        template = self.env.ref(
-            'passpord_visa_alert.email_template_visaa'
-        )
+    #     for rec in self:
+    #         rec.visa_warning = False
+    #         rec.visa_warning_message = False
 
-        hr_users = self.env.ref(
-            'hr.group_hr_user'
-        ).users.filtered(
-            lambda u: u.partner_id.email
-        )
+    #         if not rec.visa_expire:
+    #             continue
 
-        for employee in employees:
+    #         if rec.visa_expire <= today:
+    #             rec.visa_warning = True
+    #             rec.visa_warning_message = (
+    #                 'Visa has expired.'
+    #             )
 
-            recipients = hr_users
+    #         elif rec.visa_expire <= today + timedelta(days=21):
+    #             rec.visa_warning = True
+    #             rec.visa_warning_message = (
+    #                 'Visa will expire within 21 days.'
+    #             )
 
-            if (
-                employee.parent_id
-                and employee.parent_id.user_id
-                and employee.parent_id.user_id.partner_id.email
-            ):
-                recipients |= employee.parent_id.user_id
+    # def write(self, vals):
+    #     res = super().write(vals)
 
-            for user in recipients:
-                template.send_mail(
-                    employee.id,
-                    email_values={
-                        'email_to': user.partner_id.email,
-                    },
-                    force_send=True
-                )
+    #     if 'visa_expire' in vals:
+    #         self.write({
+    #             'visa_alert_sent': False
+    #         })
 
-            employee.visa_alert_sent = True 
+    #     return res
+
+    # @api.model
+    # def cron_visa_expiry_alert(self):
+
+    #     target_date = (
+    #         fields.Date.today()
+    #         + timedelta(days=21)
+    #     )
+
+    #     employees = self.search([
+    #         ('visa_expire', '=', target_date),
+    #         ('visa_alert_sent', '=', False),
+    #     ])
+
+    #     template = self.env.ref(
+    #         'passpord_visa_alert.email_template_visaa'
+    #     )
+
+    #     hr_users = self.env.ref(
+    #         'hr.group_hr_user'
+    #     ).users.filtered(
+    #         lambda u: u.partner_id.email
+    #     )
+
+    #     for employee in employees:
+
+    #         recipients = hr_users
+
+    #         if (
+    #             employee.parent_id
+    #             and employee.parent_id.user_id
+    #             and employee.parent_id.user_id.partner_id.email
+    #         ):
+    #             recipients |= employee.parent_id.user_id
+
+    #         for user in recipients:
+    #             template.send_mail(
+    #                 employee.id,
+    #                 email_values={
+    #                     'email_to': user.partner_id.email,
+    #                 },
+    #                 force_send=True
+    #             )
+
+    #         employee.visa_alert_sent = True 
 
     # passport_warning = fields.Boolean(
     #     compute='_compute_passport_warning'
