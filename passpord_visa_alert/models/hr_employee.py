@@ -32,6 +32,8 @@ class HrEmployee(models.Model):
         for employee in self:
             employee.insurance_warning = False
             employee.insurance_warning_message = False
+            if not employee.insurance_expiry_date:
+                continue
             insurance_days_left = (employee.insurance_expiry_date - today).days
 
             if insurance_days_left < 0:
