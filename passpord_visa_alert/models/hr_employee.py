@@ -6,7 +6,7 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
     
     insurance_expiry_date = fields.Date(
-        string="Insurance Expiration Date"
+        string="Insurance Expiration Date",
         store=True
     )
     insurance_warning = fields.Boolean(
