@@ -45,7 +45,7 @@ class HrEmployee(models.Model):
                     f'Employee contract expired on {contract.date_end}'
                 )
 
-            elif days_left <= 21:
+            elif days_left <= 30:
                 employee.contract_warning = True
                 employee.contract_warning_message = (
                     f'Employee contract will expire after {days_left} day(s) '
