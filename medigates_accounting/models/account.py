@@ -187,7 +187,7 @@ class AccountMove(models.Model):
     #         sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
     #         move.delivery_date_act = sale_order.confirmed_delivery_date if sale_order else False
 
-	@api.depends(
+    @api.depends(
         'invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date'
     )
     def _compute_delivery_date_act(self):
