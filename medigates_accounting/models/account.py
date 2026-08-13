@@ -176,30 +176,54 @@ class ResPartner(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 	
-    delivery__act = fields.(
-	    string="Actual Delivery ",
-	    compute="_compute_delivery__act",
+    delivery_date_act = fields.Date(
+	    string="Actual Delivery Date",
+	    compute="_compute_delivery_date_act",
 	    store=True,
 	)
-    # @api.depends('invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_')
-    # def _compute_delivery__act(self):
-    #     for move in self:
-    #         sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
-    #         move.delivery__act = sale_order.confirmed_delivery_ if sale_order else False
-
-    @api.depends(
-        'invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_'
-    )
-    def _compute_delivery__act(self):
+    @api.depends('invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date')
+    def _compute_delivery_date_act(self):
         for move in self:
             sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
+            move.delivery_date_act = sale_order.confirmed_delivery_date if sale_order else False
 
-            move.delivery__act = (
-                sale_order.confirmed_delivery_
-                if sale_order
-                else False
-            )
+    @api.onchange('invoice_date')
+    def _onchange_invoice_date(self):
+        if not self.delivery_date_act:
+            self.delivery_date_act = self.invoice_date
+	
+    # def action_post(self):
+    #     for move in self.filtered(lambda m: m.state == 'draft'):
+    #         move.date = move.delivery_date_act or move.invoice_date
 
+    #     return super().action_post()
+
+
+
+    def check_overdue_trusted_customers(self):
+        today = date.today()
+        overdue_invoices = self.search([
+            ('partner_id.trust_custom', '=', True),
+            ('state', '=', 'posted'),
+            ('payment_state', '!=', 'paid'),
+            ('invoice_date_due', '<', today),
+        ])
+
+        for invoice in overdue_invoices:
+            message = f"🚨 Invoice {invoice.name} for trusted customer {invoice.partner_id.name} is overdue (Due: {invoice.invoice_date_due})."
+            # Notify Salesperson
+            if invoice.invoice_user_id:
+                invoice.message_post(
+                    body=message,
+                    partner_ids=[invoice.invoice_user_id.partner_id.id],
+                )
+            # Notify Accountant Group (Optional)
+            group = self.env.ref('account.group_account_invoice')
+            for user in group.users:
+                invoice.message_post(
+                    body=message,
+                    partner_ids=[user.partner_id.id],
+                )
     def _get_payment_terms_computation_(self):
         self.ensure_one()
 
