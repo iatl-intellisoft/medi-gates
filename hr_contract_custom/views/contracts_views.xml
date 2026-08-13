@@ -9,7 +9,7 @@
                 <xpath expr="//field[@name='wage']"  position="attributes">
                     <attribute name="invisible">employee_grade in ('d','g','m3','m2','m1','p3','p2','p1')</attribute>
                 </xpath>
-                <xpath expr="//field[@name='wage']"  position="after">
+                <xpath expr="//field[@name='wage_type']"  position="before">
                     <field name="entitlement"/>
                 </xpath>
                 <xpath expr="//group[@name='salary']" position="before">
