@@ -270,7 +270,8 @@ class AccountMove(models.Model):
                     for term_line in invoice_payment_terms['line_ids']:
                         key = frozendict({
                             'move_id': invoice.id,
-                            'date_maturity': fields.Date.to_date(term_line.get('date')),
+                        	'date_maturity': fields.Date.to_date(invoice.delivery_date_act),
+                            # 'date_maturity': fields.Date.to_date(term_line.get('date')),
                             'discount_date': invoice_payment_terms.get('discount_date'),
                         })
                         values = {
@@ -288,7 +289,8 @@ class AccountMove(models.Model):
                 else:
                     invoice.needed_terms[frozendict({
                         'move_id': invoice.id,
-                        'date_maturity': fields.Date.to_date(invoice.invoice_date_due),
+                        'date_maturity': fields.Date.to_date(invoice.delivery_date_act),
+                        # 'date_maturity': fields.Date.to_date(invoice.invoice_date_due),
                         'discount_date': False,
                         'discount_balance': 0.0,
                         'discount_amount_currency': 0.0
