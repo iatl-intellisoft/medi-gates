@@ -178,26 +178,52 @@ class AccountMove(models.Model):
 	
     delivery_date_act = fields.Date(
 	    string="Actual Delivery Date",
-	    # compute="_compute_delivery_date_act",
+	    compute="_compute_delivery_date_act",
 	    store=True,
 	)
-    @api.depends('invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date')
+    # @api.depends('invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date')
+    # def _compute_delivery_date_act(self):
+    #     for move in self:
+    #         sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
+    #         move.delivery_date_act = sale_order.confirmed_delivery_date if sale_order else False
+
+	@api.depends(
+        'invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date'
+    )
     def _compute_delivery_date_act(self):
         for move in self:
             sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
-            move.delivery_date_act = sale_order.confirmed_delivery_date if sale_order else False
+
+            move.delivery_date_act = (
+                sale_order.confirmed_delivery_date
+                if sale_order
+                else False
+            )
+
+    def _get_payment_terms_computation_date(self):
+        self.ensure_one()
+
+        if self.delivery_date_act:
+            return self.delivery_date_act
+
+        return super()._get_payment_terms_computation_date()
+
+    def _recompute_payment_terms_lines(self):
+        for move in self:
+            super(
+                AccountMove,
+                move.with_context(
+                    delivery_date_act=move.delivery_date_act
+                )
+            )._recompute_payment_terms_lines()
+
+        return True
 
     @api.onchange('invoice_date')
     def _onchange_invoice_date(self):
         if not self.delivery_date_act:
             self.delivery_date_act = self.invoice_date
 	
-    # def action_post(self):
-    #     for move in self.filtered(lambda m: m.state == 'draft'):
-    #         move.date = move.delivery_date_act or move.invoice_date
-
-    #     return super().action_post()
-
 
 
     def check_overdue_trusted_customers(self):
