@@ -57,6 +57,8 @@ class HrEmployee(models.Model):
         for employee in self:
             employee.visa_warning = False
             employee.visa_warning_message = False
+            if not employee.visa_expire:
+                continue
 
             visa_days_left = (employee.visa_expire - today).days 
 
