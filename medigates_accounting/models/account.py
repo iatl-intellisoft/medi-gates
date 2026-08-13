@@ -178,7 +178,7 @@ class AccountMove(models.Model):
 	
     delivery_date_act = fields.Date(
 	    string="Actual Delivery Date",
-	    compute="_compute_delivery_date_act",
+	    # compute="_compute_delivery_date_act",
 	    store=True,
 	)
     @api.depends('invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date')
