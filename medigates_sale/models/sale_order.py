@@ -127,39 +127,17 @@ class SaleOrder(models.Model):
     #                 order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
     #     return res
     def write(self, vals):
-        delivery_date_changed = 'confirmed_delivery_date' in vals
-    
         res = super().write(vals)
     
-        if delivery_date_changed:
+        if 'confirmed_delivery_date' in vals and vals.get('confirmed_delivery_date'):
             for order in self:
-                invoices = order.invoice_ids.filtered(
-                    lambda inv: (
-                        inv.state == 'posted'
-                        and inv.move_type in ('out_invoice', 'out_refund')
-                        and inv.invoice_payment_term_id
-                    )
-                )
-    
-                # تأكد أن computed field في invoice اتحدث
-                invoices._compute_delivery_date_act()
-    
-                for invoice in invoices:
-                    invoice._recompute_payment_terms_lines()
+                # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
+                invoices = order.invoice_ids
+                invoices.write({
+                    # 'invoice_date': vals['confirmed_delivery_date'],
+                })
     
         return res
-    # def write(self, vals):
-    #     res = super().write(vals)
-    
-    #     if 'confirmed_delivery_date' in vals and vals.get('confirmed_delivery_date'):
-    #         for order in self:
-    #             # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
-    #             invoices = order.invoice_ids
-    #             invoices.write({
-    #                 # 'invoice_date': vals['confirmed_delivery_date'],
-    #             })
-    
-    #     return res
 
 
 class SaleOrderLine(models.Model):
