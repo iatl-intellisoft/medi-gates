@@ -176,67 +176,67 @@ class ResPartner(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 	
-    delivery_date_act = fields.Date(
-	    string="Actual Delivery Date",
-	    compute="_compute_delivery_date_act",
+    delivery__act = fields.(
+	    string="Actual Delivery ",
+	    compute="_compute_delivery__act",
 	    store=True,
 	)
-    # @api.depends('invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date')
-    # def _compute_delivery_date_act(self):
+    # @api.depends('invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_')
+    # def _compute_delivery__act(self):
     #     for move in self:
     #         sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
-    #         move.delivery_date_act = sale_order.confirmed_delivery_date if sale_order else False
+    #         move.delivery__act = sale_order.confirmed_delivery_ if sale_order else False
 
     @api.depends(
-        'invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_date'
+        'invoice_line_ids.sale_line_ids.order_id.confirmed_delivery_'
     )
-    def _compute_delivery_date_act(self):
+    def _compute_delivery__act(self):
         for move in self:
             sale_order = move.invoice_line_ids.sale_line_ids.order_id[:1]
 
-            move.delivery_date_act = (
-                sale_order.confirmed_delivery_date
+            move.delivery__act = (
+                sale_order.confirmed_delivery_
                 if sale_order
                 else False
             )
 
-    def _get_payment_terms_computation_date(self):
+    def _get_payment_terms_computation_(self):
         self.ensure_one()
 
-        if self.delivery_date_act:
-            return self.delivery_date_act
+        if self.delivery__act:
+            return self.delivery__act
 
-        return super()._get_payment_terms_computation_date()
+        return super()._get_payment_terms_computation_()
 
     def _recompute_payment_terms_lines(self):
         for move in self:
             super(
                 AccountMove,
                 move.with_context(
-                    delivery_date_act=move.delivery_date_act
+                    delivery__act=move.delivery__act
                 )
             )._recompute_payment_terms_lines()
 
         return True
 
-    @api.onchange('invoice_date')
-    def _onchange_invoice_date(self):
-        if not self.delivery_date_act:
-            self.delivery_date_act = self.invoice_date
+    @api.onchange('invoice_')
+    def _onchange_invoice_(self):
+        if not self.delivery__act:
+            self.delivery__act = self.invoice_
 	
 
 
     def check_overdue_trusted_customers(self):
-        today = date.today()
+        today = .today()
         overdue_invoices = self.search([
             ('partner_id.trust_custom', '=', True),
             ('state', '=', 'posted'),
             ('payment_state', '!=', 'paid'),
-            ('invoice_date_due', '<', today),
+            ('invoice__due', '<', today),
         ])
 
         for invoice in overdue_invoices:
-            message = f"🚨 Invoice {invoice.name} for trusted customer {invoice.partner_id.name} is overdue (Due: {invoice.invoice_date_due})."
+            message = f"🚨 Invoice {invoice.name} for trusted customer {invoice.partner_id.name} is overdue (Due: {invoice.invoice__due})."
             # Notify Salesperson
             if invoice.invoice_user_id:
                 invoice.message_post(
@@ -252,7 +252,7 @@ class AccountMove(models.Model):
                 )
                 
 
-    @api.depends('invoice_payment_term_id', 'invoice_date', 'delivery_date_act', 'currency_id', 'amount_total_in_currency_signed', 'invoice_date_due')
+    @api.depends('invoice_payment_term_id', 'invoice_', 'delivery__act', 'currency_id', 'amount_total_in_currency_signed', 'invoice__due')
     def _compute_needed_terms(self):
         AccountTax = self.env['account.tax']
         for invoice in self.with_context(bin_size=False):
@@ -271,9 +271,9 @@ class AccountMove(models.Model):
                         base_lines, _tax_lines = invoice._get_rounded_base_and_tax_lines(round_from_tax_lines=False)
                         AccountTax._add_accounting_data_in_base_lines_tax_details(base_lines, invoice.company_id, include_caba_tags=invoice.always_tax_exigible)
                         tax_results = AccountTax._prepare_tax_lines(base_lines, invoice.company_id)
-                        for base_line, to_update in tax_results['base_lines_to_update']:
-                            untaxed_amount_currency += sign * to_update['amount_currency']
-                            untaxed_amount += sign * to_update['balance']
+                        for base_line, to_up in tax_results['base_lines_to_up']:
+                            untaxed_amount_currency += sign * to_up['amount_currency']
+                            untaxed_amount += sign * to_up['balance']
                         for tax_line_vals in tax_results['tax_lines_to_add']:
                             tax_amount_currency += sign * tax_line_vals['amount_currency']
                             tax_amount += sign * tax_line_vals['balance']
@@ -283,7 +283,7 @@ class AccountMove(models.Model):
                         untaxed_amount_currency = invoice.amount_untaxed * sign
                         untaxed_amount = invoice.amount_untaxed_signed
                     invoice_payment_terms = invoice.invoice_payment_term_id._compute_terms(
-                        date_ref=invoice.delivery_date_act or invoice.invoice_date or invoice.date or fields.Date.context_today(invoice),
+                        _ref=invoice.delivery__act or invoice.invoice_ or invoice. or fields..context_today(invoice),
                         currency=invoice.currency_id,
                         tax_amount_currency=tax_amount_currency,
                         tax_amount=tax_amount,
@@ -294,11 +294,18 @@ class AccountMove(models.Model):
                         sign=sign
                     )
                     for term_line in invoice_payment_terms['line_ids']:
+						if invoice.delivery_date_act:
                         key = frozendict({
                             'move_id': invoice.id,
-                            'date_maturity': fields.Date.to_date(term_line.get('date')),
+                            '_maturity': fields.Date.to_date(term_line.get('delivery_date_act')),
                             'discount_date': invoice_payment_terms.get('discount_date'),
                         })
+						else:
+							key = frozendict({
+	                            'move_id': invoice.id,
+	                            '_maturity': fields.Date.to_date(term_line.get('date')),
+	                            'discount_date': invoice_payment_terms.get('discount_date'),
+	                        })
                         values = {
                             'balance': term_line['company_amount'],
                             'amount_currency': term_line['foreign_amount'],
@@ -312,16 +319,28 @@ class AccountMove(models.Model):
                             invoice.needed_terms[key]['balance'] += values['balance']
                             invoice.needed_terms[key]['amount_currency'] += values['amount_currency']
                 else:
-                    invoice.needed_terms[frozendict({
-                        'move_id': invoice.id,
-                        'date_maturity': fields.Date.to_date(invoice.invoice_date_due),
-                        'discount_date': False,
-                        'discount_balance': 0.0,
-                        'discount_amount_currency': 0.0
-                    })] = {
-                        'balance': invoice.amount_total_signed,
-                        'amount_currency': invoice.amount_total_in_currency_signed,
-                    }
+					if invoice.delivery_date_act:
+	                    invoice.needed_terms[frozendict({
+	                        'move_id': invoice.id,
+	                        'date_maturity': fields.Date.to_date(invoice.delivery_date_act),
+	                        'discount_date': False,
+	                        'discount_balance': 0.0,
+	                        'discount_amount_currency': 0.0
+	                    })] = {
+	                        'balance': invoice.amount_total_signed,
+	                        'amount_currency': invoice.amount_total_in_currency_signed,
+	                    }
+					else:
+						invoice.needed_terms[frozendict({
+	                        'move_id': invoice.id,
+	                        'date_maturity': fields.Date.to_date(invoice.invoice_date_due),
+	                        'discount_date': False,
+	                        'discount_balance': 0.0,
+	                        'discount_amount_currency': 0.0
+	                    })] = {
+	                        'balance': invoice.amount_total_signed,
+	                        'amount_currency': invoice.amount_total_in_currency_signed,
+	                    }
 
     # # @api.model
     # def action_post(self):
