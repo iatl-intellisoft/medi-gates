@@ -82,18 +82,18 @@ class AccountPaymentRegister(models.TransientModel):
                 ):
                     if installment['type'] == 'overdue':
                         amount_per_line_common.append(installment)
-                        line_payment_date = installment['date_maturity']
+                        # line_payment_date = installment['date_maturity']
                     elif installment['type'] == 'before_date':
                         amount_per_line_common.append(installment)
-                        line_payment_date = installment['date_maturity']
+                        # line_payment_date = installment['date_maturity']
                         first_installment_mode = 'before_date'
                     elif installment['type'] == 'next':
                         if last_installment_mode in ('next', 'overdue', 'before_date'):
                             amount_per_line_full_amount.append(installment)
-                            line_payment_date = installment['date_maturity']
+                            # line_payment_date = installment['date_maturity']
                         elif not last_installment_mode:
                             amount_per_line_common.append(installment)
-                            line_payment_date = installment['date_maturity']
+                            # line_payment_date = installment['date_maturity']
                             # if we have several moves and one of them has as first installment, a 'next', we want
                             # the whole batches to have a mode of 'next', overriding an 'overdue' on another move
                             first_installment_mode = 'next'
@@ -270,8 +270,7 @@ class AccountMove(models.Model):
                     for term_line in invoice_payment_terms['line_ids']:
                         key = frozendict({
                             'move_id': invoice.id,
-                        	'date_maturity': fields.Date.to_date(invoice.delivery_date_act),
-                            # 'date_maturity': fields.Date.to_date(term_line.get('date')),
+                            'date_maturity': fields.Date.to_date(term_line.get('date')),
                             'discount_date': invoice_payment_terms.get('discount_date'),
                         })
                         values = {
@@ -289,8 +288,7 @@ class AccountMove(models.Model):
                 else:
                     invoice.needed_terms[frozendict({
                         'move_id': invoice.id,
-                        'date_maturity': fields.Date.to_date(invoice.delivery_date_act),
-                        # 'date_maturity': fields.Date.to_date(invoice.invoice_date_due),
+                        'date_maturity': fields.Date.to_date(invoice.invoice_date_due),
                         'discount_date': False,
                         'discount_balance': 0.0,
                         'discount_amount_currency': 0.0
