@@ -179,7 +179,6 @@ class HREosRequest(models.Model):
                     result = (0.5 * salary * 5) + (salary * (rec.service_years - 5))
             else:
                 result=0
-            salary=rec.total_salary
             rec.eos_amount=salary
 
     def get_portion_of_date_spanned(self, start_date, end_date):
