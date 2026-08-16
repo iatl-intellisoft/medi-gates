@@ -125,19 +125,44 @@ class SaleOrder(models.Model):
     #         for order in self:
     #             if order.invoice_ids:
     #                 order.invoice_ids.write({'delivery_date_act': order.confirmed_delivery_date})
-    #     return res
+    #     return res 
+
     def write(self, vals):
+        # هات القيمة القديمة قبل ما تتغير
+        need_recreate = 'confirmed_delivery_date' in vals  
         res = super().write(vals)
-    
-        if 'confirmed_delivery_date' in vals and vals.get('confirmed_delivery_date'):
+        if need_recreate:
             for order in self:
-                # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
-                invoices = order.invoice_ids
-                invoices.write({
-                    # 'invoice_date': vals['confirmed_delivery_date'],
-                })
-    
+                order._cancel_and_recreate_invoice()
         return res
+
+    def _cancel_and_recreate_invoice(self):
+        invoices = self.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
+        for inv in invoices:
+            if inv.state == 'posted':
+                inv.button_draft() 
+            inv.button_cancel()
+
+            if inv.state == 'cancel':
+                inv.unlink()
+
+        self.order_line.write({'invoice_status': 'to invoice'})
+
+        new_invoices = self._create_invoices()
+        # new_invoices.action_post()
+        return new_invoices
+    # def write(self, vals):
+    #     res = super().write(vals)
+    
+    #     if 'confirmed_delivery_date' in vals and vals.get('confirmed_delivery_date'):
+    #         for order in self:
+    #             # draft_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'draft')
+    #             invoices = order.invoice_ids
+    #             invoices.write({
+    #                 # 'invoice_date': vals['confirmed_delivery_date'],
+    #             })
+    
+    #     return res
 
 
 class SaleOrderLine(models.Model):
