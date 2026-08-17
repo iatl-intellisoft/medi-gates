@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        These tags are the ONLY link between your Chart of Accounts and this
+        report. After installing the module:
+          Accounting > Configuration > Chart of Accounts > (open an account)
+          > Account Tags > add the matching "CF - ..." tag.
+
+        An account can carry more than one tag if needed, and a tag can be
+        applied to several accounts (the report sums all accounts sharing
+        a tag).
+    -->
+    <record id="tag_cf_depreciation" model="account.account.tag">
+        <field name="name">CF - Depreciation &amp; Amortization</field>
+        <field name="applicability">accounts</field>
+        <field name="color">1</field>
+    </record>
+
+    <record id="tag_cf_gain_on_disposal" model="account.account.tag">
+        <field name="name">CF - Gain/Loss on Disposal of Assets</field>
+        <field name="applicability">accounts</field>
+        <field name="color">1</field>
+    </record>
+
+    <record id="tag_cf_receivables" model="account.account.tag">
+        <field name="name">CF - Trade &amp; Other Receivables</field>
+        <field name="applicability">accounts</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="tag_cf_inventories" model="account.account.tag">
+        <field name="name">CF - Inventories</field>
+        <field name="applicability">accounts</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="tag_cf_other_payables" model="account.account.tag">
+        <field name="name">CF - Other Payables</field>
+        <field name="applicability">accounts</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="tag_cf_tax_zakat" model="account.account.tag">
+        <field name="name">CF - Tax &amp; Zakat Payable</field>
+        <field name="applicability">accounts</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="tag_cf_ppe_cost" model="account.account.tag">
+        <field name="name">CF - Property, Plant &amp; Equipment (Cost)</field>
+        <field name="applicability">accounts</field>
+        <field name="color">3</field>
+    </record>
+
+    <record id="tag_cf_disposal_proceeds" model="account.account.tag">
+        <field name="name">CF - Proceeds from Disposal of Fixed Assets</field>
+        <field name="applicability">accounts</field>
+        <field name="color">3</field>
+    </record>
+
+    <record id="tag_cf_share_capital" model="account.account.tag">
+        <field name="name">CF - Share Capital</field>
+        <field name="applicability">accounts</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="tag_cf_borrowings" model="account.account.tag">
+        <field name="name">CF - Short-term Borrowings</field>
+        <field name="applicability">accounts</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="tag_cf_non_current_borrowings" model="account.account.tag">
+        <field name="name">CF - Non-current Borrowings</field>
+        <field name="applicability">accounts</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="tag_cf_shareholder_account" model="account.account.tag">
+        <field name="name">CF - Shareholder's Current Account</field>
+        <field name="applicability">accounts</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="tag_cf_cash_equivalents" model="account.account.tag">
+        <field name="name">CF - Cash &amp; Cash Equivalents</field>
+        <field name="applicability">accounts</field>
+        <field name="color">5</field>
+    </record>
+</odoo>

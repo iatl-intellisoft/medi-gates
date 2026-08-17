@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cash_flow_statement_wizard_form" model="ir.ui.view">
+        <field name="name">cash.flow.statement.wizard.form</field>
+        <field name="model">cash.flow.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Custom Cash Flow Statement">
+                <group>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="include_comparative"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_report" string="Print PDF"
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cash_flow_statement_wizard" model="ir.actions.act_window">
+        <field name="name">Custom Cash Flow Statement</field>
+        <field name="res_model">cash.flow.statement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_cash_flow_statement_wizard"
+              name="Custom Cash Flow Statement"
+              parent="account.menu_finance_reports"
+              action="action_cash_flow_statement_wizard"
+              sequence="60"/>
+
+</odoo>

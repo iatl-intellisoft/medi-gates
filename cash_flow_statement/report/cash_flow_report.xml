@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_cash_flow_statement" model="ir.actions.report">
+        <field name="name">Cash Flow Statement</field>
+        <field name="model">cash.flow.statement.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">cash_flow_statement.report_cash_flow_statement_document</field>
+        <field name="report_file">cash_flow_statement.report_cash_flow_statement_document</field>
+        <field name="print_report_name">'Cash Flow Statement - %s' % (object.company_id.name)</field>
+        <field name="binding_model_id" ref="model_cash_flow_statement_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

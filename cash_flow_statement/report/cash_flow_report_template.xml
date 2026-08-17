@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_cash_flow_statement_document">
+    <t t-call="web.html_container">
+        <t t-foreach="reports" t-as="rep">
+            <t t-call="web.internal_layout">
+                <t t-set="o" t-value="rep['wizard']"/>
+                <t t-set="c" t-value="rep['current']"/>
+                <t t-set="p" t-value="rep['comparative']"/>
+
+                <style>
+                    .cf-table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11px; }
+                    .cf-table td, .cf-table th { padding: 3px 6px; }
+                    .cf-section { background-color: #1F4E78; color: #FFFFFF; font-weight: bold; }
+                    .cf-subtotal { background-color: #D9E1F2; font-weight: bold; border-top: 1px solid #000; }
+                    .cf-total { background-color: #BDD7EE; font-weight: bold; border-top: 1px solid #000; border-bottom: 3px double #000; }
+                    .cf-num { text-align: right; white-space: nowrap; }
+                    .cf-label { text-align: left; }
+                    .cf-italic { font-style: italic; color: #444; }
+                </style>
+
+                <div class="page">
+                    <h3 style="text-align:center;" t-esc="o.company_id.name"/>
+                    <h4 style="text-align:center;">
+                        Consolidated Statement of Cash Flows for the period ended
+                        <span t-esc="c['date_to']" t-options="{'widget': 'date'}"/>
+                    </h4>
+                    <p style="text-align:center;" class="cf-italic">
+                        (All amounts in <span t-esc="o.company_id.currency_id.name"/>)
+                    </p>
+
+                    <table class="cf-table">
+                        <thead>
+                            <tr>
+                                <th class="cf-label"></th>
+                                <th class="cf-num" t-esc="c['date_to']" t-options="{'widget': 'date'}"/>
+                                <th class="cf-num" t-if="p" t-esc="p['date_to']" t-options="{'widget': 'date'}"/>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="cf-section">
+                                <td colspan="3">CASH FLOWS FROM OPERATING ACTIVITIES</td>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Loss for the year/ period</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['loss_for_period'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['loss_for_period'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label cf-italic">Adjustment for:</td>
+                                <td/><td t-if="p"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Depreciation</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['depreciation'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['depreciation'])"/>
+                            </tr>
+                            <tr class="cf-subtotal">
+                                <td class="cf-label">Operating profit/(loss) before working capital changes</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['operating_before_wc'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['operating_before_wc'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label cf-italic">Changes in working capital:</td>
+                                <td/><td t-if="p"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">(Increase)/ Decrease in receivables</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['receivables'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['receivables'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">(Increase)/ Decrease in inventories</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['inventories'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['inventories'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Other payables</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['other_payables'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['other_payables'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Gain on disposal</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['gain_on_disposal'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['gain_on_disposal'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Tax &amp; Zakat</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['tax_zakat'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['tax_zakat'])"/>
+                            </tr>
+                            <tr class="cf-subtotal">
+                                <td class="cf-label">Cash (used in)/ generated from operations</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['cash_from_operations'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['cash_from_operations'])"/>
+                            </tr>
+                            <tr class="cf-total">
+                                <td class="cf-label">Net cash (used in)/ generated from operating activities</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['net_operating'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['net_operating'])"/>
+                            </tr>
+
+                            <tr><td colspan="3" style="height:6px;"/></tr>
+
+                            <tr class="cf-section">
+                                <td colspan="3">CASH FLOWS FROM INVESTING ACTIVITIES</td>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Purchases of property, plant and equipment</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['purchases_ppe'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['purchases_ppe'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Sale proceeds from the disposal of fixed assets</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['proceeds_disposal'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['proceeds_disposal'])"/>
+                            </tr>
+                            <tr class="cf-total">
+                                <td class="cf-label">Net cash (used in)/ generated from investing activities</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['net_investing'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['net_investing'])"/>
+                            </tr>
+
+                            <tr><td colspan="3" style="height:6px;"/></tr>
+
+                            <tr class="cf-section">
+                                <td colspan="3">CASH FLOWS FROM FINANCING ACTIVITIES</td>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Proceeds from issue of share capital</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['share_capital'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['share_capital'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Increase in borrowing</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['borrowings'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['borrowings'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Increase in non-current borrowing</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['non_current_borrowings'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['non_current_borrowings'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Net changes in shareholder's current account</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['shareholder_account'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['shareholder_account'])"/>
+                            </tr>
+                            <tr class="cf-total">
+                                <td class="cf-label">Net cash generated from/ (used in) financing activities</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['net_financing'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['net_financing'])"/>
+                            </tr>
+
+                            <tr><td colspan="3" style="height:6px;"/></tr>
+
+                            <tr class="cf-subtotal">
+                                <td class="cf-label">Net cash movement for the year/ period</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['net_movement'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['net_movement'])"/>
+                            </tr>
+                            <tr>
+                                <td class="cf-label">Cash and cash equivalents at beginning of the year/ period</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['cash_opening'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['cash_opening'])"/>
+                            </tr>
+                            <tr class="cf-total">
+                                <td class="cf-label">Cash and cash equivalents at end of the year/ period</td>
+                                <td class="cf-num" t-esc="'{:,.0f}'.format(c['cash_closing_computed'])"/>
+                                <td class="cf-num" t-if="p" t-esc="'{:,.0f}'.format(p['cash_closing_computed'])"/>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="cf-italic" style="margin-top:10px; font-size:10px;"
+                       t-if="abs(c['variance']) > 0.5">
+                        Note: computed closing cash (<t t-esc="'{:,.0f}'.format(c['cash_closing_computed'])"/>)
+                        differs from the actual General Ledger cash/bank balance
+                        (<t t-esc="'{:,.0f}'.format(c['cash_closing_actual'])"/>) by
+                        <t t-esc="'{:,.0f}'.format(c['variance'])"/>.
+                        This usually means one or more accounts are missing a "CF - ..." tag.
+                    </p>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+</odoo>
