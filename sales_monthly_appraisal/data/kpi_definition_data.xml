@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <!-- Quantitative Indicators: 25% + 25% globally -> normalized 50/50 within category -->
+    <record id="kpi_def_number_of_visits" model="sales.appraisal.kpi.definition">
+        <field name="name">Number of Visits per Month</field>
+        <field name="category_id" ref="kpi_category_quantitative"/>
+        <field name="sequence">10</field>
+        <field name="weight">50</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <record id="kpi_def_customer_visit_frequency" model="sales.appraisal.kpi.definition">
+        <field name="name">Customer Visits Frequency</field>
+        <field name="category_id" ref="kpi_category_quantitative"/>
+        <field name="sequence">20</field>
+        <field name="weight">50</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <!-- Administrative Tasks: 20% + 20% + 10% globally -> normalized 40/40/20 -->
+    <record id="kpi_def_sales_policy_accuracy" model="sales.appraisal.kpi.definition">
+        <field name="name">Sales Policy Accuracy</field>
+        <field name="category_id" ref="kpi_category_administrative"/>
+        <field name="sequence">10</field>
+        <field name="weight">40</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <record id="kpi_def_planning_organizing" model="sales.appraisal.kpi.definition">
+        <field name="name">Planning &amp; Organizing</field>
+        <field name="category_id" ref="kpi_category_administrative"/>
+        <field name="sequence">20</field>
+        <field name="weight">40</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <record id="kpi_def_customer_data_update" model="sales.appraisal.kpi.definition">
+        <field name="name">Customer Data Update</field>
+        <field name="category_id" ref="kpi_category_administrative"/>
+        <field name="sequence">30</field>
+        <field name="weight">20</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <!-- Guarantee Collection: single KPI -->
+    <record id="kpi_def_collection_without_deduction" model="sales.appraisal.kpi.definition">
+        <field name="name">Collection without Deduction</field>
+        <field name="category_id" ref="kpi_category_guarantee_collection"/>
+        <field name="sequence">10</field>
+        <field name="weight">100</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <!-- Applying Deduction Value: single KPI, entered by Accounting -->
+    <record id="kpi_def_deductive_collection" model="sales.appraisal.kpi.definition">
+        <field name="name">Deductive Collection</field>
+        <field name="category_id" ref="kpi_category_deduction"/>
+        <field name="sequence">10</field>
+        <field name="weight">100</field>
+        <field name="evaluator">accounting</field>
+    </record>
+
+</odoo>
