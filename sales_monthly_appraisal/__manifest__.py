@@ -29,7 +29,6 @@ Key features
 * Draft -> Sales Review -> Accounting Review -> Approved -> Done workflow
 * Monthly cron to auto-generate draft appraisals for active salespeople
 """,
-    'author': 'Custom Development',
     'license': 'LGPL-3',
     'depends': ['base', 'mail', 'hr', 'account', 'sales_team'],
     'data': [
@@ -44,6 +43,7 @@ Key features
         'views/sales_appraisal_target_views.xml',
         'views/sales_appraisal_views.xml',
         'views/sales_appraisal_incentive_views.xml',
+        'wizard/sales_appraisal_incentive_report_wizard_views.xml',
         'views/menus.xml',
     ],
     'installable': True,
