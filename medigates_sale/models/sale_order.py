@@ -143,11 +143,20 @@ class SaleOrder(models.Model):
                 inv.button_draft()
             inv.button_cancel()
     
-        self.order_line._compute_qty_to_invoice() 
+        cancelled_invoices = self.invoice_ids.filtered(lambda inv: inv.state == 'cancel')
+        try:
+            cancelled_invoices.unlink()
+        except UserError:
+            pass
+    
+        self.order_line._compute_qty_to_invoice()
         self.invalidate_recordset(['invoice_status'])
     
         new_invoices = self._create_invoices()
+        new_invoices.action_post()  
+    
         return new_invoices
+     
     # def write(self, vals):
     #     res = super().write(vals)
     
