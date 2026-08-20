@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <!-- Default split of the 2% overall cap across the 4 sections.
+         Adjust max_rate freely from Sales Appraisal > Configuration > Categories. -->
+    <record id="kpi_category_quantitative" model="sales.appraisal.kpi.category">
+        <field name="name">Quantitative Indicators</field>
+        <field name="code">quantitative</field>
+        <field name="sequence">10</field>
+        <field name="max_rate">0.5</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <record id="kpi_category_administrative" model="sales.appraisal.kpi.category">
+        <field name="name">Administrative Tasks</field>
+        <field name="code">administrative</field>
+        <field name="sequence">20</field>
+        <field name="max_rate">0.5</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <record id="kpi_category_guarantee_collection" model="sales.appraisal.kpi.category">
+        <field name="name">Guarantee Collection</field>
+        <field name="code">guarantee_collection</field>
+        <field name="sequence">30</field>
+        <field name="max_rate">0.5</field>
+        <field name="evaluator">sales</field>
+    </record>
+
+    <record id="kpi_category_deduction" model="sales.appraisal.kpi.category">
+        <field name="name">Applying Deduction Value</field>
+        <field name="code">deduction</field>
+        <field name="sequence">40</field>
+        <field name="max_rate">0.5</field>
+        <field name="evaluator">accounting</field>
+    </record>
+</odoo>
