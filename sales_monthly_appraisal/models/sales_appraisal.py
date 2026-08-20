@@ -194,15 +194,15 @@ class SalesAppraisal(models.Model):
                 rec.total_amount_incentive = rec.total_amount_collected_on_time + rec.total_amount_collected
     
 
-    @api.depends('total_amount_collected_on_time')
+    @api.depends('total_collected_on_time')
     def _compute_total_amount_collected_on_time_by_kpi(self):
         for rec in self:
-            rec.total_amount_collected_on_time = rec.total_amount_collected_on_time * rec.on_time_kpi_rate
+            rec.total_amount_collected_on_time = rec.total_collected_on_time * rec.on_time_kpi_rate
 
-    @api.depends('total_amount_collected','total_kpi_rate')
+    @api.depends('total_collected','total_kpi_rate')
     def _compute_total_amount_collected_by_kpi(self):
         for rec in self:
-            rec.total_amount_collected = rec.total_amount_collected * rec.total_kpi_rate
+            rec.total_amount_collected_by_kpi = rec.total_collected * rec.total_kpi_rate
 
     @api.depends('salesperson_id', 'month', 'year', 'company_id')
     def _compute_target_id(self):
