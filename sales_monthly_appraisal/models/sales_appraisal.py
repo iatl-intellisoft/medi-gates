@@ -313,7 +313,7 @@ class SalesAppraisal(models.Model):
                     'month': self.month,
                     'total_amount_collected': self.total_collected,
                     'total_amount_collected_by_kpi': self.total_amount_collected_by_kpi,
-                    'total_amount_collected_on_time': self.total_amount_collected_on_time,
+                    'total_amount_collected_on_time': self.total_collected_on_time,
                     'total_amount_collected_on_time_by_kpi': self.total_amount_collected_on_time_by_kpi,
                     'total_kpi_rate':self.total_kpi_rate,
                     'company_id':self.company_id.id
