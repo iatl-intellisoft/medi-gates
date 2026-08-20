@@ -77,7 +77,7 @@ class SalesAppraisal(models.Model):
         store=True, help="Payments made on or before the related invoice's "
                           "due date.")
     total_collected_late = fields.Monetary(
-        string='Collected Late', compute='_compute_total_collected',
+        string='Collected Late', compute='',
         store=True, help="Payments made after the related invoice's due "
                           "date (overdue collections).")
     payout_amount = fields.Monetary(
@@ -138,9 +138,9 @@ class SalesAppraisal(models.Model):
                 rec.total_collected_late = 0.0
                 continue
             payments = AccountPayment.search([
-                ('state', '=', 'posted'),
+                ('state', '=', 'paid'),
                 ('payment_type', '=', 'inbound'),
-                ('partner_type', '=', 'customer'),
+                # ('partner_type', '=', 'customer'),
                 ('date', '>=', rec.date_from),
                 ('date', '<=', rec.date_to),
                 ('company_id', '=', rec.company_id.id),
