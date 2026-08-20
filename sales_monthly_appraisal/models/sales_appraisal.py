@@ -311,7 +311,7 @@ class SalesAppraisal(models.Model):
                     'employee_id': self.employee_id.id if self.employee_id else False,
                     'year':self.year,
                     'month': self.month,
-                    'total_amount_collected': self.total_amount_collected,
+                    'total_amount_collected': self.total_collected,
                     'total_amount_collected_by_kpi': self.total_amount_collected_by_kpi,
                     'total_amount_collected_on_time': self.total_amount_collected_on_time,
                     'total_amount_collected_on_time_by_kpi': self.total_amount_collected_on_time_by_kpi,
