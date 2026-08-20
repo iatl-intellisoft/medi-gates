@@ -17,20 +17,17 @@ class SalesAppraisalIncentive(models.Model):
     _rec_name = 'display_name'
 
     salesperson_id = fields.Many2one(
-        'res.users', string='Salesperson', required=True,
+        'res.users', string='Salesperson',
         domain=[('share', '=', False)])
-    month = fields.Selection(MONTH_SELECTION, string='Month', required=True)
-    year = fields.Integer(string='Year', required=True,
-                           default=lambda self: fields.Date.today().year)
-    total_amount_collected = fields.Monetary(string='Total Amount Collected', required=True)
-    total_amount_collected_by_kpi = fields.Monetary(string='Total Amount Collected', required=True)
-    total_amount_collected_on_time = fields.Monetary(string='Total Amount Collected Time', required=True)
-    total_amount_collected_on_time_by_kpi = fields.Monetary(string='Total Amount Collected Time', required=True)
-    total_kpi_rate = fields.Float(string='Total KPI Rate', required=True)
-    currency_id = fields.Many2one(
-        'res.currency', default=lambda self: self.env.company.currency_id.id)
-    company_id = fields.Many2one(
-        'res.company', default=lambda self: self.env.company, required=True)
+    month = fields.Selection(MONTH_SELECTION, string='Month')
+    year = fields.Integer(string='Year', default=lambda self: fields.Date.today().year)
+    total_amount_collected = fields.Monetary(string='Total Amount Collected')
+    total_amount_collected_by_kpi = fields.Monetary(string='Total Amount Collected')
+    total_amount_collected_on_time = fields.Monetary(string='Total Amount Collected Time')
+    total_amount_collected_on_time_by_kpi = fields.Monetary(string='Total Amount Collected Time')
+    total_kpi_rate = fields.Float(string='Total KPI Rate')
+    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id.id)
+    company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
     display_name = fields.Char(compute='_compute_display_name', store=True)
 
     _sql_constraints = [
