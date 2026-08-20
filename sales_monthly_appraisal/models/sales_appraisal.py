@@ -190,14 +190,14 @@ class SalesAppraisal(models.Model):
     @api.depends('total_amount_incentive')
     def _compute_total_amount_incentive(self):
         for rec in self:
-            if rec.total_amount_collected_on_time and rec.total_amount_collected :
-                rec.total_amount_incentive = rec.total_amount_collected_on_time + rec.total_amount_collected
+            if rec.total_amount_collected_on_time_by_kpi and rec.total_amount_collected_by_kpi :
+                rec.total_amount_incentive = rec.total_amount_collected_on_time_by_kpi + rec.total_amount_collected_by_kpi
     
 
     @api.depends('total_collected_on_time')
     def _compute_total_amount_collected_on_time_by_kpi(self):
         for rec in self:
-            rec.total_amount_collected_on_time = rec.total_collected_on_time * rec.on_time_kpi_rate
+            rec.total_amount_collected_on_time_by_kpi = rec.total_collected_on_time * rec.on_time_kpi_rate
 
     @api.depends('total_collected','total_kpi_rate')
     def _compute_total_amount_collected_by_kpi(self):
