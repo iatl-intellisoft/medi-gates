@@ -51,6 +51,19 @@ class SalesAppraisal(models.Model):
         'sales.appraisal.kpi', 'appraisal_id', string='KPI Lines',
         copy=True)
 
+    kpi_line_quantitative_ids = fields.One2many(
+        'sales.appraisal.kpi', 'appraisal_id', string='Quantitative KPIs',
+        domain=[('category_id.code', '=', 'quantitative')])
+    kpi_line_administrative_ids = fields.One2many(
+        'sales.appraisal.kpi', 'appraisal_id', string='Administrative KPIs',
+        domain=[('category_id.code', '=', 'administrative')])
+    kpi_line_guarantee_collection_ids = fields.One2many(
+        'sales.appraisal.kpi', 'appraisal_id', string='Guarantee Collection KPIs',
+        domain=[('category_id.code', '=', 'guarantee_collection')])
+    kpi_line_deduction_ids = fields.One2many(
+        'sales.appraisal.kpi', 'appraisal_id', string='Deduction KPIs',
+        domain=[('category_id.code', '=', 'deduction')])
+
     max_total_rate = fields.Float(
         string='Max Total Rate (%)', digits=(6, 4), default=2.0,
         help="Overall cap applied to the sum of all KPI rates.")
@@ -295,7 +308,7 @@ class SalesAppraisal(models.Model):
         self.write({'state': 'done'})
         self.env['sales.appraisal.incentive'].create({
                     'salesperson_id': self.salesperson_id,
-                    'employee_id': self.employee.id if self.employee else False,
+                    'employee_id': self.employee_id.id if self.employee_id else False,
                     'year':self.year,
                     'month': self.month,
                     'total_amount_collected': self.total_amount_collected,
