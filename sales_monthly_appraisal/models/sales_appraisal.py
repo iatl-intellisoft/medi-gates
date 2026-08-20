@@ -144,9 +144,9 @@ class SalesAppraisal(models.Model):
                 rec.total_collected_late = 0.0
                 continue
             payments = AccountPayment.search([
-                ('state', '=', 'posted'),
+                ('state', '=', 'paid'),
                 ('payment_type', '=', 'inbound'),
-                ('partner_type', '=', 'customer'),
+                # ('partner_type', '=', 'customer'),
                 ('date', '>=', rec.date_from),
                 ('date', '<=', rec.date_to),
                 ('company_id', '=', rec.company_id.id),
