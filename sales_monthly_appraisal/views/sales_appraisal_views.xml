@@ -83,7 +83,6 @@
                         </group>
                     </group>
                     <notebook>
-                        <notebook>
                         <page string="Quantitative Indicators">
                             <field name="kpi_line_quantitative_ids">
                                 <list editable="bottom" create="0" delete="0">
