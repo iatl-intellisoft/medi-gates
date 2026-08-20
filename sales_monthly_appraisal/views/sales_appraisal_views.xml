@@ -9,7 +9,7 @@
                 <field name="name"/>
                 <field name="salesperson_id"/>
                 <field name="month"/>
-                <field name="year"/>
+                <field name="year" widget="integer" options="{'format': false}"/>
                 <field name="total_kpi_rate" sum="Total"/>
                 <field name="final_rate"/>
                 <field name="total_collected" widget="monetary" sum="Total"/>
@@ -59,7 +59,7 @@
                                    readonly="state == 'done'"/>
                             <field name="employee_id" options="{'no_create': True}"/>
                             <field name="month" readonly="state != 'draft'"/>
-                            <field name="year" readonly="state != 'draft'"/>
+                            <field name="year" widget="integer" options="{'format': false}" readonly="state != 'draft'"/>
                             <field name="date_from" readonly="1"/>
                             <field name="date_to" readonly="1"/>
                         </group>
