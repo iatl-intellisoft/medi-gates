@@ -308,7 +308,7 @@ class SalesAppraisal(models.Model):
         self.write({'state': 'done'})
         self.env['sales.appraisal.incentive'].create({
                     'salesperson_id': self.salesperson_id,
-                    'employee_id': self.employee_id.id if self.employee_id else False,
+                    # 'employee_id': self.employee_id.id if self.employee_id else False,
                     'year':self.year,
                     'month': self.month,
                     'total_amount_collected': self.total_collected,
