@@ -22,7 +22,8 @@
               parent="menu_sales_appraisal_reporting"
               action="action_sales_appraisal_target"
               sequence="10"/>
-    <menuitem id="menu_sales_appraisal_target"
+    
+    <menuitem id="menu_sales_appraisal_incentive"
               name="Appraisal Incentive"
               parent="menu_sales_appraisal_reporting"
               action="action_sales_appraisal_incentive"
