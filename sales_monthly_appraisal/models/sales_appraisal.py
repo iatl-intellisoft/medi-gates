@@ -307,7 +307,7 @@ class SalesAppraisal(models.Model):
                 raise UserError(_("Only approved appraisals can be marked as Done."))
         self.write({'state': 'done'})
         self.env['sales.appraisal.incentive'].create({
-                    'salesperson_id': self.salesperson_id,
+                    'salesperson_id': self.salesperson_id.id,
                     # 'employee_id': self.employee_id.id if self.employee_id else False,
                     'year':self.year,
                     'month': self.month,
@@ -345,7 +345,7 @@ class SalesAppraisal(models.Model):
 
         for user in salespeople:
             existing = self.search([
-                ('salesperson_id', '=', user.id),
+                ('', '=', user.id),
                 ('month', '=', month),
                 ('year', '=', year),
             ], limit=1)
