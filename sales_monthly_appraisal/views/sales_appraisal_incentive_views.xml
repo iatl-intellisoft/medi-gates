@@ -13,7 +13,7 @@
                 <field name="total_kpi_rate" />
                 <field name="total_amount_collected_by_kpi" />
                 <field name="total_amount_collected_on_time" widget="monetary"/>
-                <field name="on_time_kpi_rate" />
+                <!-- <field name="on_time_kpi_rate" /> -->
                 <field name="total_amount_collected_on_time_by_kpi" widget="monetary"/> 
                 <field name="currency_id" column_invisible="1"/>
             </list>
@@ -39,7 +39,7 @@
                 	    <field name="total_amount_collected" widget="monetary"/>
                 	    <field name="total_kpi_rate" />
                	    	    <field name="total_amount_collected_on_time" widget="monetary"/>
-                	    <field name="on_time_kpi_rate" />
+                	    <!-- <field name="on_time_kpi_rate" /> -->
                 	    <field name="currency_id" column_invisible="1"/>
                         </group>
                     </group>
