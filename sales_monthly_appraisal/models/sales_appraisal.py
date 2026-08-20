@@ -187,7 +187,7 @@ class SalesAppraisal(models.Model):
         for rec in self:
             rec.payout_amount = rec.total_collected * (rec.final_rate or 0.0) / 100.0 
 
-    @api.depends('total_amount_incentive')
+    @api.depends('total_amount_collected_on_time_by_kpi','total_amount_collected_by_kpi')
     def _compute_total_amount_incentive(self):
         for rec in self:
             if rec.total_amount_collected_on_time_by_kpi and rec.total_amount_collected_by_kpi :
