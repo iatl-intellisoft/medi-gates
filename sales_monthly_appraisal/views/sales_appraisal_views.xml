@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sales_appraisal_list" model="ir.ui.view">
+        <field name="name">sales.appraisal.list</field>
+        <field name="model">sales.appraisal</field>
+        <field name="arch" type="xml">
+            <list string="Sales Monthly Appraisals" decoration-muted="state == 'done'">
+                <field name="name"/>
+                <field name="salesperson_id"/>
+                <field name="month"/>
+                <field name="year"/>
+                <field name="total_kpi_rate" sum="Total"/>
+                <field name="final_rate"/>
+                <field name="total_collected" widget="monetary" sum="Total"/>
+                <field name="total_collected_on_time" widget="monetary" sum="Total" optional="show"/>
+                <field name="total_collected_late" widget="monetary" sum="Total" optional="show"/>
+                <field name="achievement_percent" widget="percentage"/>
+                <field name="payout_amount" widget="monetary" sum="Total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('draft','sales_review','accounting_review')"
+                       decoration-warning="state == 'approved'"
+                       decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sales_appraisal_form" model="ir.ui.view">
+        <field name="name">sales.appraisal.form</field>
+        <field name="model">sales.appraisal</field>
+        <field name="arch" type="xml">
+            <form string="Sales Monthly Appraisal">
+                <header>
+                    <button name="action_submit_sales_review" string="Submit to Sales Review"
+                            type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_submit_accounting_review" string="Submit to Accounting"
+                            type="object" class="oe_highlight" invisible="state != 'sales_review'"
+                            groups="sales_monthly_appraisal.group_appraisal_sales,sales_monthly_appraisal.group_appraisal_manager"/>
+                    <button name="action_approve" string="Approve"
+                            type="object" class="oe_highlight" invisible="state != 'accounting_review'"
+                            groups="sales_monthly_appraisal.group_appraisal_accounting,sales_monthly_appraisal.group_appraisal_manager"/>
+                    <button name="action_done" string="Mark as Done"
+                            type="object" class="oe_highlight" invisible="state != 'approved'"
+                            groups="sales_monthly_appraisal.group_appraisal_manager"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                            type="object" invisible="state == 'draft'"
+                            groups="sales_monthly_appraisal.group_appraisal_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,sales_review,accounting_review,approved,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="salesperson_id" options="{'no_create': True}"
+                                   readonly="state == 'done'"/>
+                            <field name="employee_id" options="{'no_create': True}"/>
+                            <field name="month" readonly="state != 'draft'"/>
+                            <field name="year" readonly="state != 'draft'"/>
+                            <field name="date_from" readonly="1"/>
+                            <field name="date_to" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="max_total_rate"
+                                   groups="sales_monthly_appraisal.group_appraisal_manager"/>
+                            <field name="total_kpi_rate"/>
+                            <field name="final_rate"/>
+                            <field name="target_id" readonly="1"/>
+                            <field name="collection_target" widget="monetary"/>
+                            <field name="total_collected" widget="monetary"/>
+                            <field name="total_collected_on_time" widget="monetary"/>
+                            <field name="total_collected_late" widget="monetary"/>
+                            <field name="achievement_percent" widget="percentage"/>
+                            <field name="payout_amount" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Quantitative Indicators">
+                            <field name="kpi_line_ids"
+                                   context="{'default_appraisal_id': id}"
+                                   domain="[('category_id.code', '=', 'quantitative')]">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="kpi_definition_id" readonly="1"/>
+                                    <field name="weight" readonly="1"/>
+                                    <field name="max_rate" readonly="1"/>
+                                    <field name="score" readonly="not can_edit"/>
+                                    <field name="rate" readonly="1"/>
+                                    <field name="comments" readonly="not can_edit"/>
+                                    <field name="can_edit" column_invisible="1"/>
+                                    <field name="category_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Administrative Tasks">
+                            <field name="kpi_line_ids"
+                                   context="{'default_appraisal_id': id}"
+                                   domain="[('category_id.code', '=', 'administrative')]">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="kpi_definition_id" readonly="1"/>
+                                    <field name="weight" readonly="1"/>
+                                    <field name="max_rate" readonly="1"/>
+                                    <field name="score" readonly="not can_edit"/>
+                                    <field name="rate" readonly="1"/>
+                                    <field name="comments" readonly="not can_edit"/>
+                                    <field name="can_edit" column_invisible="1"/>
+                                    <field name="category_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Guarantee Collection">
+                            <field name="kpi_line_ids"
+                                   context="{'default_appraisal_id': id}"
+                                   domain="[('category_id.code', '=', 'guarantee_collection')]">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="kpi_definition_id" readonly="1"/>
+                                    <field name="weight" readonly="1"/>
+                                    <field name="max_rate" readonly="1"/>
+                                    <field name="score" readonly="not can_edit"/>
+                                    <field name="rate" readonly="1"/>
+                                    <field name="comments" readonly="not can_edit"/>
+                                    <field name="can_edit" column_invisible="1"/>
+                                    <field name="category_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Applying Deduction Value">
+                            <field name="kpi_line_ids"
+                                   context="{'default_appraisal_id': id}"
+                                   domain="[('category_id.code', '=', 'deduction')]">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="kpi_definition_id" readonly="1"/>
+                                    <field name="weight" readonly="1"/>
+                                    <field name="max_rate" readonly="1"/>
+                                    <field name="score" readonly="not can_edit"/>
+                                    <field name="rate" readonly="1"/>
+                                    <field name="comments" readonly="not can_edit"/>
+                                    <field name="can_edit" column_invisible="1"/>
+                                    <field name="category_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sales_appraisal_search" model="ir.ui.view">
+        <field name="name">sales.appraisal.search</field>
+        <field name="model">sales.appraisal</field>
+        <field name="arch" type="xml">
+            <search string="Search Appraisals">
+                <field name="name"/>
+                <field name="salesperson_id"/>
+                <field name="month"/>
+                <field name="year"/>
+                <filter string="Draft" name="filter_draft" domain="[('state','=','draft')]"/>
+                <filter string="Sales Review" name="filter_sales_review" domain="[('state','=','sales_review')]"/>
+                <filter string="Accounting Review" name="filter_accounting_review" domain="[('state','=','accounting_review')]"/>
+                <filter string="Approved" name="filter_approved" domain="[('state','=','approved')]"/>
+                <filter string="Done" name="filter_done" domain="[('state','=','done')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Salesperson" name="groupby_salesperson" context="{'group_by': 'salesperson_id'}"/>
+                    <filter string="Status" name="groupby_state" context="{'group_by': 'state'}"/>
+                    <filter string="Year" name="groupby_year" context="{'group_by': 'year'}"/>
+                    <filter string="Month" name="groupby_month" context="{'group_by': 'month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_sales_appraisal" model="ir.actions.act_window">
+        <field name="name">Sales Monthly Appraisals</field>
+        <field name="res_model">sales.appraisal</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_groupby_state': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Sales Monthly Appraisal
+            </p>
+            <p>
+                Track KPI scores, guarantee collection and payout for each
+                salesperson, month by month.
+            </p>
+        </field>
+    </record>
+
+</odoo>
