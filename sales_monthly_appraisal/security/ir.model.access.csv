@@ -17,6 +17,7 @@ access_sales_appraisal_incentive_accounting,sales.appraisal.incentive.accounting
 
 access_sales_appraisal_manager,sales.appraisal.manager,model_sales_appraisal,group_appraisal_manager,1,1,1,1
 access_sales_appraisal_sales,sales.appraisal.sales,model_sales_appraisal,group_appraisal_sales,1,1,1,0
+access_sales_appraisal_incentive_report_wizard,sales.appraisal.incentive.report.wizard,model_sales_appraisal_incentive_report_wizard,,1,1,1,1
 access_sales_appraisal_accounting,sales.appraisal.accounting,model_sales_appraisal,group_appraisal_accounting,1,1,0,0
 
 access_sales_appraisal_kpi_manager,sales.appraisal.kpi.manager,model_sales_appraisal_kpi,group_appraisal_manager,1,1,1,1
