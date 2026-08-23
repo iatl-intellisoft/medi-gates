@@ -20,20 +20,17 @@
     <menuitem id="menu_sales_appraisal_target"
               name="Collection Targets"
               parent="menu_sales_appraisal_reporting"
-              action="action_sales_appraisal_target"
-              sequence="10"/>
+              action="action_sales_appraisal_target"/>
     
     <menuitem id="menu_sales_appraisal_incentive"
               name="Appraisal Incentive"
               parent="menu_sales_appraisal_reporting"
-              action="action_sales_appraisal_incentive"
-              sequence="10"/>
+              action="action_sales_appraisal_incentive"/>
     
     <menuitem id="menu_sales_appraisal_incentive_report_wizard"
               name="Appraisal Incentive Report"
               parent="menu_sales_appraisal_reporting"
-              action="action_sales_appraisal_incentive_report_wizard"
-              sequence="10"/>
+              action="action_sales_appraisal_incentive_report_wizard"/>
 
     <menuitem id="menu_sales_appraisal_configuration"
               name="Configuration"
