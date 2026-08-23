@@ -62,14 +62,14 @@
                             <field name="year" widget="integer" options="{'format': false}" readonly="state != 'draft'"/>
                             <field name="date_from" readonly="1"/>
                             <field name="date_to" readonly="1"/>
-                        </group>
-                        <group>
                             <field name="max_total_rate"
                                    groups="sales_monthly_appraisal.group_appraisal_manager"/>
                             <field name="total_kpi_rate"/>
                             <field name="final_rate"/>
                             <field name="target_id" readonly="1"/>
                             <field name="collection_target" widget="monetary"/>
+                        </group>
+                        <group>
                             <field name="total_collected" widget="monetary"/>
                             <field name="total_amount_collected_by_kpi" widget="monetary"/>
                             <field name="total_collected_on_time" widget="monetary"/>
