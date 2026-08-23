@@ -29,6 +29,7 @@
     
     <menuitem id="menu_sales_appraisal_incentive_report_wizard12"
               name="Appraisal Incentive Report"
+              parent="menu_sales_appraisal_reporting"
               action="action_sales_appraisal_incentive_report_wizard"/>
 
     <menuitem id="menu_sales_appraisal_configuration"
