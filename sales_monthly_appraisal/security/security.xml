@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="module_category_sales_appraisal" model="ir.module.category">
+            <field name="name">Sales Monthly Appraisal</field>
+            <field name="sequence">25</field>
+        </record>
+
+        <!-- Sales evaluator group, e.g. Osman: edits all KPIs except Deduction -->
+        <record id="group_appraisal_sales" model="res.groups">
+            <field name="name">Sales Evaluator</field>
+            <field name="category_id" ref="module_category_sales_appraisal"/>
+            <field name="comment">Can create appraisals and score Quantitative,
+                Administrative and Guarantee Collection KPIs. Cannot edit the
+                Applying Deduction Value section.</field>
+        </record>
+
+        <!-- Accounting evaluator group, e.g. Yazeed: edits only Deduction -->
+        <record id="group_appraisal_accounting" model="res.groups">
+            <field name="name">Accounting Evaluator</field>
+            <field name="category_id" ref="module_category_sales_appraisal"/>
+            <field name="comment">Can only score the Applying Deduction Value
+                KPI(s) and review collection figures. Cannot edit other KPI
+                sections.</field>
+        </record>
+
+        <!-- Manager / Admin: full access + approvals + configuration -->
+        <record id="group_appraisal_manager" model="res.groups">
+            <field name="name">Appraisal Manager</field>
+            <field name="category_id" ref="module_category_sales_appraisal"/>
+            <field name="implied_ids" eval="[(4, ref('group_appraisal_sales')),
+                                              (4, ref('group_appraisal_accounting'))]"/>
+            <field name="comment">Full access: configure KPIs/categories/targets,
+                edit any KPI line and approve appraisals.</field>
+        </record>
+
+        <!-- Record rule: Sales evaluators only see appraisals they are
+             involved with as salesperson, unless they are managers. -->
+        <record id="rule_appraisal_sales_own" model="ir.rule">
+            <field name="name">Sales Evaluator: appraisals (all, read/write per state)</field>
+            <field name="model_id" ref="model_sales_appraisal"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_appraisal_sales'))]"/>
+        </record>
+
+        <record id="rule_appraisal_accounting_own" model="ir.rule">
+            <field name="name">Accounting Evaluator: appraisals (all, read/write per state)</field>
+            <field name="model_id" ref="model_sales_appraisal"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_appraisal_accounting'))]"/>
+        </record>
+
+    </data>
+</odoo>
