@@ -4,7 +4,9 @@
     <menuitem id="menu_sales_appraisal_root"
               name="Sales Appraisal"
               sequence="70"
-              groups="sales_monthly_appraisal.group_appraisal_sales,sales_monthly_appraisal.group_appraisal_accounting,sales_monthly_appraisal.group_appraisal_manager"/>
+              groups="sales_monthly_appraisal.group_appraisal_sales,sales_monthly_appraisal.group_appraisal_accounting,sales_monthly_appraisal.group_appraisal_manager"
+              web_icon="sales_monthly_appraisal,static/description/icon.png"
+        />
 
     <menuitem id="menu_sales_appraisal_main"
               name="Appraisals"
