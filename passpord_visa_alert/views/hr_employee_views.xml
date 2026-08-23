@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_employee_form_visa_warning" model="ir.ui.view">
+        <field name="name">hr.employee.form.visa.warning</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+             <xpath expr="//field[@name='insurance_no']" position="after">
+                <field name="insurance_expiry_date"/>
+            </xpath>
+            <xpath expr="//sheet" position="before">
+                <field name="insurance_warning" invisible="1"/>
+                <div class="alert alert-warning" invisible="not insurance_warning">
+                    <field name="insurance_warning_message" nolabel="1" readonly="1"/>
+                </div>
+            </xpath>
+            <xpath expr="//sheet" position="before">
+                <field name="visa_warning" invisible="1"/>
+                <div class="alert alert-warning" invisible="not visa_warning">
+                    <field name="visa_warning_message" nolabel="1" readonly="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

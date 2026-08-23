@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<record id="email_template_visaa" model="mail.template">
+        <field name="name">Visa Expiry Alert</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="subject">Visa Expiry Alert - ${object.name}</field>
+        <field name="email_from">${user.email_formatted}</field>
+        <field name="body_html"> 
+            <![CDATA[
+            <div>
+                <p>Dear User,</p>
+
+                <p>
+                    The visa of employee
+                    <strong>${object.name}</strong>
+                    will expire on
+                    <strong>${object.visa_expire}</strong>.
+                </p>
+
+                <p>
+                    Please take the necessary action.
+                </p>
+
+                <p>
+                    Regards,<br/>
+                    HR System
+                </p>
+            </div>
+            ]]>
+
+        </field>
+
+    </record>
+ 
+</odoo>
