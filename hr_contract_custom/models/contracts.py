@@ -41,5 +41,15 @@ class Contracts(models.Model):
     usd_salary = fields.Float(string='Salary', store=True)
     manager_insentive = fields.Float(string="Manager's Insentive SDG", store=True)
 
+    entitlement = fields.Selection(
+        selection=[
+            ('ticket', 'Ticket'),
+            ('visa', 'Visa'),
+            ('ticket_visa', 'Ticket & Visa'),
+        ],
+        string='Entitlement',
+        tracking=True,
+    )
+
 
   
