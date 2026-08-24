@@ -2,6 +2,7 @@
 
 from odoo import api, fields, models
 from odoo.tools import float_is_zero
+from odoo.exceptions import UserError
 
 
 class HrPayslip(models.Model):
