@@ -233,7 +233,7 @@ class HrPayslip(models.Model):
         if currency and currency != company_currency:
             rate = self.usd_rate or self.payslip_run_id.usd_rate
             if not rate:
-                raise UserError(_("USD exchange rate is not set for this payslip batch."))
+                raise UserError("USD exchange rate is not set for this payslip batch.")
             return line.foreign_amount * rate
         return line.total
 
