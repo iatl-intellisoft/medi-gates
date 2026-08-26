@@ -129,42 +129,49 @@ class SaleOrder(models.Model):
 
     def write(self, vals):
         # هات القيمة القديمة قبل ما تتغير
-        need_recreate = 'confirmed_delivery_date' in vals  
+        need_recreate = 'confirmed_delivery_date' in vals
+    
         res = super().write(vals)
+    
         if need_recreate:
             for order in self:
                 order._cancel_and_recreate_invoice()
+    
         return res
-     
-     def _cancel_and_recreate_invoice(self):
-         invoices = self.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
-         
-         old_invoice_date = invoices[:1].invoice_date if invoices else False
-         
-         for inv in invoices:
-             if inv.state == 'posted':
-                 inv.button_draft()
-             inv.button_cancel()
-         
-         cancelled_invoices = self.invoice_ids.filtered(
-             lambda inv: inv.state == 'cancel'
-         )
-         
-         try:
-             cancelled_invoices.unlink()
-         except UserError:
-             pass
-         
-         self.order_line._compute_qty_to_invoice()
-         self.invalidate_recordset(['invoice_status'])
-         
-         new_invoices = self._create_invoices(
-             date=old_invoice_date
-         )
-         
-         new_invoices.action_post()
-         
-         return new_invoices
+    
+    
+    def _cancel_and_recreate_invoice(self):
+        invoices = self.invoice_ids.filtered(
+            lambda inv: inv.state != 'cancel'
+        )
+    
+        old_invoice_date = invoices[:1].invoice_date if invoices else False
+    
+        for inv in invoices:
+            if inv.state == 'posted':
+                inv.button_draft()
+    
+            inv.button_cancel()
+    
+        cancelled_invoices = self.invoice_ids.filtered(
+            lambda inv: inv.state == 'cancel'
+        )
+    
+        try:
+            cancelled_invoices.unlink()
+        except UserError:
+            pass
+    
+        self.order_line._compute_qty_to_invoice()
+        self.invalidate_recordset(['invoice_status'])
+    
+        new_invoices = self._create_invoices(
+            date=old_invoice_date
+        )
+    
+        new_invoices.action_post()
+    
+        return new_invoices
 
     # def _cancel_and_recreate_invoice(self):
     #     invoices = self.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
