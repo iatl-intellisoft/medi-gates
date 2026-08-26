@@ -135,27 +135,57 @@ class SaleOrder(models.Model):
             for order in self:
                 order._cancel_and_recreate_invoice()
         return res
+     
+     def _cancel_and_recreate_invoice(self):
+         invoices = self.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
+         
+         old_invoice_date = invoices[:1].invoice_date if invoices else False
+         
+         for inv in invoices:
+             if inv.state == 'posted':
+                 inv.button_draft()
+             inv.button_cancel()
+         
+         cancelled_invoices = self.invoice_ids.filtered(
+             lambda inv: inv.state == 'cancel'
+         )
+         
+         try:
+             cancelled_invoices.unlink()
+         except UserError:
+             pass
+         
+         self.order_line._compute_qty_to_invoice()
+         self.invalidate_recordset(['invoice_status'])
+         
+         new_invoices = self._create_invoices(
+             date=old_invoice_date
+         )
+         
+         new_invoices.action_post()
+         
+         return new_invoices
 
-    def _cancel_and_recreate_invoice(self):
-        invoices = self.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
-        for inv in invoices:
-            if inv.state == 'posted':
-                inv.button_draft()
-            inv.button_cancel()
+    # def _cancel_and_recreate_invoice(self):
+    #     invoices = self.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
+    #     for inv in invoices:
+    #         if inv.state == 'posted':
+    #             inv.button_draft()
+    #         inv.button_cancel()
     
-        cancelled_invoices = self.invoice_ids.filtered(lambda inv: inv.state == 'cancel')
-        try:
-            cancelled_invoices.unlink()
-        except UserError:
-            pass
+    #     cancelled_invoices = self.invoice_ids.filtered(lambda inv: inv.state == 'cancel')
+    #     try:
+    #         cancelled_invoices.unlink()
+    #     except UserError:
+    #         pass
     
-        self.order_line._compute_qty_to_invoice()
-        self.invalidate_recordset(['invoice_status'])
+    #     self.order_line._compute_qty_to_invoice()
+    #     self.invalidate_recordset(['invoice_status'])
     
-        new_invoices = self._create_invoices()
-        new_invoices.action_post()  
+    #     new_invoices = self._create_invoices()
+    #     new_invoices.action_post()  
     
-        return new_invoices
+    #     return new_invoices
      
     # def write(self, vals):
     #     res = super().write(vals)
