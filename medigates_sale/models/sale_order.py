@@ -128,7 +128,6 @@ class SaleOrder(models.Model):
     #     return res 
 
     def write(self, vals):
-        # هات القيمة القديمة قبل ما تتغير
         need_recreate = 'confirmed_delivery_date' in vals
     
         res = super().write(vals)
@@ -145,14 +144,17 @@ class SaleOrder(models.Model):
             lambda inv: inv.state != 'cancel'
         )
     
+        # حفظ تاريخ الفاتورة القديمة
         old_invoice_date = invoices[:1].invoice_date if invoices else False
     
+        # إلغاء الفواتير القديمة
         for inv in invoices:
             if inv.state == 'posted':
                 inv.button_draft()
     
             inv.button_cancel()
     
+        # حذف الفواتير الملغاة
         cancelled_invoices = self.invoice_ids.filtered(
             lambda inv: inv.state == 'cancel'
         )
@@ -165,10 +167,16 @@ class SaleOrder(models.Model):
         self.order_line._compute_qty_to_invoice()
         self.invalidate_recordset(['invoice_status'])
     
-        new_invoices = self._create_invoices(
-            date=old_invoice_date
-        )
+        # إنشاء الفاتورة الجديدة
+        new_invoices = self._create_invoices()
     
+        # وضع نفس تاريخ الفاتورة القديمة
+        if old_invoice_date:
+            new_invoices.write({
+                'invoice_date': old_invoice_date,
+            })
+    
+        # تأكيد الفاتورة بعد تحديد التاريخ
         new_invoices.action_post()
     
         return new_invoices
