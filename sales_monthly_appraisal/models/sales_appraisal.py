@@ -159,7 +159,7 @@ class SalesAppraisal(models.Model):
             payments = AccountPayment.search([
                 ('state', '=', 'paid'),
                 ('payment_type', '=', 'inbound'),
-                # ('partner_type', '=', 'customer'),
+                ('partner_type', '=', 'customer'),
                 ('date', '>=', rec.date_from),
                 ('date', '<=', rec.date_to),
                 ('company_id', '=', rec.company_id.id),
