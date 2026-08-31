@@ -5,36 +5,46 @@
         <field name="name">stock.in.report.wizard.form</field>
         <field name="model">stock.in.report.wizard</field>
         <field name="arch" type="xml">
-            <form string="تقرير الوارد للمخزن">
+            <form string="Stock In Report">
                 <group invisible="state != 'choose'">
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="warehouse_id"/>
                 </group>
+
                 <group invisible="state != 'done'">
                     <field name="file_name" invisible="1"/>
-                    <field name="xlsx_file" filename="file_name" widget="binary" readonly="1"/>
+                    <field name="xlsx_file"
+                           filename="file_name"
+                           widget="binary"
+                           readonly="1"/>
                 </group>
+
                 <footer>
-                    <button name="action_generate_xlsx" type="object"
-                            string="طباعة التقرير" class="btn-primary"
+                    <button name="action_generate_xlsx"
+                            type="object"
+                            string="Print Report"
+                            class="btn-primary"
                             invisible="state != 'choose'"/>
-                    <button string="إغلاق" class="btn-secondary" special="cancel"/>
+
+                    <button string="Close"
+                            class="btn-secondary"
+                            special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
     <record id="action_stock_in_report_wizard" model="ir.actions.act_window">
-        <field name="name">تقرير الوارد للمخزن (Excel)</field>
+        <field name="name">Stock In Report (Excel)</field>
         <field name="res_model">stock.in.report.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
 
     <menuitem id="menu_stock_in_report_wizard"
-              name="تقرير وارد المنتجات (Excel)"
-              parent="stock.menu_stock_root"
+              name="Stock In Report (Excel)"
+              parent="stock.menu_warehouse_report"
               action="action_stock_in_report_wizard"
               sequence="50"/>
 
