@@ -52,18 +52,23 @@ class StockInReportWizard(models.TransientModel):
             raise UserError('لا توجد حركات وارد للمنتجات في الفترة المحددة.')
 
         # تجميع البيانات لكل منتج
+        # تجميع البيانات لكل منتج وتاريخ نزول
         data = {}
         for layer in layers:
             product = layer.product_id
-            if product.id not in data:
-                data[product.id] = {
+            # تاريخ حركة المخزون
+            move_date = layer.stock_move_id.date
+            move_date_str = move_date.strftime('%Y-%m-%d') if move_date else ''
+            key = (product.id, move_date_str)
+            if key not in data:
+                data[key] = {
                     'product': product,
+                    'date': move_date_str,
                     'qty': 0.0,
                     'value': 0.0,
                 }
-            data[product.id]['qty'] += layer.quantity
-            data[product.id]['value'] += layer.value
-
+            data[key]['qty'] += layer.quantity
+            data[key]['value'] += layer.value
         # بناء ملف الإكسيل
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
@@ -79,33 +84,45 @@ class StockInReportWizard(models.TransientModel):
         title_fmt = workbook.add_format({'bold': True, 'font_size': 14, 'align': 'center'})
 
         sheet.merge_range(
-            0, 0, 0, 5,
+            0, 0, 0, 6,
             f'تقرير المنتجات الداخلة للمخزن من {self.date_from} الى {self.date_to}',
             title_fmt)
 
-        headers = ['كود المنتج', 'اسم المنتج', 'وحدة القياس', 'الكمية الداخلة',
-                   'متوسط تكلفة الوحدة', 'اجمالي الكوست']
+        headers = [
+            'كود المنتج',
+            'اسم المنتج',
+            'وحدة القياس',
+            'تاريخ النزول',
+            'الكمية الداخلة',
+            'متوسط تكلفة الوحدة',
+            'اجمالي الكوست'
+        ]
         for col, h in enumerate(headers):
             sheet.write(2, col, h, header_fmt)
 
         row = 3
         total_qty = 0.0
         total_value = 0.0
+        
         for vals in data.values():
             product = vals['product']
+            move_date = vals['date']
             qty = vals['qty']
             value = vals['value']
+        
             avg_cost = value / qty if qty else 0.0
-
+        
             sheet.write(row, 0, product.default_code or '', cell_fmt)
             sheet.write(row, 1, product.name or '', cell_fmt)
             sheet.write(row, 2, product.uom_id.name or '', cell_fmt)
-            sheet.write(row, 3, qty, num_fmt)
-            sheet.write(row, 4, avg_cost, num_fmt)
-            sheet.write(row, 5, value, num_fmt)
-
+            sheet.write(row, 3, move_date, cell_fmt)
+            sheet.write(row, 4, qty, num_fmt)
+            sheet.write(row, 5, avg_cost, num_fmt)
+            sheet.write(row, 6, value, num_fmt)
+        
             total_qty += qty
             total_value += value
+        
             row += 1
 
         total_fmt = workbook.add_format({
@@ -113,14 +130,16 @@ class StockInReportWizard(models.TransientModel):
             'num_format': '#,##0.00'
         })
         sheet.write(row, 2, 'الاجمالي', total_fmt)
-        sheet.write(row, 3, total_qty, total_fmt)
-        sheet.write(row, 4, '', total_fmt)
-        sheet.write(row, 5, total_value, total_fmt)
+        sheet.write(row, 3, '', total_fmt)
+        sheet.write(row, 4, total_qty, total_fmt)
+        sheet.write(row, 5, '', total_fmt)
+        sheet.write(row, 6, total_value, total_fmt)
 
-        sheet.set_column(0, 0, 15)
-        sheet.set_column(1, 1, 35)
-        sheet.set_column(2, 2, 12)
-        sheet.set_column(3, 5, 18)
+        sheet.set_column(0, 0, 15)  # كود المنتج
+        sheet.set_column(1, 1, 35)  # اسم المنتج
+        sheet.set_column(2, 2, 12)  # وحدة القياس
+        sheet.set_column(3, 3, 15)  # تاريخ النزول
+        sheet.set_column(4, 6, 18)  # الكمية والتكلفة
 
         workbook.close()
         output.seek(0)
