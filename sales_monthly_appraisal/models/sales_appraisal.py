@@ -149,17 +149,17 @@ class SalesAppraisal(models.Model):
 
     @api.depends('salesperson_id', 'date_from', 'date_to', 'company_id')
     def _compute_total_collected(self):
-        AccountPayment = self.env['account.payment']
+        PartialReconcile = self.env['account.partial.reconcile']
         for rec in self:
             if not (rec.salesperson_id and rec.date_from and rec.date_to):
                 rec.total_collected = 0.0
                 rec.total_collected_on_time = 0.0
                 rec.total_collected_late = 0.0
                 continue
-            payments = AccountPayment.search([
+            # Get paid inbound payments within the selected period
+            payments = self.env['account.payment'].search([
                 ('state', '=', 'paid'),
                 ('payment_type', '=', 'inbound'),
-                # ('partner_type', '=', 'customer'),
                 ('date', '>=', rec.date_from),
                 ('date', '<=', rec.date_to),
                 ('company_id', '=', rec.company_id.id),
@@ -168,33 +168,54 @@ class SalesAppraisal(models.Model):
             total_on_time = 0.0
             total_late = 0.0
             for payment in payments:
+                # Get invoices reconciled with this payment
                 invoices = payment.reconciled_invoice_ids.filtered(
-                    lambda inv: inv.invoice_user_id.id == rec.salesperson_id.id)
+                    lambda inv: (
+                        inv.invoice_user_id.id == rec.salesperson_id.id
+                        and inv.company_id.id == rec.company_id.id
+                    )
+                )
                 if not invoices:
                     continue
-                # NOTE (MVP simplification): if a single payment settles
-                # invoices from several salespeople, its full amount is
-                # counted here rather than being split proportionally.
-                # For an exact split, compute matched amounts via
-                # account.partial.reconcile instead.
-                total += payment.amount
-
-                # On-time vs late: compare the payment date against the
-                # earliest due date among the matched invoices. If the
-                # payment was made on or before that due date, it is
-                # considered "on time"; otherwise it is "late".
-                due_dates = invoices.mapped('invoice_date_due')
-                due_dates = [d for d in due_dates if d]
-                if due_dates and payment.date and payment.date <= min(due_dates):
-                    total_on_time += payment.amount
-                else:
-                    # No due date on the invoice(s), or paid after due date
-                    total_late += payment.amount
-
+                # Payment journal item
+                payment_lines = payment.move_id.line_ids.filtered(
+                    lambda line: line.account_id.account_type == 'asset_receivable'
+                )
+                for payment_line in payment_lines:
+                    # Find partial reconciliations connected to payment line
+                    partials = PartialReconcile.search([
+                        '|',
+                        ('debit_move_id', '=', payment_line.id),
+                        ('credit_move_id', '=', payment_line.id),
+                    ])
+                    for partial in partials:
+                        # Determine the invoice line involved in the reconciliation
+                        if partial.debit_move_id == payment_line:
+                            invoice_line = partial.credit_move_id
+                        else:
+                            invoice_line = partial.debit_move_id
+                        invoice = invoice_line.move_id
+                        # Make sure this is one of the salesperson's invoices
+                        if invoice not in invoices:
+                            continue
+                        # Amount actually reconciled with this invoice
+                        amount = partial.amount
+                        if not amount:
+                            continue
+                        total += amount
+                        # Check invoice due date
+                        due_date = invoice.invoice_date_due
+                        if (
+                            due_date
+                            and payment.date
+                            and payment.date <= due_date
+                        ):
+                            total_on_time += amount
+                        else:
+                            total_late += amount
             rec.total_collected = total
             rec.total_collected_on_time = total_on_time
             rec.total_collected_late = total_late
-
     @api.depends('total_collected', 'final_rate')
     def _compute_payout_amount(self):
         for rec in self:
